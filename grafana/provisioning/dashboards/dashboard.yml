@@ -1,0 +1,14 @@
+# https://grafana.com/docs/grafana/latest/administration/provisioning/#dashboards
+
+apiVersion: 1
+
+providers:
+  - name: 'Default' 
+    orgId: 1
+    folder: 'MacOS'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/1860_rev42.json
