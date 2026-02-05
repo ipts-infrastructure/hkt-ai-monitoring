@@ -23,7 +23,7 @@ Download the appropriate binary from [releases](https://github.com/ipts-infrastr
 
 **macOS:**
 ```bash
-# Download and install
+# Download and install (Please ensure the visibility of the Github was PUBLIC)
 curl -L -o hkt-prom-exporter-darwin-arm64 https://github.com/ipts-infrastructure/speedx/releases/latest/download/hkt-prom-exporter-darwin-arm64
 chmod +x hkt-prom-exporter-darwin-arm64
 sudo mv hkt-prom-exporter-darwin-arm64 /usr/local/bin/
