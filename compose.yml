@@ -24,24 +24,6 @@ services:
     restart: unless-stopped
 
   # ────────────────────────────────────────────────
-  #              Node Exporter
-  # ────────────────────────────────────────────────
-  node-exporter:
-    image: prom/node-exporter:v1.10.2
-    container_name: node_exporter
-    command:
-      - '--path.rootfs=/host'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)'
-    network_mode: host
-    pid: host
-    restart: unless-stopped
-    volumes:
-      - '/:/host:ro'
-      - /sys:/host/sys:ro
-      - /proc:/host/proc:ro
-
-  # ────────────────────────────────────────────────
   #              Cadvisor
   # ────────────────────────────────────────────────
   cadvisor:

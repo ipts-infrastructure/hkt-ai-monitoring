@@ -11,4 +11,4 @@ providers:
     updateIntervalSeconds: 10
     allowUiUpdates: true
     options:
-      path: /var/lib/grafana/dashboards/1860_rev42.json
+      path: /var/lib/grafana/dashboards/custom_exporter.json
