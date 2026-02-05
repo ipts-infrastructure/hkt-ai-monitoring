@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 3600050600271872,
+  "id": 0,
   "links": [],
   "panels": [
     {
@@ -851,105 +851,6 @@
             "mode": "thresholds"
           },
           "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "rgba(50, 172, 45, 0.97)",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "decgbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 6,
-        "y": 12
-      },
-      "id": 3,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.0-21342258703",
-      "targets": [
-        {
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "machine_memory_total / (1024 * 1024 * 1024)",
-          "interval": "",
-          "legendFormat": "Memory Total",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "machine_memory_used / (1024 * 1024 * 1024)",
-          "instant": false,
-          "legendFormat": "Memory Used",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "machine_memory_available / (1024 * 1024 * 1024)",
-          "instant": false,
-          "legendFormat": "Memory Available",
-          "range": true,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "machine_memory_free / (1024 * 1024 * 1024)",
-          "instant": false,
-          "legendFormat": "Memory Free",
-          "range": true,
-          "refId": "D"
-        }
-      ],
-      "title": " ",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P7E2AE7DB8179C128"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
           "max": 100,
           "min": 0,
           "thresholds": {
@@ -976,7 +877,7 @@
       "gridPos": {
         "h": 4,
         "w": 3,
-        "x": 12,
+        "x": 6,
         "y": 12
       },
       "id": 29,
@@ -1023,6 +924,69 @@
             "mode": "absolute",
             "steps": [
               {
+                "color": "rgba(50, 172, 45, 0.97)",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "decgbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 12
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "machine_memory_total / (1024 * 1024 * 1024)",
+          "interval": "",
+          "legendFormat": "Memory Total",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": " Memory Total",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
                 "color": "green",
                 "value": 0
               }
@@ -1035,7 +999,7 @@
       "gridPos": {
         "h": 4,
         "w": 3,
-        "x": 15,
+        "x": 12,
         "y": 12
       },
       "id": 102,
@@ -1094,9 +1058,9 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 3,
-        "x": 18,
+        "h": 2,
+        "w": 4,
+        "x": 15,
         "y": 12
       },
       "id": 103,
@@ -1122,12 +1086,12 @@
         {
           "editorMode": "code",
           "expr": "machine_memory_available / (1024 * 1024 * 1024)",
-          "legendFormat": "__auto",
+          "legendFormat": "Memory Available",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Memory Available",
+      "title": "",
       "type": "stat"
     },
     {
@@ -1156,8 +1120,8 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 3,
-        "x": 21,
+        "w": 5,
+        "x": 19,
         "y": 12
       },
       "id": 41,
@@ -1217,8 +1181,69 @@
       },
       "gridPos": {
         "h": 2,
-        "w": 3,
-        "x": 21,
+        "w": 4,
+        "x": 15,
+        "y": 14
+      },
+      "id": 108,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "machine_memory_free / (1024 * 1024 * 1024)",
+          "legendFormat": "Memory Free",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "decgbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 5,
+        "x": 19,
         "y": 14
       },
       "id": 62,
@@ -2012,7 +2037,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 6,
         "x": 0,
         "y": 41
@@ -2080,7 +2105,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 3,
         "x": 6,
         "y": 41
@@ -2141,7 +2166,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
+        "h": 4,
         "w": 3,
         "x": 9,
         "y": 41
@@ -2202,8 +2227,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 8,
+        "h": 4,
+        "w": 12,
         "x": 12,
         "y": 41
       },
@@ -2318,7 +2343,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 44
+        "y": 45
       },
       "id": 74,
       "options": {
@@ -2409,9 +2434,9 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 11,
+        "w": 12,
         "x": 12,
-        "y": 44
+        "y": 45
       },
       "id": 73,
       "options": {
@@ -2516,7 +2541,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 53
+        "y": 54
       },
       "id": 46,
       "options": {
@@ -2565,7 +2590,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 62
+        "y": 63
       },
       "id": 96,
       "panels": [],
@@ -2636,7 +2661,7 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 63
+        "y": 64
       },
       "id": 72,
       "options": {
@@ -2734,7 +2759,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 63
+        "y": 64
       },
       "id": 94,
       "options": {
@@ -2827,6 +2852,18 @@
                 "value": 263
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Process"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 554
+              }
+            ]
           }
         ]
       },
@@ -2834,7 +2871,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 72
+        "y": 73
       },
       "id": 93,
       "options": {
@@ -2848,12 +2885,7 @@
           "show": false
         },
         "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "PID"
-          }
-        ]
+        "sortBy": []
       },
       "pluginVersion": "12.4.0-21342258703",
       "targets": [
@@ -2883,10 +2915,14 @@
               "Value": true,
               "__name__": true,
               "boot_id": true,
+              "instance": true,
+              "job": false,
               "machine_id": true,
               "system_uuid": true
             },
+            "includeByName": {},
             "indexByName": {},
+            "orderByMode": "manual",
             "renameByName": {
               "localAddress": "Local Address",
               "peerAddress": "Peer Address",
@@ -2907,7 +2943,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 80
+        "y": 81
       },
       "id": 90,
       "panels": [],
@@ -2941,7 +2977,7 @@
         "h": 4,
         "w": 4,
         "x": 0,
-        "y": 81
+        "y": 82
       },
       "id": 77,
       "options": {
@@ -3001,7 +3037,7 @@
         "h": 4,
         "w": 5,
         "x": 4,
-        "y": 81
+        "y": 82
       },
       "id": 91,
       "options": {
@@ -3096,7 +3132,7 @@
         "h": 11,
         "w": 15,
         "x": 9,
-        "y": 81
+        "y": 82
       },
       "id": 71,
       "options": {
@@ -3172,7 +3208,7 @@
         "h": 7,
         "w": 9,
         "x": 0,
-        "y": 85
+        "y": 86
       },
       "id": 80,
       "options": {
@@ -3290,6 +3326,6 @@
   "timezone": "browser",
   "title": "Custom_Exporter",
   "uid": "ad9dgc7",
-  "version": 129,
+  "version": 135,
   "weekStart": ""
 }
