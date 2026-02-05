@@ -28,6 +28,10 @@ curl -L -o hkt-prom-exporter-darwin-arm64 https://github.com/ipts-infrastructure
 chmod +x hkt-prom-exporter-darwin-arm64
 sudo mv hkt-prom-exporter-darwin-arm64 /usr/local/bin/
 
+# Setup log file permissions
+sudo touch /var/log/hkt_exporter.log
+sudo chown $(whoami) /var/log/hkt_exporter.log
+
 # Setup auto-start (optional)
 cp ./speedx/com.hkt.hkt-prom-exporter.plist ~/Library/LaunchAgents/
 launchctl load ~/Library/LaunchAgents/com.hkt.hkt-prom-exporter.plist
