@@ -28,19 +28,15 @@ curl -L -o hkt-prom-exporter-darwin-arm64 https://github.com/ipts-infrastructure
 chmod +x hkt-prom-exporter-darwin-arm64
 sudo mv hkt-prom-exporter-darwin-arm64 /usr/local/bin/
 
-# Setup log file permissions
-sudo touch /var/log/hkt_exporter.log
-sudo chown $(whoami) /var/log/hkt_exporter.log
-
 # Setup auto-start (optional)
-cp ./speedx/com.hkt.hkt-prom-exporter.plist ~/Library/LaunchAgents/
-launchctl load ~/Library/LaunchAgents/com.hkt.hkt-prom-exporter.plist
-
-# Validate plist format
-plutil -lint ~/Library/LaunchAgents/com.hkt.hkt-prom-exporter.plist
+cp ./speedx/com.hkt.hkt-prom-exporter.plist /Library/LaunchDaemons/
+sudo chown root:wheel /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist  # Change ownership 
+sudo chmod 644 /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist         # Change approriate permission 
+plutil -lint /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist           # Validate plist format
+sudo launchctl load -w /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist # Loads the plist and enables it
 
 # Unload if needed
-launchctl bootout gui/$(id -u) ~/Library/LaunchAgents/com.hkt.hkt-prom-exporter.plist
+sudo launchctl unload -w /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist
 ```
 
 ### 3. Start the Stack
