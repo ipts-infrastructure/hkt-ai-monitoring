@@ -22,6 +22,11 @@ services:
     networks:
       - monitoring-net
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "7"
 
   # ────────────────────────────────────────────────
   #              Cadvisor
@@ -40,6 +45,11 @@ services:
     networks:
       - monitoring-net
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "7"
 
   # ────────────────────────────────────────────────
   #                   Grafana
@@ -61,6 +71,11 @@ services:
     networks:
       - monitoring-net
     restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "7"
 
 volumes:
   prometheus_data: {}
