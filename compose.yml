@@ -1,4 +1,4 @@
-version: '1.0'
+version: '1.1'
 
 services:
 
@@ -18,7 +18,7 @@ services:
       - '--storage.tsdb.wal-compression'         # Compress write-ahead log
       - '--web.enable-lifecycle'                 # Enable runtime reloading
     ports:
-      - "9090:9090"
+      - "9290:9090"
     networks:
       - monitoring-net
     restart: unless-stopped
@@ -41,7 +41,7 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
     ports:
-      - "8080:8080"
+      - "8280:8080"
     networks:
       - monitoring-net
     restart: unless-stopped
@@ -67,7 +67,7 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_AUTH_ANONYMOUS_ENABLED=false
     ports:
-      - "3000:3000"
+      - "3200:3000"
     networks:
       - monitoring-net
     restart: unless-stopped
@@ -76,6 +76,10 @@ services:
       options:
         max-size: "10m"
         max-file: "7"
+
+  # ────────────────────────────────────────────────
+  #                   Langfuse
+  # ────────────────────────────────────────────────
 
 volumes:
   prometheus_data: {}

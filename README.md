@@ -6,7 +6,7 @@ A comprehensive monitoring stack using Docker Compose with Prometheus, Grafana, 
 
 - Docker Engine 20.10+
 - Docker Compose 2.0+
-- Port availability: 3000 (Grafana), 9090 (Prometheus), 8080 (cAdvisor)
+- Port availability: 3200 (Grafana), 9290 (Prometheus), 8280 (cAdvisor)
 - Minimum 2GB RAM recommended for optimal performance
 
 ## 🛠️ Getting Started
@@ -49,11 +49,11 @@ docker compose --env-file .env.prod up -d
 ```
 
 ### 4. Access Services
-- **Grafana Dashboard**: http://localhost:3000
+- **Grafana Dashboard**: http://localhost:3200
   - Username: `admin` (or as configured in .env)
   - Password: `admin` (or as configured in .env)
-- **Prometheus**: http://localhost:9090
-- **cAdvisor**: http://localhost:8080
+- **Prometheus**: http://localhost:9290
+- **cAdvisor**: http://localhost:8280
 - **HktExporter**: http://localhost:8872/metrics
 
 ### 5. Stop the Stack
