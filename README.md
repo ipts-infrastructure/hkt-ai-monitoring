@@ -66,7 +66,7 @@ docker compose down
 ### Common Issues
 
 **Services not starting:**
-- Check if required ports (3000, 9090, 8080) are available
+- Check if required ports (3200, 9290, 8280) are available
 - Verify Docker daemon is running: `docker info`
 
 **Grafana login issues:**
