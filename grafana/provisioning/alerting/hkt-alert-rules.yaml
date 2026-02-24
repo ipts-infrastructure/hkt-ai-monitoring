@@ -1,0 +1,215 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: Evaluation group
+      folder: Alerts
+      interval: 1m
+      rules:
+        - uid: afczyqqgfqvb4b
+          title: Critical Memory Usage
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: P7E2AE7DB8179C128
+              model:
+                editorMode: code
+                expr: (machine_memory_used / machine_memory_total) * 100
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 95
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: Alerting
+          execErrState: Error
+          for: 1m
+          keepFiringFor: 2m
+          annotations:
+            description: Goodbye
+            summary: Hello
+          isPaused: false
+          notification_settings:
+            receiver: empty
+        - uid: bfd03y992rvuoa
+          title: High Memory Usage
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: P7E2AE7DB8179C128
+              model:
+                editorMode: code
+                expr: (machine_memory_used / machine_memory_total) * 100
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 85
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: Alerting
+          execErrState: Error
+          for: 1m
+          keepFiringFor: 2m
+          annotations:
+            description: Goodbye
+            summary: Hello
+          isPaused: false
+          notification_settings:
+            receiver: empty
+        - uid: efd2yltfvpnuod
+          title: Critical CPU Load
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: P7E2AE7DB8179C128
+              model:
+                editorMode: code
+                expr: machine_cpu_load_currentLoad
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 95
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: Alerting
+          execErrState: Error
+          for: 1m
+          keepFiringFor: 2m
+          annotations:
+            description: Goodbye
+            summary: Hello
+          isPaused: false
+          notification_settings:
+            receiver: empty
+        - uid: ffd2z0pzajw8wb
+          title: High CPU Load
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: P7E2AE7DB8179C128
+              model:
+                editorMode: code
+                expr: machine_cpu_load_currentLoad
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 85
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: Alerting
+          execErrState: Error
+          for: 1m
+          keepFiringFor: 2m
+          annotations:
+            description: Goodbye
+            summary: Hello
+          isPaused: false
+          notification_settings:
+            receiver: empty
