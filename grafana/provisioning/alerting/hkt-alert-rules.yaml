@@ -51,9 +51,6 @@ groups:
           execErrState: Error
           for: 1m
           keepFiringFor: 2m
-          annotations:
-            description: Goodbye
-            summary: Hello
           isPaused: false
           notification_settings:
             receiver: empty
@@ -103,9 +100,6 @@ groups:
           execErrState: Error
           for: 1m
           keepFiringFor: 2m
-          annotations:
-            description: Goodbye
-            summary: Hello
           isPaused: false
           notification_settings:
             receiver: empty
@@ -155,9 +149,6 @@ groups:
           execErrState: Error
           for: 1m
           keepFiringFor: 2m
-          annotations:
-            description: Goodbye
-            summary: Hello
           isPaused: false
           notification_settings:
             receiver: empty
@@ -207,9 +198,102 @@ groups:
           execErrState: Error
           for: 1m
           keepFiringFor: 2m
-          annotations:
-            description: Goodbye
-            summary: Hello
+          isPaused: false
+          notification_settings:
+            receiver: empty
+        - uid: bfe9keb5bmnlsc
+          title: High Disk Usage
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: P7E2AE7DB8179C128
+              model:
+                editorMode: code
+                expr: machine_fs_size_used{mount="/"} / (machine_fs_size_available{mount="/"} + machine_fs_size_used{mount="/"}) * 100
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 85
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          isPaused: false
+          notification_settings:
+            receiver: empty
+        - uid: cfe9kgakl3x8gd
+          title: Critical Disk Usage
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: P7E2AE7DB8179C128
+              model:
+                editorMode: code
+                expr: machine_fs_size_used{mount="/"} / (machine_fs_size_available{mount="/"} + machine_fs_size_used{mount="/"}) * 100
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 95
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
           isPaused: false
           notification_settings:
             receiver: empty
