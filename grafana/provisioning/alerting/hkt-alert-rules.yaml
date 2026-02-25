@@ -8,6 +8,8 @@ groups:
         - uid: afczyqqgfqvb4b
           title: Critical Memory Usage
           condition: C
+          annotations:
+            summary: Memory usage exceeds 95%.
           data:
             - refId: A
               relativeTimeRange:
@@ -57,6 +59,8 @@ groups:
         - uid: bfd03y992rvuoa
           title: High Memory Usage
           condition: C
+          annotations:
+            summary: Memory usage exceeds 85%.
           data:
             - refId: A
               relativeTimeRange:
@@ -106,6 +110,8 @@ groups:
         - uid: efd2yltfvpnuod
           title: Critical CPU Load
           condition: C
+          annotations:
+            summary: CPU load exceeds 95%.
           data:
             - refId: A
               relativeTimeRange:
@@ -155,6 +161,8 @@ groups:
         - uid: ffd2z0pzajw8wb
           title: High CPU Load
           condition: C
+          annotations:
+            summary: CPU load exceeds 85%.
           data:
             - refId: A
               relativeTimeRange:
@@ -204,6 +212,8 @@ groups:
         - uid: bfe9keb5bmnlsc
           title: High Disk Usage
           condition: C
+          annotations:
+            summary: Root filesystem has less than 10 GB free.
           data:
             - refId: A
               relativeTimeRange:
@@ -212,7 +222,7 @@ groups:
               datasourceUid: P7E2AE7DB8179C128
               model:
                 editorMode: code
-                expr: machine_fs_size_used{mount="/"} / (machine_fs_size_available{mount="/"} + machine_fs_size_used{mount="/"}) * 100
+                expr: machine_fs_size_available{mount="/"}
                 instant: true
                 intervalMs: 1000
                 legendFormat: __auto
@@ -225,8 +235,8 @@ groups:
                 conditions:
                     - evaluator:
                         params:
-                            - 85
-                        type: gt
+                            - 10737418240
+                        type: lt
                       operator:
                         type: and
                       query:
@@ -252,6 +262,8 @@ groups:
         - uid: cfe9kgakl3x8gd
           title: Critical Disk Usage
           condition: C
+          annotations:
+            summary: Root filesystem has less than 5 GB free.
           data:
             - refId: A
               relativeTimeRange:
@@ -260,7 +272,7 @@ groups:
               datasourceUid: P7E2AE7DB8179C128
               model:
                 editorMode: code
-                expr: machine_fs_size_used{mount="/"} / (machine_fs_size_available{mount="/"} + machine_fs_size_used{mount="/"}) * 100
+                expr: machine_fs_size_available{mount="/"}
                 instant: true
                 intervalMs: 1000
                 legendFormat: __auto
@@ -273,8 +285,8 @@ groups:
                 conditions:
                     - evaluator:
                         params:
-                            - 95
-                        type: gt
+                            - 5368709120
+                        type: lt
                       operator:
                         type: and
                       query:
