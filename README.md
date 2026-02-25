@@ -6,7 +6,7 @@ A comprehensive monitoring stack using Docker Compose with Prometheus, Grafana, 
 
 - Docker Engine 20.10+
 - Docker Compose 2.0+
-- Port availability: 23000 (Grafana), 29090 (Prometheus), 28080 (cAdvisor), 23030 (Langfuse worker), 23001 (Langfuse web), 28123 & 29000 (Clickhouse), 29002 & 29001 (Minio), 26379 (Redis), 25432 (Postgres)
+- Port availability: 23000 (Grafana), 29090 (Prometheus), 28080 (cAdvisor), 23030 (Langfuse worker), 23001 (Langfuse web), 28123 & 29000 (Clickhouse), 29002 & 29001 (Minio), 26379 (Redis), 25432 (Postgres), 28872 (HktExporter)
 - Minimum 2GB RAM recommended for optimal performance
 
 ## 🛠️ Getting Started
@@ -55,7 +55,7 @@ docker compose --env-file .env.prod up -d
   - Password: `admin` (or as configured in .env)
 - **Prometheus**: http://localhost:29090
 - **cAdvisor**: http://localhost:28080
-- **HktExporter**: http://localhost:8872/metrics
+- **HktExporter**: http://localhost:28872/metrics
 - **Langfuse Web UI**: http://localhost:23001
 - **Langfuse Worker**: http://localhost:23030 (internal worker UI / health)
 - **Langfuse Clickhouse HTTP**: http://localhost:28123
@@ -83,7 +83,7 @@ docker compose down
 - Reset admin password: `docker exec -it grafana grafana-cli admin reset-admin-password newpassword`
 
 **Prometheus targets down:**
-- Check if `hkt-exporter` is running on port 8872
+- Check if `hkt-exporter` is running on port 28872
 - Verify network connectivity: `docker network ls`
 
 **Langfuse not reachable (web/worker):**
