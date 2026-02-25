@@ -2,7 +2,7 @@ apiVersion: 1
 groups:
     - orgId: 1
       name: Evaluation group
-      folder: Alerts
+      folder: MacOS
       interval: 1m
       rules:
         - uid: afczyqqgfqvb4b
