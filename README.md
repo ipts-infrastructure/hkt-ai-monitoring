@@ -6,7 +6,7 @@ A comprehensive monitoring stack using Docker Compose with Prometheus, Grafana, 
 
 - Docker Engine 20.10+
 - Docker Compose 2.0+
-- Port availability: 23000 (Grafana), 29090 (Prometheus), 28080 (cAdvisor), 23030 (Langfuse worker), 23001 (Langfuse web), 28123 & 29000 (Clickhouse), 29002 & 29001 (Minio), 26379 (Redis)
+- Port availability: 23000 (Grafana), 29090 (Prometheus), 28080 (cAdvisor), 23030 (Langfuse worker), 23001 (Langfuse web), 28123 & 29000 (Clickhouse), 29002 & 29001 (Minio), 26379 (Redis), 25432 (Postgres)
 - Minimum 2GB RAM recommended for optimal performance
 
 ## 🛠️ Getting Started
@@ -63,6 +63,7 @@ docker compose --env-file .env.prod up -d
 - **Langfuse Minio S3 endpoint**: http://localhost:29002
 - **Langfuse Minio Console**: http://localhost:29001
 - **Langfuse Redis**: localhost:26379
+- **Langfuse Postgres**: localhost:25432
 
 ### 5. Stop the Stack
 ```bash
@@ -74,7 +75,7 @@ docker compose down
 ### Common Issues
 
 **Services not starting:**
-- Check if required ports (23000, 29090, 28080, 23001, 23030, 28123, 29000, 29002, 29001, 26379) are available
+- Check if required ports (23000, 29090, 28080, 23001, 23030, 28123, 29000, 29002, 29001, 26379, 25432) are available
 - Verify Docker daemon is running: `docker info`
 
 **Grafana login issues:**
