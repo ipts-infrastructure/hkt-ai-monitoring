@@ -12,6 +12,12 @@ scrape_configs:
     static_configs:
       - targets: ["host.docker.internal:28872"]
 
+  - job_name: "hkt-exporter-asmhk-macbook"
+    static_configs:
+      - targets: ["100.87.170.122:28872"]
+        labels:
+          device: mac-book1
+
   - job_name: "cadvisor"
     static_configs:
       - targets: ["cadvisor:8080"]
