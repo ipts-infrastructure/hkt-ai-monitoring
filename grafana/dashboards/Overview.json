@@ -1,0 +1,1681 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1445484225372160,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 7,
+        "x": 0,
+        "y": 0
+      },
+      "id": 15,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "editorMode": "builder",
+          "expr": "langfuse_daily_traces{date=\"2026-06-03\"}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Daily Traces",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 7,
+        "x": 7,
+        "y": 0
+      },
+      "id": 16,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "editorMode": "builder",
+          "expr": "langfuse_tokens_total{date=\"2026-06-03\"}",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Daily Token Usage",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 10,
+        "x": 14,
+        "y": 0
+      },
+      "id": 17,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "editorMode": "builder",
+          "expr": "langfuse_tokens_input{date=\"2026-06-03\"}",
+          "legendFormat": "Daily Token input",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "builder",
+          "expr": "langfuse_tokens_output{date=\"2026-06-03\"}",
+          "instant": false,
+          "legendFormat": "Daily Token Output",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Daily Token Usage",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "device"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Open details",
+                    "url": "d/ad9dgc7?var-device=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "arch"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "Disconnected"
+                      },
+                      "1": {
+                        "index": 1,
+                        "text": "Connected"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Alerts"
+            },
+            "properties": [
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "semi-dark-green",
+                      "value": 0
+                    },
+                    {
+                      "color": "semi-dark-red",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "index": 0,
+                        "text": "None"
+                      }
+                    },
+                    "type": "value"
+                  },
+                  {
+                    "options": {
+                      "from": 1,
+                      "result": {
+                        "index": 1,
+                        "text": "Active"
+                      },
+                      "to": 6
+                    },
+                    "type": "range"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Uptime"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "s"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "hostname"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 258
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "release"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "version"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 310
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 14,
+        "x": 0,
+        "y": 4
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "device"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "label_replace(up{job=\"hkt-exporter\"}, \"device\", \"mac-mini1\", \"\", \"\") or label_replace(up{job=\"hkt-exporter-asmhk-macbook\"}, \"device\", \"mac-book1\", \"\", \"\") or label_replace(vector(1), \"device\", \"mac-mini2\", \"\", \"\") or label_replace(vector(0), \"device\", \"mac-studio1\", \"\", \"\") or label_replace(vector(1), \"device\", \"mac-studio2\", \"\", \"\") or label_replace(vector(1), \"device\", \"mac-studio3\", \"\", \"\") or label_replace(vector(0), \"device\", \"mac-studio4\", \"\", \"\")",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{device}}",
+          "refId": "A"
+        },
+        {
+          "editorMode": "code",
+          "expr": "label_replace(machine_uptime{job=\"hkt-exporter\"}, \"device\", \"mac-mini1\", \"\", \"\") or label_replace(vector(87500), \"device\", \"mac-mini2\", \"\", \"\") or label_replace(vector(36000), \"device\", \"mac-studio1\", \"\", \"\") or label_replace(vector(42000), \"device\", \"mac-studio2\", \"\", \"\") or label_replace(vector(18000), \"device\", \"mac-studio3\", \"\", \"\") or label_replace(vector(22000), \"device\", \"mac-studio4\", \"\", \"\") or label_replace(machine_uptime{job=\"hkt-exporter-asmhk-macbook\"}, \"device\", \"mac-book1\", \"\", \"\") ",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{device}}",
+          "refId": "B"
+        },
+        {
+          "editorMode": "code",
+          "expr": "label_replace(machine_os_info{job=\"hkt-exporter\"}, \"device\", \"mac-mini1\", \"\", \"\") or label_replace(label_replace(label_replace(label_replace(label_replace(vector(1), \"device\", \"mac-mini2\", \"\", \"\"), \"hostname\", \"mac-mini2.local\", \"\", \"\"), \"distro\", \"macOS\", \"\", \"\"), \"release\", \"14.6\", \"\", \"\"), \"arch\", \"arm64\", \"\", \"\") or label_replace(label_replace(label_replace(label_replace(label_replace(vector(1), \"device\", \"mac-studio1\", \"\", \"\"), \"hostname\", \"mac-studio1.local\", \"\", \"\"), \"distro\", \"macOS\", \"\", \"\"), \"release\", \"14.6\", \"\", \"\"), \"arch\", \"arm64\", \"\", \"\") or label_replace(label_replace(label_replace(label_replace(label_replace(vector(1), \"device\", \"mac-studio2\", \"\", \"\"), \"hostname\", \"mac-studio2.local\", \"\", \"\"), \"distro\", \"macOS\", \"\", \"\"), \"release\", \"14.6\", \"\", \"\"), \"arch\", \"arm64\", \"\", \"\") or label_replace(label_replace(label_replace(label_replace(label_replace(vector(1), \"device\", \"mac-studio3\", \"\", \"\"), \"hostname\", \"mac-studio3.local\", \"\", \"\"), \"distro\", \"macOS\", \"\", \"\"), \"release\", \"14.6\", \"\", \"\"), \"arch\", \"arm64\", \"\", \"\") or label_replace(label_replace(label_replace(label_replace(label_replace(vector(1), \"device\", \"mac-studio4\", \"\", \"\"), \"hostname\", \"mac-studio4.local\", \"\", \"\"), \"distro\", \"macOS\", \"\", \"\"), \"release\", \"14.6\", \"\", \"\"), \"arch\", \"arm64\", \"\", \"\") or label_replace(machine_os_info{job=\"hkt-exporter-asmhk-macbook\"}, \"device\", \"mac-book1\", \"\", \"\") ",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{device}}",
+          "refId": "C"
+        },
+        {
+          "editorMode": "code",
+          "expr": "label_replace(machine_hw_info{job=\"hkt-exporter\"}, \"device\", \"mac-mini1\", \"\", \"\") or label_replace(label_replace(vector(1), \"device\", \"mac-mini2\", \"\", \"\"), \"version\", \"Mac mini\", \"\", \"\") or label_replace(label_replace(vector(1), \"device\", \"mac-studio1\", \"\", \"\"), \"version\", \"Mac Studio\", \"\", \"\") or label_replace(label_replace(vector(1), \"device\", \"mac-studio2\", \"\", \"\"), \"version\", \"Mac Studio\", \"\", \"\") or label_replace(label_replace(vector(1), \"device\", \"mac-studio3\", \"\", \"\"), \"version\", \"Mac Studio\", \"\", \"\") or label_replace(label_replace(vector(1), \"device\", \"mac-studio4\", \"\", \"\"), \"version\", \"Mac Studio\", \"\", \"\") or label_replace(machine_hw_info{job=\"hkt-exporter-asmhk-macbook\"}, \"device\", \"mac-book1\", \"\", \"\") ",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "{{device}}",
+          "refId": "D"
+        }
+      ],
+      "title": "Overview",
+      "transformations": [
+        {
+          "id": "labelsToFields",
+          "options": {
+            "mode": "columns"
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "device",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Value #C": true,
+              "Value #D": true,
+              "__name__": true,
+              "__name__ 1": true,
+              "__name__ 2": true,
+              "__name__ 3": true,
+              "__name__ 4": true,
+              "arch": false,
+              "build": true,
+              "codename": true,
+              "codepage": true,
+              "distro": true,
+              "fqdn": true,
+              "instance": true,
+              "instance 1": true,
+              "instance 2": true,
+              "instance 3": true,
+              "instance 4": true,
+              "job": true,
+              "job 1": true,
+              "job 2": true,
+              "job 3": true,
+              "job 4": true,
+              "kernel": true,
+              "logofile": true,
+              "platform": true,
+              "serial 1": true,
+              "serial 2": false,
+              "uefi": true,
+              "uuid": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Time 1": 11,
+              "Time 2": 15,
+              "Time 3": 19,
+              "Time 4": 32,
+              "Time 5": 38,
+              "Value #A": 9,
+              "Value #B": 7,
+              "Value #C": 31,
+              "Value #D": 37,
+              "Value #E": 10,
+              "__name__ 1": 12,
+              "__name__ 2": 16,
+              "__name__ 3": 20,
+              "__name__ 4": 33,
+              "arch": 3,
+              "build": 21,
+              "codename": 22,
+              "codepage": 23,
+              "device": 1,
+              "distro": 8,
+              "fqdn": 24,
+              "hostname": 0,
+              "instance 1": 13,
+              "instance 2": 17,
+              "instance 3": 25,
+              "instance 4": 34,
+              "job 1": 14,
+              "job 2": 18,
+              "job 3": 26,
+              "job 4": 35,
+              "kernel": 27,
+              "logofile": 28,
+              "platform": 29,
+              "release": 4,
+              "serial 1": 6,
+              "serial 2": 5,
+              "uefi": 30,
+              "uuid": 36,
+              "version": 2
+            },
+            "renameByName": {
+              "Time 5": "",
+              "Value #A": "Status",
+              "Value #B": "Uptime",
+              "Value #E": "Alerts",
+              "Value #F": "Memory %",
+              "device": "Device"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-testdata-datasource"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "id"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Open details",
+                    "url": "d/ad9dgc7?var-device=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "detail__Uptime (s)"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 10,
+        "x": 14,
+        "y": 4
+      },
+      "id": 12,
+      "options": {
+        "edges": {
+          "mainStatUnit": ""
+        },
+        "layoutAlgorithm": "layered",
+        "nodes": {
+          "arc": [
+            {
+              "color": "red",
+              "field": "firing",
+              "threshold": 1
+            }
+          ],
+          "arcs": [],
+          "mainStatUnit": "none",
+          "secondaryStatUnit": "none"
+        },
+        "zoomMode": "greedy"
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-testdata-datasource"
+          },
+          "rawFrameContent": "[\r\n    {\r\n      \"schema\": {\r\n        \"name\": \"nodes\",\r\n        \"refId\": \"A\",\r\n        \"meta\": {\r\n          \"preferredVisualisationType\": \"nodeGraph\"\r\n        },\r\n        \"fields\": [\r\n          {\r\n            \"name\": \"id\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"title\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"subtitle\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"mainstat\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"secondarystat\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"color\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"icon\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"nodeRadius\",\r\n            \"type\": \"number\"\r\n          },\r\n          {\r\n            \"name\": \"detail__Open details\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"detail__Uptime (s)\",\r\n            \"type\": \"number\"\r\n          },\r\n          {\r\n            \"name\": \"detail__Firing alerts\",\r\n            \"type\": \"number\"\r\n          },\r\n          {\r\n            \"name\": \"detail__Status\",\r\n            \"type\": \"string\"\r\n          }\r\n        ]\r\n      },\r\n      \"data\": {\r\n        \"values\": [\r\n          [\r\n            \"mac-mini1\",\r\n            \"mac-mini2\",\r\n            \"mac-studio1\",\r\n            \"mac-studio2\",\r\n            \"mac-studio3\",\r\n            \"mac-studio4\"\r\n          ],\r\n          [\r\n            \"mac-mini1\",\r\n            \"mac-mini2\",\r\n            \"mac-studio1\",\r\n            \"mac-studio2\",\r\n            \"mac-studio3\",\r\n            \"mac-studio4\"\r\n          ],\r\n          [\r\n            \"Mac mini\",\r\n            \"Mac mini\",\r\n            \"Mac Studio\",\r\n            \"Mac Studio\",\r\n            \"Mac Studio\",\r\n            \"Mac Studio\"\r\n          ],\r\n          [\r\n            \"92081s\",\r\n            \"87500s\",\r\n            \"36000s\",\r\n            \"42000s\",\r\n            \"18000s\",\r\n            \"22000s\"\r\n          ],\r\n          [\r\n            \"Connected\",\r\n            \"Connected\",\r\n            \"Disconnected\",\r\n            \"Connected\",\r\n            \"Connected\",\r\n            \"Disconnected\"\r\n          ],\r\n          [\r\n            \"green\",\r\n            \"green\",\r\n            \"green\",\r\n            \"red\",\r\n            \"green\",\r\n            \"green\"\r\n          ],\r\n          [\r\n            \"window\",\r\n            \"window\",\r\n            \"ai-sparkle\",\r\n            \"ai-sparkle\",\r\n            \"ai-sparkle\",\r\n            \"ai-sparkle\"\r\n          ],\r\n          [\r\n            50,\r\n            50,\r\n            35,\r\n            35,\r\n            35,\r\n            35\r\n          ],\r\n          [\r\n            \"d/ad9dgc7?var-device=mac-mini1\",\r\n            \"d/ad9dgc7?var-device=mac-mini2\",\r\n            \"d/ad9dgc7?var-device=mac-studio1\",\r\n            \"d/ad9dgc7?var-device=mac-studio2\",\r\n            \"d/ad9dgc7?var-device=mac-studio3\",\r\n            \"d/ad9dgc7?var-device=mac-studio4\"\r\n          ],\r\n          [\r\n            92081,\r\n            87500,\r\n            36000,\r\n            42000,\r\n            18000,\r\n            22000\r\n          ],\r\n          [\r\n            0,\r\n            1,\r\n            2,\r\n            0,\r\n            0,\r\n            3\r\n          ],\r\n          [\r\n            \"Connected\",\r\n            \"Connected\",\r\n            \"Disconnected\",\r\n            \"Connected\",\r\n            \"Connected\",\r\n            \"Disconnected\"\r\n          ]\r\n        ]\r\n      }\r\n    }\r\n  ]",
+          "refId": "A",
+          "scenarioId": "raw_frame"
+        },
+        {
+          "datasource": {
+            "type": "grafana-testdata-datasource"
+          },
+          "rawFrameContent": "[\r\n    {\r\n      \"schema\": {\r\n        \"name\": \"edges\",\r\n        \"refId\": \"B\",\r\n        \"meta\": {\r\n          \"preferredVisualisationType\": \"nodeGraph\"\r\n        },\r\n        \"fields\": [\r\n          {\r\n            \"name\": \"id\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"source\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"target\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"mainstat\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"secondarystat\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"color\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"strokeDasharray\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"thickness\",\r\n            \"type\": \"number\"\r\n          }\r\n        ]\r\n      },\r\n      \"data\": {\r\n        \"values\": [\r\n          [\r\n            \"e1\",\r\n            \"e2\",\r\n            \"e3\",\r\n            \"e4\",\r\n            \"e5\",\r\n            \"e6\",\r\n            \"e7\",\r\n            \"e8\"\r\n          ],\r\n          [\r\n            \"mac-mini1\",\r\n            \"mac-mini1\",\r\n            \"mac-mini2\",\r\n            \"mac-mini2\",\r\n            \"mac-mini1\",\r\n            \"mac-mini1\",\r\n            \"mac-mini2\",\r\n            \"mac-mini2\"\r\n          ],\r\n          [\r\n            \"mac-studio1\",\r\n            \"mac-studio2\",\r\n            \"mac-studio1\",\r\n            \"mac-studio2\",\r\n            \"mac-studio3\",\r\n            \"mac-studio4\",\r\n            \"mac-studio3\",\r\n            \"mac-studio4\"\r\n          ],\r\n          [\r\n            \"ok\",\r\n            \"x\",\r\n            \"ok\",\r\n            \"x\",\r\n            \"ok\",\r\n            \"ok\",\r\n            \"ok\",\r\n            \"ok\"\r\n          ],\r\n          [\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\"\r\n          ],\r\n          [\r\n            \"green\",\r\n            \"red\",\r\n            \"green\",\r\n            \"red\",\r\n            \"green\",\r\n            \"green\",\r\n            \"green\",\r\n            \"green\"\r\n          ],\r\n          [\r\n            \"\",\r\n            \"6,4\",\r\n            \"\",\r\n            \"6,4\",\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\"\r\n          ],\r\n          [\r\n            3,\r\n            4,\r\n            3,\r\n            3,\r\n            3,\r\n            3,\r\n            3,\r\n            3\r\n          ]\r\n        ]\r\n      }\r\n    }\r\n  ]",
+          "refId": "B",
+          "scenarioId": "raw_frame"
+        },
+        {
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "ffjp1756hxhj4b"
+          },
+          "hide": true,
+          "refId": "C",
+          "scenarioId": "node_graph"
+        }
+      ],
+      "title": "Network Status",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "detail__Uptime (s)"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "nodeGraph"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 14,
+        "x": 0,
+        "y": 24
+      },
+      "id": 14,
+      "options": {
+        "animationControlEnabled": true,
+        "animationsEnabled": true,
+        "debuggingCtr": {
+          "colorsCtr": 0,
+          "dataCtr": 0,
+          "displaySvgCtr": 0,
+          "mappingsCtr": 0,
+          "timingsCtr": 0
+        },
+        "highlighterEnabled": true,
+        "highlighterSelection": "",
+        "panZoomEnabled": true,
+        "panelConfig": "https://raw.githubusercontent.com/liliachan1112/public-repository/main/network_diagram.yaml",
+        "siteConfig": "",
+        "svg": "https://raw.githubusercontent.com/liliachan1112/public-repository/main/network_diagram.svg",
+        "testDataEnabled": true,
+        "timeSliderEnabled": false,
+        "timeSliderMode": "local"
+      },
+      "pluginVersion": "1.20.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "1",
+          "instant": false,
+          "legendFormat": "macmini1-connection-status",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "1",
+          "instant": false,
+          "legendFormat": "macmini2-connection-status",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "1",
+          "instant": false,
+          "legendFormat": "macstudio1-connection-status",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "0",
+          "instant": false,
+          "legendFormat": "macstudio2-connection-status",
+          "range": true,
+          "refId": "D"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "1",
+          "instant": false,
+          "legendFormat": "macstudio3-connection-status",
+          "range": true,
+          "refId": "E"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "1",
+          "instant": false,
+          "legendFormat": "macstudio4-connection-status",
+          "range": true,
+          "refId": "F"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "1",
+          "instant": false,
+          "legendFormat": "macmini1-macstudio1-connection-status",
+          "range": true,
+          "refId": "G"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "0",
+          "instant": false,
+          "legendFormat": "macmini1-macstudio2-connection-status",
+          "range": true,
+          "refId": "H"
+        }
+      ],
+      "title": "Network Status (Flow)",
+      "type": "andrewbmchugh-flow-panel"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 10,
+        "x": 14,
+        "y": 24
+      },
+      "id": 13,
+      "options": {
+        "inlineEditing": false,
+        "panZoom": false,
+        "root": {
+          "background": {
+            "color": {
+              "fixed": "#00000000"
+            },
+            "image": {
+              "fixed": "img/bg/p4.png",
+              "mode": "field"
+            }
+          },
+          "border": {
+            "color": {
+              "fixed": "dark-green"
+            }
+          },
+          "constraint": {
+            "horizontal": "left",
+            "vertical": "top"
+          },
+          "elements": [
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 1
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "text"
+                },
+                "size": 13,
+                "text": {
+                  "field": "{device=\"mac-mini2\"}",
+                  "fixed": "Mac-mini2",
+                  "mode": "fixed"
+                },
+                "valign": "top"
+              },
+              "connections": [
+                {
+                  "color": {
+                    "fixed": "red"
+                  },
+                  "lineStyle": {
+                    "animate": false,
+                    "style": "dotted"
+                  },
+                  "path": "straight",
+                  "size": {
+                    "fixed": 2,
+                    "max": 10,
+                    "min": 1
+                  },
+                  "source": {
+                    "x": 1,
+                    "y": 0.5
+                  },
+                  "sourceOriginal": {
+                    "x": 409,
+                    "y": 239.75
+                  },
+                  "target": {
+                    "x": -0.9791666666666666,
+                    "y": -0.06666666666666667
+                  },
+                  "targetName": "Element 6",
+                  "targetOriginal": {
+                    "x": 548,
+                    "y": 73
+                  }
+                },
+                {
+                  "color": {
+                    "fixed": "green"
+                  },
+                  "lineStyle": {
+                    "animate": false,
+                    "style": "dotted"
+                  },
+                  "path": "straight",
+                  "size": {
+                    "fixed": 2,
+                    "max": 10,
+                    "min": 1
+                  },
+                  "source": {
+                    "x": 1,
+                    "y": -0.5
+                  },
+                  "sourceOriginal": {
+                    "x": 409,
+                    "y": 277.25
+                  },
+                  "target": {
+                    "x": -0.8958333333333334,
+                    "y": -0.013333333333333334
+                  },
+                  "targetName": "Element 11",
+                  "targetOriginal": {
+                    "x": 553,
+                    "y": 259
+                  }
+                },
+                {
+                  "color": {
+                    "fixed": "green"
+                  },
+                  "lineStyle": {
+                    "animate": false,
+                    "style": "dotted"
+                  },
+                  "path": "straight",
+                  "size": {
+                    "fixed": 2,
+                    "max": 10,
+                    "min": 1
+                  },
+                  "source": {
+                    "x": 1,
+                    "y": -1
+                  },
+                  "sourceOriginal": {
+                    "x": 409,
+                    "y": 296
+                  },
+                  "target": {
+                    "x": -1,
+                    "y": 0.013333333333333334
+                  },
+                  "targetName": "Element 13",
+                  "targetOriginal": {
+                    "x": 549,
+                    "y": 349
+                  }
+                },
+                {
+                  "color": {
+                    "fixed": "green"
+                  },
+                  "lineStyle": {
+                    "animate": false,
+                    "style": "dotted"
+                  },
+                  "path": "straight",
+                  "size": {
+                    "fixed": 2,
+                    "max": 10,
+                    "min": 1
+                  },
+                  "source": {
+                    "x": 1,
+                    "y": 0
+                  },
+                  "sourceOriginal": {
+                    "x": 409,
+                    "y": 258.5
+                  },
+                  "target": {
+                    "x": -0.9375,
+                    "y": -0.44
+                  },
+                  "targetName": "Element 9",
+                  "targetOriginal": {
+                    "x": 658,
+                    "y": 185
+                  }
+                }
+              ],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [],
+              "name": "Element 3",
+              "placement": {
+                "height": 75,
+                "left": 93,
+                "rotation": 0,
+                "top": 222,
+                "width": 96
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                },
+                "image": {
+                  "fixed": "https://img.icons8.com/fluency/96/mac-mini.png",
+                  "mode": "fixed"
+                },
+                "size": "contain"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [],
+              "name": "Element 8",
+              "placement": {
+                "height": 67,
+                "left": 108,
+                "top": 237,
+                "width": 65
+              },
+              "type": "rectangle"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 2
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "text"
+                },
+                "size": 13,
+                "text": {
+                  "field": "{device=\"mac-mini2\"}",
+                  "fixed": "Mac-mini1",
+                  "mode": "fixed"
+                },
+                "valign": "top"
+              },
+              "connections": [
+                {
+                  "color": {
+                    "fixed": "red"
+                  },
+                  "direction": {
+                    "mode": "fixed"
+                  },
+                  "lineStyle": {
+                    "animate": false,
+                    "style": "dotted"
+                  },
+                  "path": "straight",
+                  "size": {
+                    "fixed": 2,
+                    "max": 10,
+                    "min": 1
+                  },
+                  "source": {
+                    "x": 1,
+                    "y": 0.5
+                  },
+                  "sourceOriginal": {
+                    "x": 408,
+                    "y": 118.75
+                  },
+                  "target": {
+                    "x": -0.8541666666666666,
+                    "y": 0.5733333333333334
+                  },
+                  "targetName": "Element 6",
+                  "targetOriginal": {
+                    "x": 554,
+                    "y": 49
+                  }
+                },
+                {
+                  "color": {
+                    "fixed": "green"
+                  },
+                  "lineStyle": {
+                    "animate": false,
+                    "style": "dotted"
+                  },
+                  "path": "straight",
+                  "size": {
+                    "fixed": 2,
+                    "max": 10,
+                    "min": 1
+                  },
+                  "source": {
+                    "x": 1,
+                    "y": 0
+                  },
+                  "sourceOriginal": {
+                    "x": 408,
+                    "y": 137.5
+                  },
+                  "target": {
+                    "x": -0.9166666666666666,
+                    "y": 0.14666666666666667
+                  },
+                  "targetName": "Element 9",
+                  "targetOriginal": {
+                    "x": 551,
+                    "y": 162
+                  }
+                },
+                {
+                  "color": {
+                    "fixed": "green"
+                  },
+                  "lineStyle": {
+                    "animate": false,
+                    "style": "dotted"
+                  },
+                  "path": "straight",
+                  "size": {
+                    "fixed": 2,
+                    "max": 10,
+                    "min": 1
+                  },
+                  "source": {
+                    "x": 1,
+                    "y": -0.5
+                  },
+                  "sourceOriginal": {
+                    "x": 408,
+                    "y": 156.25
+                  },
+                  "target": {
+                    "x": -0.9375,
+                    "y": 0.36
+                  },
+                  "targetName": "Element 11",
+                  "targetOriginal": {
+                    "x": 551,
+                    "y": 245
+                  }
+                },
+                {
+                  "color": {
+                    "fixed": "green"
+                  },
+                  "lineStyle": {
+                    "animate": false,
+                    "style": "dotted"
+                  },
+                  "path": "straight",
+                  "size": {
+                    "fixed": 2,
+                    "max": 10,
+                    "min": 1
+                  },
+                  "source": {
+                    "x": 1,
+                    "y": -1
+                  },
+                  "sourceOriginal": {
+                    "x": 408,
+                    "y": 175
+                  },
+                  "target": {
+                    "x": -1,
+                    "y": 0.41333333333333333
+                  },
+                  "targetName": "Element 13",
+                  "targetOriginal": {
+                    "x": 549,
+                    "y": 334
+                  }
+                }
+              ],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [],
+              "name": "Element 4",
+              "placement": {
+                "height": 75,
+                "left": 92,
+                "top": 101,
+                "width": 96
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                },
+                "image": {
+                  "fixed": "https://img.icons8.com/fluency/96/mac-mini.png",
+                  "mode": "fixed"
+                },
+                "size": "contain"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [],
+              "name": "Element 5",
+              "placement": {
+                "height": 66.98863220214844,
+                "left": 108,
+                "rotation": 0,
+                "top": 109,
+                "width": 65
+              },
+              "type": "rectangle"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "red"
+                },
+                "width": 2
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "text"
+                },
+                "size": 13,
+                "text": {
+                  "field": "{device=\"mac-mini2\"}",
+                  "fixed": "Mac-studio2",
+                  "mode": "fixed"
+                },
+                "valign": "top"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [
+                {
+                  "title": "Details",
+                  "url": "http://100.119.124.68:23000/dashboards"
+                }
+              ],
+              "name": "Element 6",
+              "placement": {
+                "height": 75,
+                "left": 435,
+                "rotation": 0,
+                "top": 35,
+                "width": 95.984375
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                },
+                "image": {
+                  "fixed": "https://img.icons8.com/skeuomorphism/96/mac-studio.png",
+                  "mode": "fixed"
+                },
+                "size": "contain"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [],
+              "name": "Element 7",
+              "placement": {
+                "height": 67,
+                "left": 451,
+                "top": 49,
+                "width": 65
+              },
+              "type": "rectangle"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 2
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "text"
+                },
+                "size": 13,
+                "text": {
+                  "field": "{device=\"mac-mini2\"}",
+                  "fixed": "Mac-studio3",
+                  "mode": "fixed"
+                },
+                "valign": "top"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [],
+              "name": "Element 9",
+              "placement": {
+                "height": 75,
+                "left": 433,
+                "top": 128,
+                "width": 96
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                },
+                "image": {
+                  "fixed": "https://img.icons8.com/skeuomorphism/96/mac-studio.png",
+                  "mode": "fixed"
+                },
+                "size": "contain"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [],
+              "name": "Element 10",
+              "placement": {
+                "height": 67,
+                "left": 449,
+                "top": 142,
+                "width": 65
+              },
+              "type": "rectangle"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "green"
+                },
+                "width": 2
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "text"
+                },
+                "size": 13,
+                "text": {
+                  "field": "{device=\"mac-mini2\"}",
+                  "fixed": "Mac-studio4",
+                  "mode": "fixed"
+                },
+                "valign": "top"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [],
+              "name": "Element 11",
+              "placement": {
+                "height": 75,
+                "left": 434,
+                "rotation": 0,
+                "top": 219,
+                "width": 96
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                },
+                "image": {
+                  "fixed": "https://img.icons8.com/skeuomorphism/96/mac-studio.png",
+                  "mode": "fixed"
+                },
+                "size": "contain"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "valign": "middle"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [],
+              "name": "Element 12",
+              "placement": {
+                "height": 67,
+                "left": 450,
+                "rotation": 0,
+                "top": 233,
+                "width": 65
+              },
+              "type": "rectangle"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                }
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "width": 2
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "text"
+                },
+                "size": 13,
+                "text": {
+                  "field": "{device=\"mac-mini2\"}",
+                  "fixed": "Mac-studio1",
+                  "mode": "fixed"
+                },
+                "valign": "top"
+              },
+              "connections": [],
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [],
+              "name": "Element 13",
+              "placement": {
+                "height": 75,
+                "left": 435,
+                "top": 310,
+                "width": 96
+              },
+              "type": "metric-value"
+            },
+            {
+              "background": {
+                "color": {
+                  "fixed": "transparent"
+                },
+                "image": {
+                  "fixed": "https://img.icons8.com/skeuomorphism/96/mac-studio.png",
+                  "mode": "fixed"
+                },
+                "size": "contain"
+              },
+              "border": {
+                "color": {
+                  "fixed": "dark-green"
+                }
+              },
+              "config": {
+                "align": "center",
+                "color": {
+                  "fixed": "#000000"
+                },
+                "valign": "middle"
+              },
+              "constraint": {
+                "horizontal": "left",
+                "vertical": "top"
+              },
+              "links": [],
+              "name": "Element 14",
+              "placement": {
+                "height": 67,
+                "left": 451,
+                "top": 324,
+                "width": 65
+              },
+              "type": "rectangle"
+            }
+          ],
+          "name": "Element 1777368735049",
+          "placement": {
+            "height": 100,
+            "left": 0,
+            "rotation": 0,
+            "top": 0,
+            "width": 100
+          },
+          "type": "frame"
+        },
+        "showAdvancedTypes": false,
+        "tooltip": {
+          "disableForOneClick": false,
+          "mode": "single"
+        },
+        "zoomToContent": false
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "label_replace(up{device=\"mac-mini1\"}, \"device\", \"mac-mini1\", \"\", \"\") or label_replace(vector(1), \"device\", \"mac-mini2\", \"\", \"\") or label_replace(vector(0), \"device\", \"mac-studio1\", \"\", \"\") or label_replace(vector(1), \"device\", \"mac-studio2\", \"\", \"\") or label_replace(vector(1), \"device\", \"mac-studio3\", \"\", \"\") or label_replace(vector(0), \"device\", \"mac-studio4\", \"\", \"\") or label_replace(up{device=\"mac-book1\"}, \"device\", \"mac-book1\", \"\", \"\")",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Network Status (Canvas)",
+      "type": "canvas"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 42,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P7E2AE7DB8179C128"
+        },
+        "name": "query0",
+        "options": [],
+        "query": "",
+        "refresh": 1,
+        "regex": "",
+        "regexApplyTo": "value",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-12h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Overview",
+  "uid": "adrh9wd",
+  "version": 143,
+  "weekStart": ""
+}

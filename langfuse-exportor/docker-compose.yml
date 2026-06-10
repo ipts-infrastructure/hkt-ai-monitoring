@@ -1,0 +1,11 @@
+services:
+  langfuse-exporter:
+    build: .
+    env_file: .env
+    ports:
+      - "${METRICS_PORT:-29100}:${METRICS_PORT:-29100}"
+    environment:
+      METRICS_PORT: ${METRICS_PORT:-29100}
+    volumes:
+      - ./projects.json:/app/projects.json:ro
+    restart: unless-stopped

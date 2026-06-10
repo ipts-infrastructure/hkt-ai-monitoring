@@ -6,7 +6,7 @@ A comprehensive monitoring stack using Docker Compose with Prometheus, Grafana, 
 
 - Docker Engine 20.10+
 - Docker Compose 2.0+
-- Port availability: 23000 (Grafana), 29090 (Prometheus), 28080 (cAdvisor), 23030 (Langfuse worker), 23001 (Langfuse web), 28123 & 29000 (Clickhouse), 29002 & 29001 (Minio), 26379 (Redis), 25432 (Postgres), 28872 (HktExporter)
+- Port availability: 23000 (Grafana), 29090 (Prometheus), 28080 (cAdvisor), 23030 (Langfuse worker), 23001 (Langfuse web), 29100 (Langfuse exporter), 28123 & 29000 (Clickhouse), 29002 & 29001 (Minio), 26379 (Redis), 25432 (Postgres), 28872 (HktExporter)
 - Minimum 2GB RAM recommended for optimal performance
 
 ## 🛠️ Getting Started
@@ -19,7 +19,18 @@ cp .env.example .env.dev
 # Edit .env.dev with your langfuse secret configure
 ```
 
-### 2. Download & install HKT exporter binary
+### 2. Configure Langfuse Prometheus Exporter
+Create project credentials (one API key pair per Langfuse project):
+
+```bash
+cp langfuse-exportor/projects.json.example langfuse-exportor/projects.json
+```
+
+Edit `langfuse-exportor/projects.json` with keys from Langfuse UI → **Project → Settings → API Keys**.
+
+The exporter is included in the main stack and scrapes Langfuse over the internal Docker network (`http://langfuse-web:3000`). Prometheus is preconfigured to scrape `langfuse-exporter:29100`.
+
+### 3. Download & install HKT exporter binary
 Download the appropriate binary from [releases](https://github.com/ipts-infrastructure/speedx/releases):
 
 **macOS:**
@@ -40,7 +51,7 @@ sudo launchctl load -w /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist   
 sudo launchctl unload -w /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist # Stops the service and removes auto-start
 ```
 
-### 3. Start the Stack
+### 4. Start the Stack
 ```bash
 # Development
 docker compose --env-file .env.dev up -d
@@ -49,7 +60,7 @@ docker compose --env-file .env.dev up -d
 docker compose --env-file .env.prod up -d
 ```
 
-### 4. Access Services
+### 5. Access Services
 - **Grafana Dashboard**: http://localhost:23000
   - Username: `admin` (or as configured in .env)
   - Password: `admin` (or as configured in .env)
@@ -64,8 +75,9 @@ docker compose --env-file .env.prod up -d
 - **Langfuse Minio Console**: http://localhost:29001
 - **Langfuse Redis**: localhost:26379
 - **Langfuse Postgres**: localhost:25432
+- **Langfuse Exporter metrics**: http://localhost:29100/metrics
 
-### 5. Stop the Stack
+### 6. Stop the Stack
 ```bash
 docker compose down
 ```
@@ -84,6 +96,8 @@ docker compose down
 
 **Prometheus targets down:**
 - Check if `hkt-exporter` is running on port 28872
+- Check if `langfuse-exporter` is running: `docker compose ps langfuse-exporter`
+- Confirm `langfuse-exportor/projects.json` exists and contains valid API keys
 - Verify network connectivity: `docker network ls`
 
 **Langfuse not reachable (web/worker):**
