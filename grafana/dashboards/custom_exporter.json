@@ -24,8 +24,21 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 3738352423624704,
-  "links": [],
+  "id": 1441713968721920,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "dashboard",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Back to Overview",
+      "tooltip": "Return to device overview",
+      "type": "link",
+      "url": "d/adrh9wd"
+    }
+  ],
   "panels": [
     {
       "datasource": {
@@ -78,8 +91,8 @@
       "pluginVersion": "12.4.0-21342258703",
       "targets": [
         {
-          "editorMode": "code",
-          "expr": "machine_uptime",
+          "editorMode": "builder",
+          "expr": "machine_uptime{device=\"$device\"}",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -148,7 +161,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "(machine_memory_used / machine_memory_total) * 100",
+          "expr": "(machine_memory_used{device=\"$device\"} / machine_memory_total{device=\"$device\"}) * 100",
           "legendFormat": "Memory Usage",
           "range": true,
           "refId": "A"
@@ -221,7 +234,7 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "builder",
-          "expr": "machine_cpu_load_currentLoad",
+          "expr": "machine_cpu_load_currentLoad{device=\"$device\"}",
           "instant": false,
           "legendFormat": "CPU Load",
           "range": true,
@@ -244,7 +257,7 @@
       },
       "id": 110,
       "options": {
-        "alertInstanceLabelFilter": "",
+        "alertInstanceLabelFilter": "device=$device",
         "alertName": "",
         "dashboardAlerts": false,
         "groupBy": [],
@@ -318,7 +331,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_cpu_speed",
+          "expr": "machine_cpu_speed{device=\"$device\"}",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -410,7 +423,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "machine_memory_free / (1024 * 1024 * 1024)",
+          "expr": "machine_memory_free{device=\"$device\"} / (1024 * 1024 * 1024)",
           "instant": false,
           "interval": "",
           "legendFormat": "Memory Free",
@@ -419,7 +432,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_memory_used / (1024 * 1024 * 1024)",
+          "expr": "machine_memory_used{device=\"$device\"} / (1024 * 1024 * 1024)",
           "legendFormat": "Memory Used",
           "range": true,
           "refId": "A"
@@ -511,7 +524,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "machine_fs_size_available{mount=\"/\"} / (1024 * 1024 * 1024)",
+          "expr": "machine_fs_size_available{mount=\"/\",device=\"$device\"} / (1024 * 1024 * 1024)",
           "instant": false,
           "interval": "",
           "legendFormat": "Disk Available",
@@ -520,7 +533,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_fs_size_used{mount=\"/\"} / (1024 * 1024 * 1024)",
+          "expr": "machine_fs_size_used{mount=\"/\",device=\"$device\"} / (1024 * 1024 * 1024)",
           "legendFormat": "Disk Used",
           "range": true,
           "refId": "A"
@@ -580,7 +593,7 @@
       "targets": [
         {
           "editorMode": "builder",
-          "expr": "machine_processes_all",
+          "expr": "machine_processes_all{device=\"$device\"}",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -637,48 +650,36 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Property"
+              "options": "OS"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 150
+                "value": 70
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Value"
+              "options": "Kernel"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 300
+                "value": 70
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Hardware Version"
+              "options": "Architecture"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 216
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "━━━ Hardware ━━━"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 283
+                "value": 120
               }
             ]
           },
@@ -690,19 +691,43 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 250
+                "value": 230
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "FQDN"
+              "options": "Release"
             },
             "properties": [
               {
                 "id": "custom.width",
-                "value": 223
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Code Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Distribution"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
               }
             ]
           }
@@ -737,7 +762,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_hw_info",
+          "expr": "machine_hw_info{device=\"$device\"}",
           "format": "table",
           "hide": true,
           "instant": true,
@@ -746,7 +771,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_chassis_info",
+          "expr": "machine_chassis_info{device=\"$device\"}",
           "format": "table",
           "hide": true,
           "instant": true,
@@ -755,7 +780,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_cpu_info",
+          "expr": "machine_cpu_info{device=\"$device\"}",
           "format": "table",
           "hide": true,
           "instant": true,
@@ -764,7 +789,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_baseboard_info",
+          "expr": "machine_baseboard_info{device=\"$device\"}",
           "format": "table",
           "hide": true,
           "instant": true,
@@ -773,7 +798,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_timezone_info",
+          "expr": "machine_timezone_info{device=\"$device\"}",
           "format": "table",
           "hide": true,
           "instant": true,
@@ -782,7 +807,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_os_info",
+          "expr": "machine_os_info{device=\"$device\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -790,12 +815,24 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_uuid_info",
+          "expr": "machine_uuid_info{device=\"$device\"}",
           "format": "table",
           "hide": true,
           "instant": true,
           "legendFormat": "__auto",
           "refId": "G"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "H"
         }
       ],
       "title": "Machine Hardware Info",
@@ -819,9 +856,14 @@
               "Value": true,
               "__name__": true,
               "boot_id": true,
+              "build": true,
+              "codepage": true,
               "device": true,
+              "job": true,
+              "logofile": true,
               "machine_id": true,
-              "system_uuid": true
+              "system_uuid": true,
+              "uefi": true
             },
             "includeByName": {},
             "indexByName": {
@@ -876,7 +918,7 @@
               "os": "OS UUID",
               "performance_cores": "Performance Cores",
               "physical_cores": "Physical Cores",
-              "platform": "━━━ OS ━━━",
+              "platform": "OS",
               "release": "Release",
               "serial": "Serial Number",
               "timezone": "━━━ System ━━━",
@@ -899,6 +941,7 @@
               "machine_id": true,
               "system_uuid": true
             },
+            "includeByName": {},
             "indexByName": {},
             "renameByName": {
               "machine_cpu_temperature_main": "━━━ CPU Temperature ━━━",
@@ -906,7 +949,8 @@
               "machine_disksio_ms": "IO Latency (ms)",
               "machine_disksio_rIO": "━━━ Disk I/O ━━━",
               "machine_disksio_tIO": "Total IOs",
-              "machine_disksio_wIO": "Write IOs"
+              "machine_disksio_wIO": "Write IOs",
+              "{__name__=\"container_cpu_load_average_10s\", id=\"/\", instance=\"cadvisor:8080\", job=\"cadvisor\"}": ""
             }
           }
         }
@@ -990,7 +1034,7 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "builder",
-          "expr": "machine_cpu_load_currentLoad",
+          "expr": "machine_cpu_load_currentLoad{device=\"$device\"}",
           "instant": false,
           "legendFormat": "CPU Load",
           "range": true,
@@ -1084,7 +1128,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_cpu_load_currentLoad",
+          "expr": "machine_cpu_load_currentLoad{device=\"$device\"}",
           "legendFormat": "CPU Load",
           "range": true,
           "refId": "A"
@@ -1278,7 +1322,7 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "machine_processes_list_cpu",
+          "expr": "machine_processes_list_cpu{device=\"$device\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -1471,28 +1515,28 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_cpu_load_currentLoadUser",
+          "expr": "machine_cpu_load_currentLoadUser{device=\"$device\"}",
           "legendFormat": "User Load",
           "range": true,
           "refId": "A"
         },
         {
           "editorMode": "code",
-          "expr": "machine_cpu_load_currentLoadSystem",
+          "expr": "machine_cpu_load_currentLoadSystem{device=\"$device\"}",
           "legendFormat": "System Load",
           "range": true,
           "refId": "B"
         },
         {
           "editorMode": "code",
-          "expr": "machine_cpu_load_currentLoadIdle",
+          "expr": "machine_cpu_load_currentLoadIdle{device=\"$device\"}",
           "legendFormat": "Idle",
           "range": true,
           "refId": "C"
         },
         {
           "editorMode": "code",
-          "expr": "machine_cpu_load_currentLoadIrq",
+          "expr": "machine_cpu_load_currentLoadIrq{device=\"$device\"}",
           "legendFormat": "IRQ Load",
           "range": true,
           "refId": "D"
@@ -1648,28 +1692,28 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_cpu_load_currentLoadUser",
+          "expr": "machine_cpu_load_currentLoadUser{device=\"$device\"}",
           "legendFormat": "User Load",
           "range": true,
           "refId": "A"
         },
         {
           "editorMode": "code",
-          "expr": "machine_cpu_load_currentLoadSystem",
+          "expr": "machine_cpu_load_currentLoadSystem{device=\"$device\"}",
           "legendFormat": "System Load",
           "range": true,
           "refId": "B"
         },
         {
           "editorMode": "code",
-          "expr": "machine_cpu_load_currentLoadIdle",
+          "expr": "machine_cpu_load_currentLoadIdle{device=\"$device\"}",
           "legendFormat": "Idle",
           "range": true,
           "refId": "C"
         },
         {
           "editorMode": "code",
-          "expr": "machine_cpu_load_currentLoadIrq",
+          "expr": "machine_cpu_load_currentLoadIrq{device=\"$device\"}",
           "legendFormat": "IRQ Load",
           "range": true,
           "refId": "D"
@@ -1730,7 +1774,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_cpu_speed",
+          "expr": "machine_cpu_speed{device=\"$device\"}",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -1825,7 +1869,7 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "machine_cpu_speed",
+          "expr": "machine_cpu_speed{device=\"$device\"}",
           "instant": false,
           "legendFormat": "CPU Speed",
           "range": true,
@@ -1833,7 +1877,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_cpu_speedMin",
+          "expr": "machine_cpu_speedMin{device=\"$device\"}",
           "legendFormat": "Min Speed",
           "range": true,
           "refId": "A"
@@ -1844,7 +1888,7 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "machine_cpu_speedMax",
+          "expr": "machine_cpu_speedMax{device=\"$device\"}",
           "instant": false,
           "legendFormat": "Max Speed",
           "range": true,
@@ -1852,21 +1896,21 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_cpu_current_speed_avg",
+          "expr": "machine_cpu_current_speed_avg{device=\"$device\"}",
           "legendFormat": "Current Avg",
           "range": true,
           "refId": "D"
         },
         {
           "editorMode": "code",
-          "expr": "machine_cpu_current_speed_max",
+          "expr": "machine_cpu_current_speed_max{device=\"$device\"}",
           "legendFormat": "Current Max",
           "range": true,
           "refId": "E"
         },
         {
           "editorMode": "code",
-          "expr": "machine_cpu_current_speed_min",
+          "expr": "machine_cpu_current_speed_min{device=\"$device\"}",
           "legendFormat": "Current Min",
           "range": true,
           "refId": "F"
@@ -1941,7 +1985,7 @@
         {
           "editorMode": "code",
           "exemplar": false,
-          "expr": "machine_memory_total / (1024 * 1024 * 1024)",
+          "expr": "machine_memory_total{device=\"$device\"} / (1024 * 1024 * 1024)",
           "interval": "",
           "legendFormat": "Memory Total",
           "range": true,
@@ -2003,7 +2047,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_memory_available / (1024 * 1024 * 1024)",
+          "expr": "machine_memory_available{device=\"$device\"} / (1024 * 1024 * 1024)",
           "legendFormat": "Memory Available",
           "range": true,
           "refId": "A"
@@ -2064,7 +2108,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_memory_swapused / (1024 * 1024 * 1024)",
+          "expr": "machine_memory_swapused{device=\"$device\"} / (1024 * 1024 * 1024)",
           "legendFormat": "Swap Used",
           "range": true,
           "refId": "A"
@@ -2125,7 +2169,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_memory_swaptotal / (1024 * 1024 * 1024)",
+          "expr": "machine_memory_swaptotal{device=\"$device\"} / (1024 * 1024 * 1024)",
           "legendFormat": "Swap Total",
           "range": true,
           "refId": "A"
@@ -2341,7 +2385,7 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "machine_processes_list_mem",
+          "expr": "machine_processes_list_mem{device=\"$device\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -2476,7 +2520,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "(machine_memory_used / machine_memory_total) * 100",
+          "expr": "(machine_memory_used{device=\"$device\"} / machine_memory_total{device=\"$device\"}) * 100",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -2580,7 +2624,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "(machine_memory_used / machine_memory_total) * 100",
+          "expr": "(machine_memory_used{device=\"$device\"} / machine_memory_total{device=\"$device\"}) * 100",
           "legendFormat": "Memory Usage",
           "range": true,
           "refId": "A"
@@ -2672,7 +2716,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "machine_memory_free / (1024 * 1024 * 1024)",
+          "expr": "machine_memory_free{device=\"$device\"} / (1024 * 1024 * 1024)",
           "instant": false,
           "interval": "",
           "legendFormat": "Memory Free",
@@ -2681,7 +2725,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_memory_used / (1024 * 1024 * 1024)",
+          "expr": "machine_memory_used{device=\"$device\"} / (1024 * 1024 * 1024)",
           "legendFormat": "Memory Used",
           "range": true,
           "refId": "A"
@@ -2772,21 +2816,21 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_memory_active / (1024 * 1024 * 1024)",
+          "expr": "machine_memory_active{device=\"$device\"} / (1024 * 1024 * 1024)",
           "legendFormat": "Memory Active",
           "range": true,
           "refId": "A"
         },
         {
           "editorMode": "code",
-          "expr": "machine_memory_buffcache / (1024 * 1024 * 1024)",
+          "expr": "machine_memory_buffcache{device=\"$device\"} / (1024 * 1024 * 1024)",
           "legendFormat": "Memory Buff/Cache",
           "range": true,
           "refId": "B"
         },
         {
           "editorMode": "code",
-          "expr": "machine_memory_reclaimable / (1024 * 1024 * 1024)",
+          "expr": "machine_memory_reclaimable{device=\"$device\"} / (1024 * 1024 * 1024)",
           "legendFormat": "Memory Reclaimable",
           "range": true,
           "refId": "C"
@@ -2891,7 +2935,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "machine_fs_size_available{mount=\"/\"} / (1024 * 1024 * 1024)",
+          "expr": "machine_fs_size_available{mount=\"/\",device=\"$device\"} / (1024 * 1024 * 1024)",
           "instant": false,
           "interval": "",
           "legendFormat": "Disk Available",
@@ -2900,7 +2944,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "machine_fs_size_used{mount=\"/\"} / (1024 * 1024 * 1024)",
+          "expr": "machine_fs_size_used{mount=\"/\",device=\"$device\"} / (1024 * 1024 * 1024)",
           "legendFormat": "Disk Used",
           "range": true,
           "refId": "A"
@@ -2995,7 +3039,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_fs_size_use{mount!=\"\"}",
+          "expr": "machine_fs_size_use{mount!=\"\",device=\"$device\"}",
           "legendFormat": "{{mount}}",
           "range": true,
           "refId": "A"
@@ -3088,21 +3132,21 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_fs_stats_rx_sec",
+          "expr": "machine_fs_stats_rx_sec{device=\"$device\"}",
           "legendFormat": "Read",
           "range": true,
           "refId": "A"
         },
         {
           "editorMode": "code",
-          "expr": "machine_fs_stats_wx_sec",
+          "expr": "machine_fs_stats_wx_sec{device=\"$device\"}",
           "legendFormat": "Write",
           "range": true,
           "refId": "B"
         },
         {
           "editorMode": "code",
-          "expr": "machine_fs_stats_tx_sec",
+          "expr": "machine_fs_stats_tx_sec{device=\"$device\"}",
           "legendFormat": "Total",
           "range": true,
           "refId": "C"
@@ -3193,21 +3237,21 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_disksio_rIO_sec",
+          "expr": "machine_disksio_rIO_sec{device=\"$device\"}",
           "legendFormat": "Read IO/sec",
           "range": true,
           "refId": "A"
         },
         {
           "editorMode": "code",
-          "expr": "machine_disksio_wIO_sec",
+          "expr": "machine_disksio_wIO_sec{device=\"$device\"}",
           "legendFormat": "Write IO/sec",
           "range": true,
           "refId": "B"
         },
         {
           "editorMode": "code",
-          "expr": "machine_disksio_tIO_sec",
+          "expr": "machine_disksio_tIO_sec{device=\"$device\"}",
           "legendFormat": "Total IO/sec",
           "range": true,
           "refId": "C"
@@ -3281,14 +3325,14 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum(machine_network_stats_rx_sec * 8)",
+          "expr": "sum(machine_network_stats_rx_sec{device=\"$device\"} * 8)",
           "legendFormat": "Rx",
           "range": true,
           "refId": "A"
         },
         {
           "editorMode": "code",
-          "expr": "sum(machine_network_stats_tx_sec * 8)",
+          "expr": "sum(machine_network_stats_tx_sec{device=\"$device\"} * 8)",
           "legendFormat": "Tx",
           "range": true,
           "refId": "B"
@@ -3381,14 +3425,14 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_network_stats_rx_sec * 8",
+          "expr": "machine_network_stats_rx_sec{device=\"$device\"} * 8",
           "legendFormat": "Rx {{iface}}",
           "range": true,
           "refId": "A"
         },
         {
           "editorMode": "code",
-          "expr": "machine_network_stats_tx_sec * 8",
+          "expr": "machine_network_stats_tx_sec{device=\"$device\"} * 8",
           "legendFormat": "Tx {{iface}}",
           "range": true,
           "refId": "B"
@@ -3479,28 +3523,28 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_network_stats_rx_errors",
+          "expr": "machine_network_stats_rx_errors{device=\"$device\"}",
           "legendFormat": "Rx Errors {{iface}}",
           "range": true,
           "refId": "A"
         },
         {
           "editorMode": "code",
-          "expr": "machine_network_stats_tx_errors",
+          "expr": "machine_network_stats_tx_errors{device=\"$device\"}",
           "legendFormat": "Tx Errors {{iface}}",
           "range": true,
           "refId": "B"
         },
         {
           "editorMode": "code",
-          "expr": "machine_network_stats_rx_dropped",
+          "expr": "machine_network_stats_rx_dropped{device=\"$device\"}",
           "legendFormat": "Rx Dropped {{iface}}",
           "range": true,
           "refId": "C"
         },
         {
           "editorMode": "code",
-          "expr": "machine_network_stats_tx_dropped",
+          "expr": "machine_network_stats_tx_dropped{device=\"$device\"}",
           "legendFormat": "Tx Dropped {{iface}}",
           "range": true,
           "refId": "D"
@@ -3669,7 +3713,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_network_connections_state",
+          "expr": "machine_network_connections_state{device=\"$device\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -3796,7 +3840,7 @@
       "targets": [
         {
           "editorMode": "builder",
-          "expr": "machine_processes_all",
+          "expr": "machine_processes_all{device=\"$device\"}",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -3856,7 +3900,7 @@
       "targets": [
         {
           "editorMode": "builder",
-          "expr": "machine_processes_running",
+          "expr": "machine_processes_running{device=\"$device\"}",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -3947,28 +3991,28 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "machine_processes_all",
+          "expr": "machine_processes_all{device=\"$device\"}",
           "legendFormat": "All Processes",
           "range": true,
           "refId": "A"
         },
         {
           "editorMode": "code",
-          "expr": "machine_processes_running",
+          "expr": "machine_processes_running{device=\"$device\"}",
           "legendFormat": "Running",
           "range": true,
           "refId": "B"
         },
         {
           "editorMode": "code",
-          "expr": "machine_processes_blocked",
+          "expr": "machine_processes_blocked{device=\"$device\"}",
           "legendFormat": "Blocked",
           "range": true,
           "refId": "C"
         },
         {
           "editorMode": "code",
-          "expr": "machine_processes_sleeping",
+          "expr": "machine_processes_sleeping{device=\"$device\"}",
           "legendFormat": "Sleeping",
           "range": true,
           "refId": "D"
@@ -4035,21 +4079,21 @@
       "targets": [
         {
           "editorMode": "builder",
-          "expr": "machine_processes_running",
+          "expr": "machine_processes_running{device=\"$device\"}",
           "legendFormat": "Running",
           "range": true,
           "refId": "B"
         },
         {
           "editorMode": "code",
-          "expr": "machine_processes_blocked",
+          "expr": "machine_processes_blocked{device=\"$device\"}",
           "legendFormat": "Blocked",
           "range": true,
           "refId": "C"
         },
         {
           "editorMode": "code",
-          "expr": "machine_processes_sleeping",
+          "expr": "machine_processes_sleeping{device=\"$device\"}",
           "legendFormat": "Sleeping",
           "range": true,
           "refId": "D"
@@ -4075,6 +4119,7 @@
           "uid": "P7E2AE7DB8179C128"
         },
         "definition": "label_values(machine_timezone_info,timezoneName)",
+        "hide": 2,
         "label": "timezone",
         "name": "timezone",
         "options": [],
@@ -4098,6 +4143,7 @@
           "uid": "P7E2AE7DB8179C128"
         },
         "definition": "label_values(machine_hw_info,version)",
+        "hide": 2,
         "label": "machine_hw_info",
         "name": "machine_hw_info",
         "options": [],
@@ -4110,6 +4156,29 @@
         "regex": "",
         "regexApplyTo": "value",
         "type": "query"
+      },
+      {
+        "current": {
+          "text": "mac-mini1",
+          "value": "mac-mini1"
+        },
+        "name": "device",
+        "options": [],
+        "query": "mac-mini1,mac-book1,mac-mini2,mac-studio1,mac-studio2,mac-studio3,mac-studio4",
+        "type": "custom",
+        "valuesFormat": "csv"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "includeAll": false,
+        "name": "query0",
+        "options": [],
+        "query": "",
+        "type": "custom",
+        "valuesFormat": "csv"
       }
     ]
   },
@@ -4121,6 +4190,6 @@
   "timezone": "browser",
   "title": "Custom_Exporter",
   "uid": "ad9dgc7",
-  "version": 3,
+  "version": 30,
   "weekStart": ""
 }

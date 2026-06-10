@@ -179,6 +179,35 @@ services:
         max-file: "7"
 
   # ────────────────────────────────────────────────
+  #              Langfuse Prometheus Exporter
+  # ────────────────────────────────────────────────
+  langfuse-exporter:
+    build:
+      context: ./langfuse-exportor
+    container_name: langfuse-exporter
+    restart: unless-stopped
+    depends_on:
+      langfuse-web:
+        condition: service_started
+    ports:
+      - "${LANGFUSE_EXPORTER_METRICS_PORT:-29100}:29100"
+    environment:
+      LANGFUSE_HOST: ${LANGFUSE_EXPORTER_HOST:-http://langfuse-web:3000}
+      LANGFUSE_PROJECTS_FILE: /app/projects.json
+      SCRAPE_INTERVAL_SECONDS: ${LANGFUSE_EXPORTER_SCRAPE_INTERVAL_SECONDS:-60}
+      LOOKBACK_DAYS: ${LANGFUSE_EXPORTER_LOOKBACK_DAYS:-7}
+      METRICS_PORT: "29100"
+    volumes:
+      - ./langfuse-exportor/projects.json:/app/projects.json:ro
+    networks:
+      - monitoring-net
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "7"
+
+  # ────────────────────────────────────────────────
   #                   Langfuse (Clickhouse)
   # ────────────────────────────────────────────────
   clickhouse:

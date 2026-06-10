@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Chatbot1",
+    "public_key": "pk-lf-xxxx",
+    "secret_key": "sk-lf-xxxx"
+  },
+  {
+    "name": "Chatbot2",
+    "public_key": "pk-lf-xxxx",
+    "secret_key": "sk-lf-xxxx"
+  },
+  {
+    "name": "Chatbot3",
+    "public_key": "pk-lf-xxxx",
+    "secret_key": "sk-lf-xxxx"
+  }
+]
