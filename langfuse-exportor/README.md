@@ -131,4 +131,6 @@ All metrics include a `project` label.
 | `langfuse_exporter_last_scrape_success` | `project` |
 | `langfuse_exporter_scrape_errors_total` | `project` |
 
+Daily metrics are stored with a sample timestamp at **23:59:59 UTC** on each `date` label so Grafana's time range picker can filter by calendar day.
+
 `projects.json` is gitignored — do not commit API keys.
