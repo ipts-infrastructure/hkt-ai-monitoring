@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 from prometheus_client import Counter, Gauge
 
 DAILY_TRACES = Gauge(
@@ -82,69 +80,27 @@ def clear_gauges() -> None:
         gauge.clear()
 
 
-def _date_to_timestamp(date: str) -> float | None:
-    try:
-        day = datetime.strptime(date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
-        end = day.replace(hour=23, minute=59, second=59)
-        now = datetime.now(timezone.utc)
-        if end > now:
-            end = now
-        return end.timestamp()
-    except ValueError:
-        return None
-
-
-def _set_daily_gauge(gauge: Gauge, labels: dict, value: float, date: str) -> None:
-    ts = _date_to_timestamp(date)
-    if ts is not None:
-        gauge.labels(**labels).set(value, timestamp=ts)
-    else:
-        gauge.labels(**labels).set(value)
-
-
 def update_from_daily_rows(project: str, rows: list[dict]) -> None:
     for row in rows:
         date = row.get("date", "unknown")
-        _set_daily_gauge(
-            DAILY_TRACES,
-            {"project": project, "date": date},
-            float(row.get("countTraces", 0)),
-            date,
+        DAILY_TRACES.labels(project=project, date=date).set(
+            float(row.get("countTraces", 0))
         )
-        _set_daily_gauge(
-            DAILY_OBSERVATIONS,
-            {"project": project, "date": date},
-            float(row.get("countObservations", 0)),
-            date,
+        DAILY_OBSERVATIONS.labels(project=project, date=date).set(
+            float(row.get("countObservations", 0))
         )
-        _set_daily_gauge(
-            DAILY_COST_USD,
-            {"project": project, "date": date},
-            float(row.get("totalCost", 0)),
-            date,
+        DAILY_COST_USD.labels(project=project, date=date).set(
+            float(row.get("totalCost", 0))
         )
 
         for usage in row.get("usage", []):
             model = usage.get("model") or "unknown"
             labels = {"project": project, "date": date, "model": model}
-            _set_daily_gauge(
-                TOKENS_TOTAL, labels, float(usage.get("totalUsage", 0)), date
-            )
-            _set_daily_gauge(
-                TOKENS_INPUT, labels, float(usage.get("inputUsage", 0)), date
-            )
-            _set_daily_gauge(
-                TOKENS_OUTPUT, labels, float(usage.get("outputUsage", 0)), date
-            )
-            _set_daily_gauge(
-                MODEL_COST_USD, labels, float(usage.get("totalCost", 0)), date
-            )
-            _set_daily_gauge(
-                MODEL_TRACES, labels, float(usage.get("countTraces", 0)), date
-            )
-            _set_daily_gauge(
-                MODEL_OBSERVATIONS,
-                labels,
-                float(usage.get("countObservations", 0)),
-                date,
+            TOKENS_TOTAL.labels(**labels).set(float(usage.get("totalUsage", 0)))
+            TOKENS_INPUT.labels(**labels).set(float(usage.get("inputUsage", 0)))
+            TOKENS_OUTPUT.labels(**labels).set(float(usage.get("outputUsage", 0)))
+            MODEL_COST_USD.labels(**labels).set(float(usage.get("totalCost", 0)))
+            MODEL_TRACES.labels(**labels).set(float(usage.get("countTraces", 0)))
+            MODEL_OBSERVATIONS.labels(**labels).set(
+                float(usage.get("countObservations", 0))
             )

@@ -25,7 +25,7 @@
         "type": "prometheus",
         "uid": "P7E2AE7DB8179C128"
       },
-      "description": "Sum of daily token totals across the selected time range (UTC calendar days).",
+      "description": "Total tokens used across all days in the selected time range (sums daily totals for each UTC calendar day).",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -47,7 +47,7 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 6,
+        "w": 4,
         "x": 0,
         "y": 0
       },
@@ -60,7 +60,7 @@
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "sum"
           ],
           "fields": "",
           "values": false
@@ -77,7 +77,8 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "sum(max by (project, date, model) (last_over_time(langfuse_tokens_total{project=~\"$project\"}[$__range])))",
+          "expr": "sum by (date) (max by (project, date, model) (langfuse_tokens_total{project=~\"$project\"}))",
+          "format": "table",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
@@ -85,6 +86,45 @@
         }
       ],
       "title": "Total Tokens",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": "${__from:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              },
+              {
+                "config": {
+                  "id": "lowerOrEqual",
+                  "options": {
+                    "value": "${__to:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "sum"
+            ]
+          }
+        }
+      ],
       "type": "stat"
     },
     {
@@ -92,6 +132,7 @@
         "type": "prometheus",
         "uid": "P7E2AE7DB8179C128"
       },
+      "description": "Total input tokens across all days in the selected time range.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -113,8 +154,8 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 6,
-        "x": 6,
+        "w": 4,
+        "x": 4,
         "y": 0
       },
       "id": 2,
@@ -126,7 +167,7 @@
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "sum"
           ],
           "fields": "",
           "values": false
@@ -143,7 +184,8 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "sum(max by (project, date, model) (last_over_time(langfuse_tokens_input{project=~\"$project\"}[$__range])))",
+          "expr": "sum by (date) (max by (project, date, model) (langfuse_tokens_input{project=~\"$project\"}))",
+          "format": "table",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
@@ -151,6 +193,45 @@
         }
       ],
       "title": "Input Tokens",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": "${__from:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              },
+              {
+                "config": {
+                  "id": "lowerOrEqual",
+                  "options": {
+                    "value": "${__to:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "sum"
+            ]
+          }
+        }
+      ],
       "type": "stat"
     },
     {
@@ -158,6 +239,7 @@
         "type": "prometheus",
         "uid": "P7E2AE7DB8179C128"
       },
+      "description": "Total output tokens across all days in the selected time range.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -179,8 +261,8 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 6,
-        "x": 12,
+        "w": 4,
+        "x": 8,
         "y": 0
       },
       "id": 3,
@@ -192,7 +274,7 @@
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "sum"
           ],
           "fields": "",
           "values": false
@@ -209,7 +291,8 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "sum(max by (project, date, model) (last_over_time(langfuse_tokens_output{project=~\"$project\"}[$__range])))",
+          "expr": "sum by (date) (max by (project, date, model) (langfuse_tokens_output{project=~\"$project\"}))",
+          "format": "table",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
@@ -217,6 +300,45 @@
         }
       ],
       "title": "Output Tokens",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": "${__from:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              },
+              {
+                "config": {
+                  "id": "lowerOrEqual",
+                  "options": {
+                    "value": "${__to:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "sum"
+            ]
+          }
+        }
+      ],
       "type": "stat"
     },
     {
@@ -224,6 +346,7 @@
         "type": "prometheus",
         "uid": "P7E2AE7DB8179C128"
       },
+      "description": "Total cost across all days in the selected time range.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -245,8 +368,8 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 6,
-        "x": 18,
+        "w": 4,
+        "x": 12,
         "y": 0
       },
       "id": 4,
@@ -258,7 +381,7 @@
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "sum"
           ],
           "fields": "",
           "values": false
@@ -275,7 +398,8 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "sum(max by (project, date) (last_over_time(langfuse_daily_cost_usd{project=~\"$project\"}[$__range])))",
+          "expr": "sum by (date) (max by (project, date) (langfuse_daily_cost_usd{project=~\"$project\"}))",
+          "format": "table",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
@@ -283,6 +407,152 @@
         }
       ],
       "title": "Cost USD",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": "${__from:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              },
+              {
+                "config": {
+                  "id": "lowerOrEqual",
+                  "options": {
+                    "value": "${__to:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "sum"
+            ]
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "Total Langfuse traces across all days in the selected time range.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 0
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "sum by (date) (max by (project, date) (langfuse_daily_traces{project=~\"$project\"}))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Traces",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": "${__from:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              },
+              {
+                "config": {
+                  "id": "lowerOrEqual",
+                  "options": {
+                    "value": "${__to:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": [
+              "sum"
+            ]
+          }
+        }
+      ],
       "type": "stat"
     },
     {
@@ -368,7 +638,7 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "sum by (project) (max by (project, date, model) (last_over_time(langfuse_tokens_total{project=~\"$project\"}[$__range])))",
+          "expr": "sum by (project, date) (max by (project, date, model) (langfuse_tokens_total{project=~\"$project\"}))",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -379,15 +649,60 @@
       "title": "Tokens by Project",
       "transformations": [
         {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": "${__from:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              },
+              {
+                "config": {
+                  "id": "lowerOrEqual",
+                  "options": {
+                    "value": "${__to:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "project": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": true,
+              "date": true
             },
             "includeByName": {},
             "indexByName": {},
             "renameByName": {
-              "Value": "Tokens"
+              "Value (sum)": "Tokens"
             }
           }
         }
@@ -471,7 +786,7 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "sum by (project, model) (max by (project, date, model) (last_over_time(langfuse_tokens_total{project=~\"$project\"}[$__range])))",
+          "expr": "sum by (project, model, date) (max by (project, date, model) (langfuse_tokens_total{project=~\"$project\"}))",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
@@ -482,19 +797,68 @@
       "title": "Tokens by Model",
       "transformations": [
         {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": "${__from:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              },
+              {
+                "config": {
+                  "id": "lowerOrEqual",
+                  "options": {
+                    "value": "${__to:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "model": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "project": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {
-              "Time": true
+              "Time": true,
+              "date": true
             },
             "includeByName": {},
             "indexByName": {
-              "Value": 2,
+              "Value (sum)": 2,
               "model": 1,
               "project": 0
             },
             "renameByName": {
-              "Value": "Tokens",
+              "Value (sum)": "Tokens",
               "model": "Model",
               "project": "Project"
             }
@@ -508,7 +872,7 @@
         "type": "prometheus",
         "uid": "P7E2AE7DB8179C128"
       },
-      "description": "Daily token totals per project within the selected time range (one point per UTC calendar day).",
+      "description": "One bar per calendar day — combined total across all selected projects.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -520,9 +884,6 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.85,
-            "drawStyle": "bars",
             "fillOpacity": 80,
             "gradientMode": "none",
             "hideFrom": {
@@ -530,19 +891,9 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
             "lineWidth": 1,
-            "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
-            },
-            "showPoints": "never",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
             },
             "thresholdsStyle": {
               "mode": "off"
@@ -570,17 +921,27 @@
       },
       "id": 7,
       "options": {
+        "barRadius": 0,
+        "barWidth": 0.85,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
         "legend": {
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
         "tooltip": {
           "hideZeros": false,
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
-        }
+        },
+        "xField": "date",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
       "pluginVersion": "12.4.0-21342258703",
       "targets": [
@@ -590,15 +951,70 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "sum by (project) (max by (project, date, model) (langfuse_tokens_total{project=~\"$project\"}))",
-          "instant": false,
-          "legendFormat": "{{project}}",
-          "range": true,
+          "expr": "sum by (date) (max by (project, date, model) (langfuse_tokens_total{project=~\"$project\"}))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
           "refId": "A"
         }
       ],
-      "title": "Tokens per Day (by Project)",
-      "type": "timeseries"
+      "title": "Tokens per Day",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": "${__from:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              },
+              {
+                "config": {
+                  "id": "lowerOrEqual",
+                  "options": {
+                    "value": "${__to:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": false,
+                "field": "date"
+              }
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Tokens"
+            }
+          }
+        }
+      ],
+      "type": "barchart"
     },
     {
       "datasource": {
@@ -664,17 +1080,18 @@
         "x": 0,
         "y": 22
       },
+      "description": "Daily combined token total over the selected time range.",
       "id": 8,
       "options": {
         "legend": {
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": false
         },
         "tooltip": {
           "hideZeros": false,
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
@@ -686,15 +1103,386 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "sum by (project) (max by (project, date, model) (langfuse_tokens_total{project=~\"$project\"}))",
-          "instant": false,
-          "legendFormat": "{{project}}",
-          "range": true,
+          "expr": "sum by (date) (max by (project, date, model) (langfuse_tokens_total{project=~\"$project\"}))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "Total",
+          "range": false,
           "refId": "A"
         }
       ],
-      "title": "Daily Tokens by Project",
+      "title": "Daily Token Trend",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": "${__from:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              },
+              {
+                "config": {
+                  "id": "lowerOrEqual",
+                  "options": {
+                    "value": "${__to:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": false,
+                "field": "date"
+              }
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Tokens"
+            }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "time",
+                "targetField": "date"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
       "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "One bar per calendar day — combined trace count across all selected projects.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      },
+      "id": 10,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.85,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "date",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "sum by (date) (max by (project, date) (langfuse_daily_traces{project=~\"$project\"}))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Traces per Day",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": "${__from:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              },
+              {
+                "config": {
+                  "id": "lowerOrEqual",
+                  "options": {
+                    "value": "${__to:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": false,
+                "field": "date"
+              }
+            ]
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value": "Traces"
+            }
+          }
+        }
+      ],
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "Total traces per project across the selected time range.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 32
+      },
+      "id": 11,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.8,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "project",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "sum by (project, date) (max by (project, date) (langfuse_daily_traces{project=~\"$project\"}))",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Traces by Project",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "greaterOrEqual",
+                  "options": {
+                    "value": "${__from:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              },
+              {
+                "config": {
+                  "id": "lowerOrEqual",
+                  "options": {
+                    "value": "${__to:date:YYYY-MM-DD}"
+                  }
+                },
+                "fieldName": "date"
+              }
+            ],
+            "match": "all",
+            "type": "include"
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Value": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "project": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "date": true
+            },
+            "includeByName": {},
+            "indexByName": {},
+            "renameByName": {
+              "Value (sum)": "Traces"
+            }
+          }
+        }
+      ],
+      "type": "barchart"
     }
   ],
   "preload": false,
@@ -705,7 +1493,7 @@
     "tokens",
     "example"
   ],
-  "description": "Langfuse daily token usage. Use the time picker to select a date range (UTC calendar days). Hourly granularity is not available from the Langfuse daily metrics API.",
+  "description": "Langfuse daily usage (tokens, traces, cost). The time picker selects which calendar days (UTC) to include. Top stat panels sum across all days in that range (e.g. Last 7 days = total for those 7 days). Daily charts show one combined total per day. History is limited to LANGFUSE_EXPORTER_LOOKBACK_DAYS (default 7).",
   "templating": {
     "list": [
       {
@@ -743,8 +1531,8 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Langfuse Token Usage",
+  "title": "Langfuse Usage",
   "uid": "langfuse-tokens",
-  "version": 2,
+  "version": 5,
   "weekStart": ""
 }
