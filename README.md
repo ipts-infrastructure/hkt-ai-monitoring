@@ -19,7 +19,16 @@ cp .env.example .env.dev
 # Edit .env.dev with your langfuse secret configure
 ```
 
-### 2. Configure Langfuse Prometheus Exporter
+### 2. Configure Prometheus scrape targets
+Copy the example config and set targets for your machines (HKT exporter IPs/hostnames and device labels):
+
+```bash
+cp prometheus/prometheus.yml.example prometheus/prometheus.yml
+```
+
+Edit `prometheus/prometheus.yml` with your exporter addresses. Docker-internal jobs (`cadvisor`, `langfuse-exporter`) usually need no changes when using the default compose stack.
+
+### 3. Configure Langfuse Prometheus Exporter
 Create project credentials (one API key pair per Langfuse project):
 
 ```bash
@@ -30,7 +39,7 @@ Edit `langfuse-exportor/projects.json` with keys from Langfuse UI → **Project 
 
 The exporter is included in the main stack and scrapes Langfuse over the internal Docker network (`http://langfuse-web:3000`). Prometheus is preconfigured to scrape `langfuse-exporter:29100`.
 
-### 3. Download & install HKT exporter binary
+### 4. Download & install HKT exporter binary
 Download the appropriate binary from [releases](https://github.com/ipts-infrastructure/speedx/releases):
 
 **macOS:**
@@ -51,7 +60,7 @@ sudo launchctl load -w /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist   
 sudo launchctl unload -w /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist # Stops the service and removes auto-start
 ```
 
-### 4. Start the Stack
+### 5. Start the Stack
 ```bash
 # Development
 docker compose --env-file .env.dev up -d
@@ -60,7 +69,7 @@ docker compose --env-file .env.dev up -d
 docker compose --env-file .env.prod up -d
 ```
 
-### 5. Access Services
+### 6. Access Services
 - **Grafana Dashboard**: http://localhost:23000
   - Username: `admin` (or as configured in .env)
   - Password: `admin` (or as configured in .env)
@@ -77,7 +86,7 @@ docker compose --env-file .env.prod up -d
 - **Langfuse Postgres**: localhost:25432
 - **Langfuse Exporter metrics**: http://localhost:29100/metrics
 
-### 6. Stop the Stack
+### 7. Stop the Stack
 ```bash
 docker compose down
 ```
@@ -95,6 +104,7 @@ docker compose down
 - Reset admin password: `docker exec -it grafana grafana-cli admin reset-admin-password newpassword`
 
 **Prometheus targets down:**
+- Copy `prometheus/prometheus.yml.example` to `prometheus/prometheus.yml` if the file is missing
 - Check if `hkt-exporter` is running on port 28872
 - Check if `langfuse-exporter` is running: `docker compose ps langfuse-exporter`
 - Confirm `langfuse-exportor/projects.json` exists and contains valid API keys
