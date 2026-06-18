@@ -133,4 +133,6 @@ All metrics include a `project` label.
 
 Each metric carries a `date` label (`YYYY-MM-DD`). Grafana filters by calendar day using that label and the dashboard time picker (Prometheus scrape timestamps are not used for day boundaries).
 
+When Langfuse returns no daily rows, or a day has no model usage, the exporter still emits zero-valued metrics (`model="none"` for token series) so Grafana/Prometheus always have a series to query.
+
 `projects.json` is gitignored — do not commit API keys.

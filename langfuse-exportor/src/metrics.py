@@ -1,3 +1,6 @@
+from datetime import datetime, timezone
+from typing import Optional
+
 from prometheus_client import Counter, Gauge
 
 DAILY_TRACES = Gauge(
@@ -80,7 +83,39 @@ def clear_gauges() -> None:
         gauge.clear()
 
 
+def _today_utc() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+
+def _zero_daily_row(date: str) -> dict:
+    return {
+        "date": date,
+        "countTraces": 0,
+        "countObservations": 0,
+        "totalCost": 0,
+        "usage": [],
+    }
+
+
+def _set_model_metrics(
+    project: str, date: str, model: str, usage: Optional[dict] = None
+) -> None:
+    usage = usage or {}
+    labels = {"project": project, "date": date, "model": model}
+    TOKENS_TOTAL.labels(**labels).set(float(usage.get("totalUsage", 0)))
+    TOKENS_INPUT.labels(**labels).set(float(usage.get("inputUsage", 0)))
+    TOKENS_OUTPUT.labels(**labels).set(float(usage.get("outputUsage", 0)))
+    MODEL_COST_USD.labels(**labels).set(float(usage.get("totalCost", 0)))
+    MODEL_TRACES.labels(**labels).set(float(usage.get("countTraces", 0)))
+    MODEL_OBSERVATIONS.labels(**labels).set(
+        float(usage.get("countObservations", 0))
+    )
+
+
 def update_from_daily_rows(project: str, rows: list[dict]) -> None:
+    if not rows:
+        rows = [_zero_daily_row(_today_utc())]
+
     for row in rows:
         date = row.get("date", "unknown")
         DAILY_TRACES.labels(project=project, date=date).set(
@@ -93,14 +128,11 @@ def update_from_daily_rows(project: str, rows: list[dict]) -> None:
             float(row.get("totalCost", 0))
         )
 
-        for usage in row.get("usage", []):
+        usage_rows = row.get("usage") or []
+        if not usage_rows:
+            _set_model_metrics(project, date, "none")
+            continue
+
+        for usage in usage_rows:
             model = usage.get("model") or "unknown"
-            labels = {"project": project, "date": date, "model": model}
-            TOKENS_TOTAL.labels(**labels).set(float(usage.get("totalUsage", 0)))
-            TOKENS_INPUT.labels(**labels).set(float(usage.get("inputUsage", 0)))
-            TOKENS_OUTPUT.labels(**labels).set(float(usage.get("outputUsage", 0)))
-            MODEL_COST_USD.labels(**labels).set(float(usage.get("totalCost", 0)))
-            MODEL_TRACES.labels(**labels).set(float(usage.get("countTraces", 0)))
-            MODEL_OBSERVATIONS.labels(**labels).set(
-                float(usage.get("countObservations", 0))
-            )
+            _set_model_metrics(project, date, model, usage)
