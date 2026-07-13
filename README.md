@@ -6,20 +6,27 @@ A comprehensive monitoring stack using Docker Compose with Prometheus, Grafana, 
 
 - Docker Engine 20.10+
 - Docker Compose 2.0+
-- Port availability: 23000 (Grafana), 29090 (Prometheus), 28080 (cAdvisor), 23030 (Langfuse worker), 23001 (Langfuse web), 29100 (Langfuse exporter), 28123 & 29000 (Clickhouse), 29002 & 29001 (Minio), 26379 (Redis), 25432 (Postgres), 28872 (HktExporter)
+- Port availability: 23000 (Grafana), 23200 (Tempo query), 24317/24318 (Tempo OTLP), 29090 (Prometheus), 28080 (cAdvisor), 23030 (Langfuse worker), 23001 (Langfuse web), 29100 (Langfuse exporter), 28123 & 29000 (Clickhouse), 29002 & 29001 (Minio), 26379 (Redis), 25432 (Postgres), 28872 (HktExporter)
 - Minimum 2GB RAM recommended for optimal performance
 
 ## 🛠️ Getting Started
 
+
+
 ### 1. Environment Setup
+
 Copy the example environment file and configure your credentials:
+
 ```bash
 cp .env.example .env.dev
 # Edit .env.dev with your preferred Grafana admin credentials
 # Edit .env.dev with your langfuse secret configure
 ```
 
+
+
 ### 2. Configure Prometheus scrape targets
+
 Copy the example config and set targets for your machines (HKT exporter IPs/hostnames and device labels):
 
 ```bash
@@ -29,6 +36,7 @@ cp prometheus/prometheus.yml.example prometheus/prometheus.yml
 Edit `prometheus/prometheus.yml` with your exporter addresses. Docker-internal jobs (`cadvisor`, `langfuse-exporter`) usually need no changes when using the default compose stack.
 
 ### 3. Configure Langfuse Prometheus Exporter
+
 Create project credentials (one API key pair per Langfuse project):
 
 ```bash
@@ -40,9 +48,11 @@ Edit `langfuse-exportor/projects.json` with keys from Langfuse UI → **Project 
 The exporter is included in the main stack and scrapes Langfuse over the internal Docker network (`http://langfuse-web:3000`). Prometheus is preconfigured to scrape `langfuse-exporter:29100`.
 
 ### 4. Download & install HKT exporter binary
+
 Download the appropriate binary from [releases](https://github.com/ipts-infrastructure/speedx/releases):
 
 **macOS:**
+
 ```bash
 # Download and install (Please ensure the visibility of the Github was PUBLIC)
 curl -L -o hkt-prom-exporter-darwin-arm64 https://github.com/ipts-infrastructure/speedx/releases/latest/download/hkt-prom-exporter-darwin-arm64 # Downloads the binary file from release
@@ -50,7 +60,7 @@ chmod +x hkt-prom-exporter-darwin-arm64                                         
 sudo mv hkt-prom-exporter-darwin-arm64 /usr/local/bin/                          # Moves the binary to a standard location
 
 # Setup auto-start (optional)
-cp ./speedx/com.hkt.hkt-prom-exporter.plist /Library/LaunchDaemons/
+cp ./speedx/com.hkt.hkt-prom-exporter.plist /Library/LaunchDaotelcol config emons/
 sudo chown root:wheel /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist    # Change ownership 
 sudo chmod 644 /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist           # Change approriate permission 
 plutil -lint /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist             # Validate plist format
@@ -60,7 +70,10 @@ sudo launchctl load -w /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist   
 sudo launchctl unload -w /Library/LaunchDaemons/com.hkt.hkt-prom-exporter.plist # Stops the service and removes auto-start
 ```
 
+
+
 ### 5. Start the Stack
+
 ```bash
 # Development
 docker compose --env-file .env.dev up -d
@@ -69,41 +82,103 @@ docker compose --env-file .env.dev up -d
 docker compose --env-file .env.prod up -d
 ```
 
+
+
 ### 6. Access Services
-- **Grafana Dashboard**: http://localhost:23000
+
+- **Grafana Dashboard**: [http://localhost:23000](http://localhost:23000)
   - Username: `admin` (or as configured in .env)
   - Password: `admin` (or as configured in .env)
-- **Prometheus**: http://localhost:29090
-- **cAdvisor**: http://localhost:28080
-- **HktExporter**: http://localhost:28872/metrics
-- **Langfuse Web UI**: http://localhost:23001
-- **Langfuse Worker**: http://localhost:23030 (internal worker UI / health)
-- **Langfuse Clickhouse HTTP**: http://localhost:28123
+- **Prometheus**: [http://localhost:29090](http://localhost:29090)
+- **cAdvisor**: [http://localhost:28080](http://localhost:28080)
+- **HktExporter**: [http://localhost:28872/metrics](http://localhost:28872/metrics)
+- **Langfuse Web UI**: [http://localhost:23001](http://localhost:23001)
+- **Langfuse Worker**: [http://localhost:23030](http://localhost:23030) (internal worker UI / health)
+- **Langfuse Clickhouse HTTP**: [http://localhost:28123](http://localhost:28123)
 - **Langfuse Clickhouse TCP**: localhost:29000
-- **Langfuse Minio S3 endpoint**: http://localhost:29002
-- **Langfuse Minio Console**: http://localhost:29001
+- **Langfuse Minio S3 endpoint**: [http://localhost:29002](http://localhost:29002)
+- **Langfuse Minio Console**: [http://localhost:29001](http://localhost:29001)
 - **Langfuse Redis**: localhost:26379
 - **Langfuse Postgres**: localhost:25432
-- **Langfuse Exporter metrics**: http://localhost:29100/metrics
+- **Langfuse Exporter metrics**: [http://localhost:29100/metrics](http://localhost:29100/metrics)
+- **Tempo**: [http://localhost:23200](http://localhost:23200) (OTLP ingest: gRPC `24317`, HTTP `24318`)
 
-### 7. Stop the Stack
+
+
+### 7. n8n OpenTelemetry → Grafana Tempo
+
+If you already run an OpenTelemetry Collector on the Mac (e.g. n8n → `http://localhost:4318`), **only Tempo is needed** in this stack. Add a Tempo exporter to your existing collector config.
+
+**1. Start Tempo**
+
+```bash
+docker compose --env-file .env.dev up -d tempo grafana prometheus
+```
+
+**2. Add a Tempo exporter to your Mac otelcol**
+
+```yaml
+exporters:
+  otlp/tempo:
+    endpoint: localhost:24317
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/tempo, debug]   # remove debug when verified
+```
+
+Restart your Mac otelcol after editing.
+
+Flow:
+
+```text
+n8n  →  otelcol (Mac :4318)  →  Tempo (localhost:24317)  →  Grafana
+```
+
+**3. View traces in Grafana**
+
+- Dashboard: **MacOS → n8n Traces**
+- Or **Explore → Tempo** with TraceQL:
+
+```traceql
+{ resource.service.name = "n8n" }
+{ resource.service.name = "n8n" && span.n8n.workflow.name =~ "AI Agent.*" }
+{ resource.service.name = "n8n" && name = "node.execute" }
+```
+
+Click a trace to see spans like `workflow.execute`, `node.execute`, and attributes such as `n8n.workflow.name`, `n8n.node.name`, `n8n.execution.id`.
+
+### 8. Stop the Stack
+
 ```bash
 docker compose down
 ```
 
+
+
 ## 🚨 Troubleshooting
+
+
 
 ### Common Issues
 
 **Services not starting:**
+
 - Check if required ports (23000, 29090, 28080, 23001, 23030, 28123, 29000, 29002, 29001, 26379, 25432) are available
 - Verify Docker daemon is running: `docker info`
 
 **Grafana login issues:**
+
 - Verify credentials in your .env file
 - Reset admin password: `docker exec -it grafana grafana-cli admin reset-admin-password newpassword`
 
 **Prometheus targets down:**
+
 - Copy `prometheus/prometheus.yml.example` to `prometheus/prometheus.yml` if the file is missing
 - Check if `hkt-exporter` is running on port 28872
 - Check if `langfuse-exporter` is running: `docker compose ps langfuse-exporter`
@@ -111,23 +186,29 @@ docker compose down
 - Verify network connectivity: `docker network ls`
 
 **Langfuse not reachable (web/worker):**
+
 - Ensure `langfuse-web` and `langfuse-worker` containers are healthy: `docker compose ps`
 - Check that `NEXTAUTH_URL`, `DATABASE_URL`, and Clickhouse/Minio/Redis env vars are correctly set in `.env`
 - Confirm required Langfuse ports are not in use by other processes
 
 **Langfuse storage backend issues (Clickhouse/Minio/Redis/Postgres):**
+
 - Check Clickhouse health: `curl http://localhost:28123/ping`
 - Access Minio console at `http://localhost:29001` and verify the `langfuse` bucket exists
 - Verify Redis is responding: `redis-cli -h localhost -p 26379 -a myredissecret`
 - Confirm Postgres container is healthy: `docker compose ps postgres`
 
 **Data persistence issues:**
+
 - Ensure Docker volumes have proper permissions
 - Check volume mounts: `docker volume ls`
 
 **Memory issues:**
+
 - Monitor resource usage: `docker stats`
 - Adjust retention period in compose.yml if needed
+
+
 
 ## 🔖 References
 
@@ -136,6 +217,9 @@ docker compose down
 - [cAdvisor GitHub](https://github.com/google/cadvisor)
 - [Docker Compose Reference](https://docs.docker.com/compose/)
 - [HKT Custom Exporter](https://github.com/ipts-infrastructure/speedx)
- - [Langfuse Documentation](https://langfuse.com/docs)
+- [Langfuse Documentation](https://langfuse.com/docs)
+
+
 
 ## 📄 License
+

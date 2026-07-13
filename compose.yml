@@ -17,6 +17,7 @@ services:
       - '--storage.tsdb.retention.time=15d'      # Adjust retention period
       - '--storage.tsdb.wal-compression'         # Compress write-ahead log
       - '--web.enable-lifecycle'                 # Enable runtime reloading
+      - '--web.enable-remote-write-receiver'     # Tempo span metrics
     ports:
       - "29090:9090"
     networks:
@@ -61,6 +62,7 @@ services:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./grafana/dashboards:/var/lib/grafana/dashboards
+      - ./grafana/dashboards-empty:/var/lib/grafana/dashboards-empty
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USERNAME}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
@@ -68,6 +70,32 @@ services:
       - GF_AUTH_ANONYMOUS_ENABLED=false
     ports:
       - "23000:3000"
+    networks:
+      - monitoring-net
+    depends_on:
+      - tempo
+      - prometheus
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "7"
+
+  # ────────────────────────────────────────────────
+  #              Grafana Tempo (traces)
+  # ────────────────────────────────────────────────
+  tempo:
+    image: grafana/tempo:2.7.2
+    container_name: tempo
+    command: ["-config.file=/etc/tempo/tempo.yaml"]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo/tempo.yaml:ro
+      - tempo_data:/var/tempo
+    ports:
+      - "23200:3200"   # Tempo HTTP (query + metrics)
+      - "24317:4317"   # OTLP gRPC ingest
+      - "24318:4318"   # OTLP HTTP ingest
     networks:
       - monitoring-net
     restart: unless-stopped
@@ -325,6 +353,7 @@ services:
 volumes:
   prometheus_data: {}
   grafana_data: {}
+  tempo_data: {}
   langfuse_postgres_data: {}
   langfuse_clickhouse_data: {}
   langfuse_clickhouse_logs: {}

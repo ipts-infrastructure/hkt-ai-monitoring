@@ -13,4 +13,26 @@ datasources:
     isDefault: true
     jsonData:
       timeInterval: 1m
+      exemplarTraceIdDestinations:
+        - name: traceID
+          datasourceUid: tempo
+    editable: false
+
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: http://tempo:3200
+    jsonData:
+      nodeGraph:
+        enabled: true
+      search:
+        hide: false
+      tracesToMetrics:
+        datasourceUid: P7E2AE7DB8179C128
+        tags:
+          - key: service.name
+            value: service
+      serviceMap:
+        datasourceUid: P7E2AE7DB8179C128
     editable: false
