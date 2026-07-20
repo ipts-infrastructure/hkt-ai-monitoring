@@ -1,0 +1,494 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Workflow traces from OpenTelemetry",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 416931008790528,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "targetBlank": true,
+      "title": "Open in Explore",
+      "type": "link",
+      "url": "/explore?schemaVersion=1&panes=%7B%22n8n%22%3A%7B%22datasource%22%3A%22tempo%22%2C%22queries%22%3A%5B%7B%22refId%22%3A%22A%22%2C%22queryType%22%3A%22traceql%22%2C%22query%22%3A%22%7B%20resource.service.name%20%3D%20%5C%22n8n%5C%22%20%7D%22%7D%5D%2C%22range%22%3A%7B%22from%22%3A%22now-1h%22%2C%22to%22%3A%22now%22%7D%7D%7D&orgId=1"
+    }
+  ],
+  "panels": [
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "Trace count per n8n workflow. Click a workflow name to filter the traces table below.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "n8n.workflow.name (count)"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "auto"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 150
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "red",
+                      "value": 200
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Workflow"
+            },
+            "properties": [
+              {
+                "id": "custom.align",
+                "value": "left"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Filter traces by workflow",
+                    "url": "/d/n8n-traces/n8n-traces?orgId=1&from=${__from}&to=${__to}&var-workflow=${__value.raw}&var-traceId=${traceId}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": true,
+          "fields": "",
+          "reducer": [
+            "count"
+          ],
+          "show": true
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Workflow"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 500,
+          "metricsQueryType": "range",
+          "query": "{ resource.service.name = \"n8n\" && name = \"workflow.execute\" && span.n8n.workflow.name != \"AI Agent Main Path Node Log Evaluation (With Create Column)\" && span.n8n.workflow.name != \"AI Agent Main Path Node Log + Evaluation (With Create Column)\" } | select(span.n8n.workflow.id, span.n8n.workflow.name)\n",
+          "queryType": "traceql",
+          "refId": "A",
+          "serviceMapUseNativeHistograms": false,
+          "tableType": "spans"
+        }
+      ],
+      "title": "Workflows (Click to select workflow)",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "duration": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "aggregate"
+              },
+              "n8n.workflow.name": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "duration (count)": 1,
+              "n8n.workflow.name": 0
+            },
+            "renameByName": {
+              "duration (count)": "Traces",
+              "n8n.workflow.name": "Workflow",
+              "n8n.workflow.name (count)": "Traces Count"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "Recent workflow.execute spans for the selected workflow. Click Trace ID → View Trace Detail. Clear or set Workflow to .* to show all.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": true
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Trace ID"
+            },
+            "properties": [
+              {
+                "id": "custom.align",
+                "value": "left"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "View Trace Detail",
+                    "url": "/d/n8n-traces/n8n-traces?orgId=1&from=${__from}&to=${__to}&var-traceId=${__value.raw}&var-workflow=${workflow}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "n8n.workflow.id"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Workflow ID"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "n8n.workflow.name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Workflow"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "duration"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "gauge"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 15,
+        "x": 9,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Start time"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 30,
+          "metricsQueryType": "range",
+          "query": "{ resource.service.name = \"n8n\" && name = \"workflow.execute\" && span.n8n.workflow.name =~ \"^${workflow}$\" } | select(span.n8n.workflow.id, span.n8n.workflow.name)",
+          "queryType": "traceql",
+          "refId": "A",
+          "serviceMapUseNativeHistograms": false,
+          "tableType": "spans"
+        }
+      ],
+      "title": "Workflow Traces: (${workflow})",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Trace ID",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "traceIdHidden"
+              ],
+              "reducer": "first"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Name": true,
+              "Service": true,
+              "Span ID": true,
+              "Trace Name": true,
+              "Trace Service": true,
+              "n8n.workflow.id": true,
+              "name": true,
+              "nested": true,
+              "service.name": true,
+              "spanID": true,
+              "traceIdHidden": true,
+              "traceName": true,
+              "traceService": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Duration": 9,
+              "Name": 7,
+              "Span ID": 5,
+              "Start time": 6,
+              "Trace ID": 0,
+              "Trace Name": 4,
+              "Trace Service": 3,
+              "n8n.workflow.id": 1,
+              "n8n.workflow.name": 10,
+              "service.name": 8,
+              "traceIdHidden": 2
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "Trace waterfall for the selected Trace ID. Span bars show n8n.node.name (configured on the Tempo datasource spanBar setting).",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 2,
+      "options": {
+        "showSpanId": false,
+        "showTraceId": true,
+        "spanFilters": {
+          "adhocFilters": [],
+          "criticalPathOnly": false,
+          "matchesOnly": false
+        }
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 20,
+          "metricsQueryType": "range",
+          "query": "${traceId}",
+          "queryType": "traceql",
+          "refId": "A",
+          "serviceMapUseNativeHistograms": false,
+          "tableType": "traces"
+        }
+      ],
+      "title": "Trace: ${traceId} Detail",
+      "type": "traces"
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": [
+    "n8n",
+    "traces",
+    "tempo",
+    "nodes"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "AI Agent Main Path Node Log Evaluation",
+          "value": "AI Agent Main Path Node Log Evaluation"
+        },
+        "hide": 2,
+        "label": "Workflow",
+        "name": "workflow",
+        "options": [
+          {
+            "selected": true,
+            "text": "AI Agent Main Path Node Log Evaluation",
+            "value": "AI Agent Main Path Node Log Evaluation"
+          }
+        ],
+        "query": "AI Agent Main Path Node Log Evaluation",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "a1f0eec8d740042b24c13aa44cb34b7e",
+          "value": "a1f0eec8d740042b24c13aa44cb34b7e"
+        },
+        "hide": 2,
+        "label": "Trace ID",
+        "name": "traceId",
+        "options": [
+          {
+            "selected": true,
+            "text": "a1f0eec8d740042b24c13aa44cb34b7e",
+            "value": "a1f0eec8d740042b24c13aa44cb34b7e"
+          }
+        ],
+        "query": "a1f0eec8d740042b24c13aa44cb34b7e",
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "2026-07-16T02:27:07.238Z",
+    "to": "2026-07-16T05:27:07.238Z"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "AI workflow",
+  "uid": "ai-traces",
+  "version": 91,
+  "weekStart": ""
+}
