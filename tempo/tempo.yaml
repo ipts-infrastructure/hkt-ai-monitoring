@@ -36,6 +36,12 @@ query_frontend:
     max_duration: 24h
 
 metrics_generator:
+  processor:
+    local_blocks:
+      # Include all spans (not only kind=server); n8n/AI traces are often internal/client.
+      filter_server_spans: false
+      # Persist RF1 blocks so TraceQL metrics can query beyond the live window.
+      flush_to_storage: true
   registry:
     external_labels:
       source: tempo
@@ -44,6 +50,9 @@ metrics_generator:
     remote_write:
       - url: http://prometheus:9090/api/v1/write
         send_exemplars: true
+  # Required by local-blocks (TraceQL metrics); separate from metrics WAL above.
+  traces_storage:
+    path: /var/tempo/generator/traces
 
 overrides:
   metrics_generator_processors: [service-graphs, span-metrics, local-blocks]
