@@ -31,6 +31,9 @@ query_frontend:
     duration_slo: 5s
   trace_by_id:
     duration_slo: 5s
+  # TraceQL metrics default is 3h; Overview panels use longer ranges (e.g. now-12h).
+  metrics:
+    max_duration: 24h
 
 metrics_generator:
   registry:
