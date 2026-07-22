@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 0,
+  "id": 2969202312511488,
   "links": [
     {
       "asDropdown": false,
@@ -129,7 +129,7 @@
         ]
       },
       "gridPos": {
-        "h": 6,
+        "h": 8,
         "w": 9,
         "x": 0,
         "y": 0
@@ -310,7 +310,7 @@
         ]
       },
       "gridPos": {
-        "h": 6,
+        "h": 8,
         "w": 15,
         "x": 9,
         "y": 0
@@ -321,8 +321,8 @@
         "showHeader": true,
         "sortBy": [
           {
-            "desc": true,
-            "displayName": "Start time"
+            "desc": false,
+            "displayName": "Trace ID"
           }
         ]
       },
@@ -378,17 +378,16 @@
             },
             "includeByName": {},
             "indexByName": {
-              "Duration": 9,
-              "Name": 7,
-              "Span ID": 5,
-              "Start time": 6,
+              "Duration": 7,
+              "Name": 9,
+              "Span ID": 6,
+              "Start time": 8,
               "Trace ID": 0,
-              "Trace Name": 4,
-              "Trace Service": 3,
-              "n8n.workflow.id": 1,
-              "n8n.workflow.name": 10,
-              "service.name": 8,
-              "traceIdHidden": 2
+              "Trace Name": 5,
+              "Trace Service": 4,
+              "n8n.workflow.id": 2,
+              "n8n.workflow.name": 1,
+              "traceIdHidden": 3
             },
             "renameByName": {}
           }
@@ -526,8 +525,7 @@
             },
             "properties": [
               {
-                "id": "custom.width",
-                "value": 262
+                "id": "custom.width"
               }
             ]
           },
@@ -569,14 +567,26 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Start time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 276
+              }
+            ]
           }
         ]
       },
       "gridPos": {
-        "h": 8,
-        "w": 24,
+        "h": 22,
+        "w": 9,
         "x": 0,
-        "y": 6
+        "y": 8
       },
       "id": 5,
       "options": {
@@ -651,16 +661,16 @@
             },
             "includeByName": {},
             "indexByName": {
-              "Duration": 2,
+              "Duration": 1,
               "Name": 11,
               "Span ID": 10,
-              "Start time": 1,
+              "Start time": 3,
               "Trace ID": 6,
               "Trace Name": 9,
               "Trace Service": 8,
               "n8n.node.name": 0,
               "service.name": 5,
-              "status": 3,
+              "status": 2,
               "statusMessage": 4,
               "traceIdHidden": 7
             },
@@ -685,10 +695,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 17,
-        "w": 24,
-        "x": 0,
-        "y": 14
+        "h": 22,
+        "w": 15,
+        "x": 9,
+        "y": 8
       },
       "id": 2,
       "options": {
@@ -740,8 +750,8 @@
     "list": [
       {
         "current": {
-          "text": "Chatflow 1",
-          "value": "Chatflow 1"
+          "text": "AI Agent Main Path Node Log Evaluation",
+          "value": "AI Agent Main Path Node Log Evaluation"
         },
         "hide": 2,
         "label": "Workflow",
@@ -749,17 +759,17 @@
         "options": [
           {
             "selected": true,
-            "text": "Chatflow 1",
-            "value": "Chatflow 1"
+            "text": "AI Agent Main Path Node Log Evaluation",
+            "value": "AI Agent Main Path Node Log Evaluation"
           }
         ],
-        "query": "Chatflow 1",
+        "query": "AI Agent Main Path Node Log Evaluation",
         "type": "textbox"
       },
       {
         "current": {
-          "text": "dd030957b8bbfe238eec93d63975da1e",
-          "value": "dd030957b8bbfe238eec93d63975da1e"
+          "text": "490ce640971d266b3498e7d5bcd1923e",
+          "value": "490ce640971d266b3498e7d5bcd1923e"
         },
         "hide": 2,
         "label": "Trace ID",
@@ -767,23 +777,23 @@
         "options": [
           {
             "selected": true,
-            "text": "dd030957b8bbfe238eec93d63975da1e",
-            "value": "dd030957b8bbfe238eec93d63975da1e"
+            "text": "490ce640971d266b3498e7d5bcd1923e",
+            "value": "490ce640971d266b3498e7d5bcd1923e"
           }
         ],
-        "query": "dd030957b8bbfe238eec93d63975da1e",
+        "query": "490ce640971d266b3498e7d5bcd1923e",
         "type": "textbox"
       }
     ]
   },
   "time": {
-    "from": "2026-07-20T09:58:59.689Z",
-    "to": "2026-07-20T10:03:59.689Z"
+    "from": "2026-07-16T02:27:07.238Z",
+    "to": "2026-07-16T05:27:07.238Z"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "AI workflow",
   "uid": "ai-traces",
-  "version": 21,
+  "version": 29,
   "weekStart": ""
 }

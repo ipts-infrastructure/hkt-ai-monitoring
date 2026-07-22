@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1445484225372160,
+  "id": 349065903390720,
   "links": [],
   "panels": [
     {
@@ -416,7 +416,7 @@
         ]
       },
       "gridPos": {
-        "h": 20,
+        "h": 13,
         "w": 14,
         "x": 0,
         "y": 4
@@ -577,248 +577,6 @@
     },
     {
       "datasource": {
-        "type": "grafana-testdata-datasource"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "id"
-            },
-            "properties": [
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "title": "Open details",
-                    "url": "d/ad9dgc7?var-device=${__value.raw}"
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "detail__Uptime (s)"
-            },
-            "properties": []
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 20,
-        "w": 10,
-        "x": 14,
-        "y": 4
-      },
-      "id": 12,
-      "options": {
-        "edges": {
-          "mainStatUnit": ""
-        },
-        "layoutAlgorithm": "layered",
-        "nodes": {
-          "arc": [
-            {
-              "color": "red",
-              "field": "firing",
-              "threshold": 1
-            }
-          ],
-          "arcs": [],
-          "mainStatUnit": "none",
-          "secondaryStatUnit": "none"
-        },
-        "zoomMode": "greedy"
-      },
-      "pluginVersion": "12.4.0-21342258703",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource"
-          },
-          "rawFrameContent": "[\r\n    {\r\n      \"schema\": {\r\n        \"name\": \"nodes\",\r\n        \"refId\": \"A\",\r\n        \"meta\": {\r\n          \"preferredVisualisationType\": \"nodeGraph\"\r\n        },\r\n        \"fields\": [\r\n          {\r\n            \"name\": \"id\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"title\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"subtitle\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"mainstat\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"secondarystat\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"color\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"icon\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"nodeRadius\",\r\n            \"type\": \"number\"\r\n          },\r\n          {\r\n            \"name\": \"detail__Open details\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"detail__Uptime (s)\",\r\n            \"type\": \"number\"\r\n          },\r\n          {\r\n            \"name\": \"detail__Firing alerts\",\r\n            \"type\": \"number\"\r\n          },\r\n          {\r\n            \"name\": \"detail__Status\",\r\n            \"type\": \"string\"\r\n          }\r\n        ]\r\n      },\r\n      \"data\": {\r\n        \"values\": [\r\n          [\r\n            \"mac-mini1\",\r\n            \"mac-mini2\",\r\n            \"mac-studio1\",\r\n            \"mac-studio2\",\r\n            \"mac-studio3\",\r\n            \"mac-studio4\"\r\n          ],\r\n          [\r\n            \"mac-mini1\",\r\n            \"mac-mini2\",\r\n            \"mac-studio1\",\r\n            \"mac-studio2\",\r\n            \"mac-studio3\",\r\n            \"mac-studio4\"\r\n          ],\r\n          [\r\n            \"Mac mini\",\r\n            \"Mac mini\",\r\n            \"Mac Studio\",\r\n            \"Mac Studio\",\r\n            \"Mac Studio\",\r\n            \"Mac Studio\"\r\n          ],\r\n          [\r\n            \"92081s\",\r\n            \"87500s\",\r\n            \"36000s\",\r\n            \"42000s\",\r\n            \"18000s\",\r\n            \"22000s\"\r\n          ],\r\n          [\r\n            \"Connected\",\r\n            \"Connected\",\r\n            \"Disconnected\",\r\n            \"Connected\",\r\n            \"Connected\",\r\n            \"Disconnected\"\r\n          ],\r\n          [\r\n            \"green\",\r\n            \"green\",\r\n            \"green\",\r\n            \"red\",\r\n            \"green\",\r\n            \"green\"\r\n          ],\r\n          [\r\n            \"window\",\r\n            \"window\",\r\n            \"ai-sparkle\",\r\n            \"ai-sparkle\",\r\n            \"ai-sparkle\",\r\n            \"ai-sparkle\"\r\n          ],\r\n          [\r\n            50,\r\n            50,\r\n            35,\r\n            35,\r\n            35,\r\n            35\r\n          ],\r\n          [\r\n            \"d/ad9dgc7?var-device=mac-mini1\",\r\n            \"d/ad9dgc7?var-device=mac-mini2\",\r\n            \"d/ad9dgc7?var-device=mac-studio1\",\r\n            \"d/ad9dgc7?var-device=mac-studio2\",\r\n            \"d/ad9dgc7?var-device=mac-studio3\",\r\n            \"d/ad9dgc7?var-device=mac-studio4\"\r\n          ],\r\n          [\r\n            92081,\r\n            87500,\r\n            36000,\r\n            42000,\r\n            18000,\r\n            22000\r\n          ],\r\n          [\r\n            0,\r\n            1,\r\n            2,\r\n            0,\r\n            0,\r\n            3\r\n          ],\r\n          [\r\n            \"Connected\",\r\n            \"Connected\",\r\n            \"Disconnected\",\r\n            \"Connected\",\r\n            \"Connected\",\r\n            \"Disconnected\"\r\n          ]\r\n        ]\r\n      }\r\n    }\r\n  ]",
-          "refId": "A",
-          "scenarioId": "raw_frame"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource"
-          },
-          "rawFrameContent": "[\r\n    {\r\n      \"schema\": {\r\n        \"name\": \"edges\",\r\n        \"refId\": \"B\",\r\n        \"meta\": {\r\n          \"preferredVisualisationType\": \"nodeGraph\"\r\n        },\r\n        \"fields\": [\r\n          {\r\n            \"name\": \"id\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"source\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"target\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"mainstat\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"secondarystat\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"color\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"strokeDasharray\",\r\n            \"type\": \"string\"\r\n          },\r\n          {\r\n            \"name\": \"thickness\",\r\n            \"type\": \"number\"\r\n          }\r\n        ]\r\n      },\r\n      \"data\": {\r\n        \"values\": [\r\n          [\r\n            \"e1\",\r\n            \"e2\",\r\n            \"e3\",\r\n            \"e4\",\r\n            \"e5\",\r\n            \"e6\",\r\n            \"e7\",\r\n            \"e8\"\r\n          ],\r\n          [\r\n            \"mac-mini1\",\r\n            \"mac-mini1\",\r\n            \"mac-mini2\",\r\n            \"mac-mini2\",\r\n            \"mac-mini1\",\r\n            \"mac-mini1\",\r\n            \"mac-mini2\",\r\n            \"mac-mini2\"\r\n          ],\r\n          [\r\n            \"mac-studio1\",\r\n            \"mac-studio2\",\r\n            \"mac-studio1\",\r\n            \"mac-studio2\",\r\n            \"mac-studio3\",\r\n            \"mac-studio4\",\r\n            \"mac-studio3\",\r\n            \"mac-studio4\"\r\n          ],\r\n          [\r\n            \"ok\",\r\n            \"x\",\r\n            \"ok\",\r\n            \"x\",\r\n            \"ok\",\r\n            \"ok\",\r\n            \"ok\",\r\n            \"ok\"\r\n          ],\r\n          [\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\"\r\n          ],\r\n          [\r\n            \"green\",\r\n            \"red\",\r\n            \"green\",\r\n            \"red\",\r\n            \"green\",\r\n            \"green\",\r\n            \"green\",\r\n            \"green\"\r\n          ],\r\n          [\r\n            \"\",\r\n            \"6,4\",\r\n            \"\",\r\n            \"6,4\",\r\n            \"\",\r\n            \"\",\r\n            \"\",\r\n            \"\"\r\n          ],\r\n          [\r\n            3,\r\n            4,\r\n            3,\r\n            3,\r\n            3,\r\n            3,\r\n            3,\r\n            3\r\n          ]\r\n        ]\r\n      }\r\n    }\r\n  ]",
-          "refId": "B",
-          "scenarioId": "raw_frame"
-        },
-        {
-          "datasource": {
-            "type": "grafana-testdata-datasource",
-            "uid": "ffjp1756hxhj4b"
-          },
-          "hide": true,
-          "refId": "C",
-          "scenarioId": "node_graph"
-        }
-      ],
-      "title": "Network Status",
-      "transformations": [
-        {
-          "id": "convertFieldType",
-          "options": {
-            "conversions": [
-              {
-                "destinationType": "number",
-                "targetField": "detail__Uptime (s)"
-              }
-            ],
-            "fields": {}
-          }
-        }
-      ],
-      "type": "nodeGraph"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P7E2AE7DB8179C128"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 13,
-        "w": 14,
-        "x": 0,
-        "y": 24
-      },
-      "id": 14,
-      "options": {
-        "animationControlEnabled": true,
-        "animationsEnabled": true,
-        "debuggingCtr": {
-          "colorsCtr": 0,
-          "dataCtr": 0,
-          "displaySvgCtr": 0,
-          "mappingsCtr": 0,
-          "timingsCtr": 0
-        },
-        "highlighterEnabled": true,
-        "highlighterSelection": "",
-        "panZoomEnabled": true,
-        "panelConfig": "https://raw.githubusercontent.com/liliachan1112/public-repository/main/network_diagram.yaml",
-        "siteConfig": "",
-        "svg": "https://raw.githubusercontent.com/liliachan1112/public-repository/main/network_diagram.svg",
-        "testDataEnabled": true,
-        "timeSliderEnabled": false,
-        "timeSliderMode": "local"
-      },
-      "pluginVersion": "1.20.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "1",
-          "instant": false,
-          "legendFormat": "macmini1-connection-status",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "1",
-          "instant": false,
-          "legendFormat": "macmini2-connection-status",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "1",
-          "instant": false,
-          "legendFormat": "macstudio1-connection-status",
-          "range": true,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "0",
-          "instant": false,
-          "legendFormat": "macstudio2-connection-status",
-          "range": true,
-          "refId": "D"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "1",
-          "instant": false,
-          "legendFormat": "macstudio3-connection-status",
-          "range": true,
-          "refId": "E"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "1",
-          "instant": false,
-          "legendFormat": "macstudio4-connection-status",
-          "range": true,
-          "refId": "F"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "1",
-          "instant": false,
-          "legendFormat": "macmini1-macstudio1-connection-status",
-          "range": true,
-          "refId": "G"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "0",
-          "instant": false,
-          "legendFormat": "macmini1-macstudio2-connection-status",
-          "range": true,
-          "refId": "H"
-        }
-      ],
-      "title": "Network Status (Flow)",
-      "type": "andrewbmchugh-flow-panel"
-    },
-    {
-      "datasource": {
         "type": "prometheus",
         "uid": "P7E2AE7DB8179C128"
       },
@@ -848,7 +606,7 @@
         "h": 13,
         "w": 10,
         "x": 14,
-        "y": 24
+        "y": 4
       },
       "id": 13,
       "options": {
@@ -1676,6 +1434,6 @@
   "timezone": "browser",
   "title": "Overview",
   "uid": "adrh9wd",
-  "version": 143,
+  "version": 2,
   "weekStart": ""
 }
