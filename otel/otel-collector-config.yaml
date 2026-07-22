@@ -1,0 +1,33 @@
+# OTLP gateway for apps outside this stack (n8n, Dify, …).
+# Receives OTLP on :4317/:4318 and forwards traces to Tempo on the compose network.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 512
+
+exporters:
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+
+  # Uncomment while debugging ingest (noisy):
+  # debug:
+  #   verbosity: basic
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/tempo]
+      # exporters: [otlp/tempo, debug]
