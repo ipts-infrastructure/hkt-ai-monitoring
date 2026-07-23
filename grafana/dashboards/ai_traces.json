@@ -145,6 +145,7 @@
           ],
           "show": true
         },
+        "frameIndex": 1,
         "showHeader": true,
         "sortBy": [
           {
@@ -162,7 +163,7 @@
           },
           "limit": 500,
           "metricsQueryType": "range",
-          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name != \"AI Agent Main Path Node Log Evaluation (With Create Column)\" && span.n8n.workflow.name != \"AI Agent Main Path Node Log + Evaluation (With Create Column)\" } | select(span.n8n.workflow.id, span.n8n.workflow.name, resource.service.name)\n",
+          "query": "{ name = \"workflow.execute\" } | select(span.n8n.workflow.id, span.n8n.workflow.name, resource.service.name)\n",
           "queryType": "traceql",
           "refId": "A",
           "serviceMapUseNativeHistograms": false,
@@ -200,7 +201,10 @@
         {
           "id": "organize",
           "options": {
-            "excludeByName": {},
+            "excludeByName": {
+              "duration (count)": true,
+              "n8n.workflow.name (count)": false
+            },
             "includeByName": {},
             "indexByName": {
               "duration (count)": 1,
@@ -677,7 +681,7 @@
           "tableType": "spans"
         }
       ],
-      "title": "Nodes: (${traceId})",
+      "title": "Nodes: ${traceId}",
       "transformations": [
         {
           "id": "calculateField",
@@ -1030,8 +1034,8 @@
       },
       {
         "current": {
-          "text": "3f1f796ac0133899dd75e8443494d053",
-          "value": "3f1f796ac0133899dd75e8443494d053"
+          "text": "",
+          "value": ""
         },
         "hide": 2,
         "label": "Trace ID",
@@ -1039,11 +1043,11 @@
         "options": [
           {
             "selected": true,
-            "text": "3f1f796ac0133899dd75e8443494d053",
-            "value": "3f1f796ac0133899dd75e8443494d053"
+            "text": "",
+            "value": ""
           }
         ],
-        "query": "3f1f796ac0133899dd75e8443494d053",
+        "query": "",
         "type": "textbox"
       }
     ]
@@ -1056,6 +1060,6 @@
   "timezone": "browser",
   "title": "AI workflow",
   "uid": "ai-traces",
-  "version": 47,
+  "version": 57,
   "weekStart": ""
 }
