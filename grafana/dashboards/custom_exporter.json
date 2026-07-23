@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 0,
+  "id": 349065953722368,
   "links": [
     {
       "asDropdown": false,
@@ -269,7 +269,7 @@
           "error": true,
           "firing": true,
           "noData": false,
-          "normal": true,
+          "normal": false,
           "pending": true,
           "recovering": true
         },
@@ -4190,6 +4190,6 @@
   "timezone": "browser",
   "title": "System Metric",
   "uid": "ad9dgc7",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }

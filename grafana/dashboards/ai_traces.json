@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 2969202312511488,
+  "id": 0,
   "links": [
     {
       "asDropdown": false,
@@ -768,8 +768,8 @@
       },
       {
         "current": {
-          "text": "490ce640971d266b3498e7d5bcd1923e",
-          "value": "490ce640971d266b3498e7d5bcd1923e"
+          "text": "2e3e60ab1c463c66694e1cb6975777c4",
+          "value": "2e3e60ab1c463c66694e1cb6975777c4"
         },
         "hide": 2,
         "label": "Trace ID",
@@ -777,23 +777,23 @@
         "options": [
           {
             "selected": true,
-            "text": "490ce640971d266b3498e7d5bcd1923e",
-            "value": "490ce640971d266b3498e7d5bcd1923e"
+            "text": "2e3e60ab1c463c66694e1cb6975777c4",
+            "value": "2e3e60ab1c463c66694e1cb6975777c4"
           }
         ],
-        "query": "490ce640971d266b3498e7d5bcd1923e",
+        "query": "2e3e60ab1c463c66694e1cb6975777c4",
         "type": "textbox"
       }
     ]
   },
   "time": {
-    "from": "2026-07-16T02:27:07.238Z",
-    "to": "2026-07-16T05:27:07.238Z"
+    "from": "2026-07-23T01:23:36.405Z",
+    "to": "2026-07-23T04:23:36.405Z"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "AI workflow",
   "uid": "ai-traces",
-  "version": 29,
+  "version": 30,
   "weekStart": ""
 }
