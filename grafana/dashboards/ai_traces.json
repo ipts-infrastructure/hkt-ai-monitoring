@@ -237,11 +237,19 @@
           "links": [],
           "mappings": [],
           "thresholds": {
-            "mode": "absolute",
+            "mode": "percentage",
             "steps": [
               {
                 "color": "green",
                 "value": 0
+              },
+              {
+                "color": "#EAB839",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
               }
             ]
           }
@@ -296,14 +304,54 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "duration"
+              "options": "Duration"
             },
             "properties": [
               {
                 "id": "custom.cellOptions",
                 "value": {
-                  "type": "gauge"
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
                 }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "error": {
+                        "color": "red",
+                        "index": 1,
+                        "text": "Error"
+                      },
+                      "ok": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "OK"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 120
               }
             ]
           }
@@ -335,7 +383,7 @@
           },
           "limit": 30,
           "metricsQueryType": "range",
-          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"^${workflow}$\" } | select(span.n8n.workflow.id, span.n8n.workflow.name)",
+          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"^${workflow}$\" } | select(span.n8n.workflow.id, span.n8n.workflow.name, status)",
           "queryType": "traceql",
           "refId": "A",
           "serviceMapUseNativeHistograms": false,
@@ -389,7 +437,9 @@
               "n8n.workflow.name": 1,
               "traceIdHidden": 3
             },
-            "renameByName": {}
+            "renameByName": {
+              "status": "Status"
+            }
           }
         }
       ],
@@ -768,8 +818,8 @@
       },
       {
         "current": {
-          "text": "2e3e60ab1c463c66694e1cb6975777c4",
-          "value": "2e3e60ab1c463c66694e1cb6975777c4"
+          "text": "be9870f31e607dbf15ed4d6a6e67d8cb",
+          "value": "be9870f31e607dbf15ed4d6a6e67d8cb"
         },
         "hide": 2,
         "label": "Trace ID",
@@ -777,11 +827,11 @@
         "options": [
           {
             "selected": true,
-            "text": "2e3e60ab1c463c66694e1cb6975777c4",
-            "value": "2e3e60ab1c463c66694e1cb6975777c4"
+            "text": "be9870f31e607dbf15ed4d6a6e67d8cb",
+            "value": "be9870f31e607dbf15ed4d6a6e67d8cb"
           }
         ],
-        "query": "2e3e60ab1c463c66694e1cb6975777c4",
+        "query": "be9870f31e607dbf15ed4d6a6e67d8cb",
         "type": "textbox"
       }
     ]
@@ -794,6 +844,6 @@
   "timezone": "browser",
   "title": "AI workflow",
   "uid": "ai-traces",
-  "version": 30,
+  "version": 33,
   "weekStart": ""
 }
