@@ -19,6 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
+  "id": 349066033414144,
   "links": [],
   "panels": [
     {
@@ -1388,6 +1389,6 @@
   "timezone": "browser",
   "title": "Langfuse Usage",
   "uid": "langfuse-usage",
-  "version": 4,
+  "version": 5,
   "weekStart": ""
 }

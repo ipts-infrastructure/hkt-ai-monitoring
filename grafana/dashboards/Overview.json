@@ -1645,6 +1645,7 @@
               {
                 "id": "custom.cellOptions",
                 "value": {
+                  "mode": "basic",
                   "type": "color-background"
                 }
               },
@@ -1742,16 +1743,16 @@
             },
             "includeByName": {},
             "indexByName": {
-              "Duration": 3,
+              "Duration": 2,
               "Name": 10,
               "Span ID": 9,
-              "Start time": 2,
+              "Start time": 5,
               "Trace ID": 0,
               "Trace Name": 8,
               "Trace Service": 7,
-              "n8n.workflow.id": 5,
-              "n8n.workflow.name": 4,
-              "status": 1,
+              "n8n.workflow.id": 4,
+              "n8n.workflow.name": 1,
+              "status": 3,
               "traceIdHidden": 6
             },
             "renameByName": {
@@ -1768,6 +1769,7 @@
     }
   ],
   "preload": false,
+  "refresh": "10s",
   "schemaVersion": 42,
   "tags": [],
   "templating": {
@@ -1792,13 +1794,13 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Overview",
   "uid": "adrh9wd",
-  "version": 42,
+  "version": 46,
   "weekStart": ""
 }

@@ -4183,13 +4183,13 @@
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "System Metric",
   "uid": "ad9dgc7",
-  "version": 4,
+  "version": 6,
   "weekStart": ""
 }
