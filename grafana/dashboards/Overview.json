@@ -1647,6 +1647,10 @@
                 "value": {
                   "type": "color-background"
                 }
+              },
+              {
+                "id": "custom.width",
+                "value": 120
               }
             ]
           },
@@ -1795,6 +1799,6 @@
   "timezone": "browser",
   "title": "Overview",
   "uid": "adrh9wd",
-  "version": 41,
+  "version": 42,
   "weekStart": ""
 }
