@@ -38,6 +38,8 @@ query_frontend:
   # TraceQL metrics default is 3h; 0 = no max (still bounded by block_retention).
   metrics:
     max_duration: 0
+    # Query flushed RF1 blocks sooner (default 30m leaves a gap after restarts).
+    query_backend_after: 0s
 
 metrics_generator:
   processor:
@@ -46,6 +48,8 @@ metrics_generator:
       filter_server_spans: false
       # Persist RF1 blocks so TraceQL metrics can query beyond the live window.
       flush_to_storage: true
+      # Keep completed local blocks available until backend poll catches up (default 1h).
+      complete_block_timeout: 24h
   registry:
     external_labels:
       source: tempo
@@ -59,4 +63,6 @@ metrics_generator:
     path: /var/tempo/generator/traces
 
 overrides:
-  metrics_generator_processors: [service-graphs, span-metrics, local-blocks]
+  defaults:
+    metrics_generator:
+      processors: [service-graphs, span-metrics, local-blocks]
