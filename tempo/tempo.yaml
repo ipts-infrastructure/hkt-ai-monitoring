@@ -29,11 +29,15 @@ storage:
 query_frontend:
   search:
     duration_slo: 5s
+    # Grafana "Span limit" (spss). Default 100 causes 400 when raised in the UI.
+    max_spans_per_span_set: 1000
+    # Grafana "Limit" (max traces returned). 0 = unlimited.
+    max_result_limit: 10000
   trace_by_id:
     duration_slo: 5s
-  # TraceQL metrics default is 3h; Overview panels use longer ranges (e.g. now-12h).
+  # TraceQL metrics default is 3h; 0 = no max (still bounded by block_retention).
   metrics:
-    max_duration: 24h
+    max_duration: 0
 
 metrics_generator:
   processor:
