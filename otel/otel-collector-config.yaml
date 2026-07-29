@@ -20,6 +20,9 @@ exporters:
     tls:
       insecure: true
 
+  # Accept Dify/other OTLP metrics so /v1/metrics is not 404 (drop locally).
+  nop: {}
+
   # Uncomment while debugging ingest (noisy):
   # debug:
   #   verbosity: basic
@@ -31,3 +34,7 @@ service:
       processors: [batch]
       exporters: [otlp/tempo]
       # exporters: [otlp/tempo, debug]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [nop]
