@@ -127,6 +127,23 @@ class ExtractTraceMetricsTest(unittest.TestCase):
         self.assertEqual(extracted["node_name"], "AI Agent")
         self.assertEqual(extracted["execution_id"], "660")
 
+    def test_reads_ttft_from_output_and_string_metadata(self) -> None:
+        extracted = extract_trace_metrics(
+            {
+                "id": "t2",
+                "metadata": '{"executionId": 652, "model": "qwen/qwen3.6-27b"}',
+                "output": {
+                    "AI_TTFT_Ms": 10852,
+                    "inputTokens": 10,
+                    "outputTokens": 20,
+                    "totalTokens": 30,
+                },
+            }
+        )
+        self.assertEqual(extracted["ttft_ms"], 10852.0)
+        self.assertEqual(extracted["execution_id"], "652")
+        self.assertEqual(extracted["total_tokens"], 30.0)
+
     def test_falls_back_to_dotted_metadata_keys(self) -> None:
         extracted = extract_trace_metrics(
             {

@@ -7,9 +7,11 @@ from prometheus_client import start_http_server
 from config import load_config
 from langfuse_client import LangfuseClient, extract_trace_metrics
 from metrics import (
+    AI_METRICS_EXTRACTED,
     SCRAPE_ERRORS,
     SCRAPE_SUCCESS,
     SCRAPE_TIMESTAMP,
+    TRACES_FETCHED,
     clear_daily_gauges,
     update_from_daily_rows,
     update_from_traces,
@@ -42,6 +44,8 @@ def scrape_project(host: str, project: dict, cfg: dict) -> None:
 
     new_traces, window_traces = update_from_traces(name, trace_metrics)
 
+    TRACES_FETCHED.labels(project=name).set(len(traces))
+    AI_METRICS_EXTRACTED.labels(project=name).set(len(trace_metrics))
     SCRAPE_SUCCESS.labels(project=name).set(1)
     SCRAPE_TIMESTAMP.labels(project=name).set(
         datetime.now(timezone.utc).timestamp()
@@ -51,9 +55,16 @@ def scrape_project(host: str, project: dict, cfg: dict) -> None:
         name,
         len(rows),
         len(traces),
-        window_traces,
+        len(trace_metrics),
         new_traces,
     )
+    if traces and not trace_metrics:
+        logger.warning(
+            "Project %s: fetched %d traces but none had AI_TTFT_Ms/tokens "
+            "(check Langfuse metadata on those traces)",
+            name,
+            len(traces),
+        )
 
 
 def run() -> None:

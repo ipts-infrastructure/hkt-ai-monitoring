@@ -151,6 +151,22 @@ SCRAPE_ERRORS = Counter(
     "Total failed Langfuse API scrapes",
     ["project"],
 )
+TRACES_FETCHED = Gauge(
+    "langfuse_exporter_traces_fetched",
+    "Traces returned by Langfuse /api/public/traces on the last scrape",
+    ["project"],
+)
+AI_METRICS_EXTRACTED = Gauge(
+    "langfuse_exporter_ai_metrics_extracted",
+    "Traces with TTFT/token fields extracted on the last scrape",
+    ["project"],
+)
+EXPORTER_FEATURE = Gauge(
+    "langfuse_exporter_feature_trace_ttft",
+    "1 when this exporter build supports trace TTFT/token metrics",
+    [],
+)
+EXPORTER_FEATURE.set(1)
 
 _ALL_DAILY_GAUGES = (
     DAILY_TRACES,

@@ -1,7 +1,11 @@
+import json
+import logging
 from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
 import requests
+
+logger = logging.getLogger("langfuse-exporter")
 
 
 class LangfuseClient:
@@ -9,7 +13,7 @@ class LangfuseClient:
         self._session = requests.Session()
         self._session.auth = (public_key, secret_key)
         self._session.headers["Accept"] = "application/json"
-        self._base = host
+        self._base = host.rstrip("/")
 
     def fetch_daily_metrics(self, lookback_days: int) -> list[dict]:
         end = datetime.now(timezone.utc)
@@ -28,14 +32,28 @@ class LangfuseClient:
         payload = response.json()
         return payload.get("data", [])
 
+    def fetch_trace(self, trace_id: str) -> dict:
+        response = self._session.get(
+            f"{self._base}/api/public/traces/{trace_id}",
+            timeout=60,
+        )
+        response.raise_for_status()
+        return response.json()
+
     def fetch_traces(
         self,
         lookback_hours: int,
         *,
         page_limit: int = 100,
         max_pages: int = 10,
+        hydrate_missing_ai: bool = True,
     ) -> list[dict]:
-        """Fetch recent traces (newest first) within the lookback window."""
+        """
+        Fetch recent traces within the lookback window.
+
+        Langfuse list responses sometimes omit custom metadata; when AI fields
+        are missing we optionally GET each trace by id.
+        """
         end = datetime.now(timezone.utc)
         start = end - timedelta(hours=lookback_hours)
         traces: list[dict] = []
@@ -46,7 +64,6 @@ class LangfuseClient:
                 "toTimestamp": end.isoformat().replace("+00:00", "Z"),
                 "limit": page_limit,
                 "page": page,
-                "orderBy": "timestamp.desc",
             }
             response = self._session.get(
                 f"{self._base}/api/public/traces",
@@ -62,7 +79,50 @@ class LangfuseClient:
             if page >= total_pages or not batch:
                 break
             page += 1
-        return traces
+
+        if not hydrate_missing_ai:
+            return traces
+
+        hydrated: list[dict] = []
+        for trace in traces:
+            if _has_ai_fields(trace):
+                hydrated.append(trace)
+                continue
+            trace_id = trace.get("id")
+            if not trace_id:
+                hydrated.append(trace)
+                continue
+            try:
+                detail = self.fetch_trace(str(trace_id))
+                hydrated.append(detail if isinstance(detail, dict) else trace)
+            except Exception:
+                logger.warning(
+                    "Failed to hydrate Langfuse trace %s", trace_id, exc_info=True
+                )
+                hydrated.append(trace)
+        return hydrated
+
+
+def _as_dict(value: Any) -> dict:
+    if isinstance(value, dict):
+        return value
+    if isinstance(value, str) and value.strip():
+        try:
+            parsed = json.loads(value)
+        except json.JSONDecodeError:
+            return {}
+        if isinstance(parsed, dict):
+            return parsed
+    return {}
+
+
+def _has_ai_fields(trace: dict) -> bool:
+    metadata = _as_dict(trace.get("metadata"))
+    output = _as_dict(trace.get("output"))
+    for key in ("AI_TTFT_Ms", "AI_TTFT_Sec", "inputTokens", "outputTokens", "totalTokens"):
+        if metadata.get(key) is not None or output.get(key) is not None:
+            return True
+    return False
 
 
 def _to_float(value: Any) -> Optional[float]:
@@ -84,20 +144,30 @@ def extract_trace_metrics(trace: dict) -> Optional[dict]:
     Supports post-run metadata from n8n demos:
       AI_TTFT_Ms, inputTokens, outputTokens, totalTokens,
       model, n8n_node_name / n8n.node.name, n8n_workflow_name, executionId
+    Also checks trace.output (n8n sometimes stores TTFT there).
     """
-    metadata = trace.get("metadata") or {}
-    if not isinstance(metadata, dict):
-        metadata = {}
+    metadata = _as_dict(trace.get("metadata"))
+    output = _as_dict(trace.get("output"))
 
     ttft_ms = _to_float(metadata.get("AI_TTFT_Ms"))
     if ttft_ms is None:
-        ttft_ms = _to_float(metadata.get("AI_TTFT_Sec"))
-        if ttft_ms is not None:
-            ttft_ms *= 1000.0
+        ttft_ms = _to_float(output.get("AI_TTFT_Ms"))
+    if ttft_ms is None:
+        ttft_sec = _to_float(metadata.get("AI_TTFT_Sec"))
+        if ttft_sec is None:
+            ttft_sec = _to_float(output.get("AI_TTFT_Sec"))
+        if ttft_sec is not None:
+            ttft_ms = ttft_sec * 1000.0
 
     input_tokens = _to_float(metadata.get("inputTokens"))
+    if input_tokens is None:
+        input_tokens = _to_float(output.get("inputTokens"))
     output_tokens = _to_float(metadata.get("outputTokens"))
+    if output_tokens is None:
+        output_tokens = _to_float(output.get("outputTokens"))
     total_tokens = _to_float(metadata.get("totalTokens"))
+    if total_tokens is None:
+        total_tokens = _to_float(output.get("totalTokens"))
     if total_tokens is None and input_tokens is not None and output_tokens is not None:
         total_tokens = input_tokens + output_tokens
 
@@ -105,11 +175,13 @@ def extract_trace_metrics(trace: dict) -> Optional[dict]:
     if ttft_ms is None and input_tokens is None and output_tokens is None:
         return None
 
-    trace_input = trace.get("input")
-    input_model = None
-    if isinstance(trace_input, dict):
-        input_model = trace_input.get("model")
-    model = metadata.get("model") or input_model or "unknown"
+    trace_input = _as_dict(trace.get("input"))
+    model = (
+        metadata.get("model")
+        or output.get("model")
+        or trace_input.get("model")
+        or "unknown"
+    )
     node_name = (
         metadata.get("n8n_node_name")
         or metadata.get("n8n.node.name")
