@@ -15,11 +15,10 @@
       }
     ]
   },
-  "description": "Tempo traces + Langfuse AI panel (Infinity) + Prometheus TTFT/token rates (langfuse-exporter). Join per-run via Execution ID; rates via Project=TTFT-example.",
+  "description": "Tempo Trace table shows all workflow runs. Langfuse TTFT / tokens (Prometheus) shows AI metrics — join via Execution ID.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 0,
   "links": [],
   "panels": [
     {
@@ -407,7 +406,7 @@
         "type": "tempo",
         "uid": "tempo"
       },
-      "description": "Tempo workflow.execute only. Join TTFT via Execution ID → Langfuse panel below (Mixed joins were unstable).",
+      "description": "All Tempo workflow.execute traces for the selected Workflow (including runs without an AI Agent). TTFT is in the Langfuse TTFT / tokens table below — click Execution ID to filter it.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -469,7 +468,7 @@
                 "value": [
                   {
                     "targetBlank": false,
-                    "title": "Show Langfuse TTFT for this execution",
+                    "title": "Show TTFT / tokens for this execution",
                     "url": "/d/n8n-traces/n8n-traces?orgId=1&from=${__from}&to=${__to}&var-executionId=${__value.raw}&var-traceId=${__data.fields[\"Trace ID\"]}&var-workflow=${workflow}"
                   }
                 ]
@@ -600,17 +599,17 @@
               "traceService": true
             },
             "indexByName": {
-              "Trace ID": 0,
-              "n8n.workflow.name": 1,
-              "n8n.execution.id": 2,
-              "status": 3,
               "Duration": 4,
-              "Start time": 5
+              "Start time": 5,
+              "Trace ID": 0,
+              "n8n.execution.id": 2,
+              "n8n.workflow.name": 1,
+              "status": 3
             },
             "renameByName": {
-              "status": "Status",
+              "n8n.execution.id": "Execution ID",
               "n8n.workflow.name": "Workflow",
-              "n8n.execution.id": "Execution ID"
+              "status": "Status"
             }
           }
         }
@@ -705,10 +704,10 @@
         ]
       },
       "gridPos": {
-        "h": 18,
+        "h": 16,
         "w": 8,
         "x": 0,
-        "y": 31
+        "y": 21
       },
       "id": 4,
       "options": {
@@ -743,26 +742,26 @@
           "options": {
             "excludeByName": {
               "Name": true,
-              "name": true,
               "Service": true,
               "Span ID": true,
               "Trace ID": true,
               "Trace Name": true,
               "Trace Service": true,
+              "n8n.execution.id": true,
+              "name": true,
               "nested": true,
               "service.name": true,
               "spanID": true,
               "traceIdHidden": true,
               "traceName": true,
-              "traceService": true,
-              "n8n.execution.id": true
+              "traceService": true
             },
             "indexByName": {
+              "Duration": 4,
               "Start time": 0,
               "n8n.node.name": 1,
               "n8n.node.type": 2,
               "status": 3,
-              "Duration": 4,
               "statusMessage": 5
             },
             "renameByName": {
@@ -787,10 +786,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 18,
+        "h": 16,
         "w": 16,
         "x": 8,
-        "y": 31
+        "y": 21
       },
       "id": 5,
       "options": {
@@ -821,21 +820,11 @@
       "type": "traces"
     },
     {
-      "type": "table",
-      "id": 9106,
-      "title": "Langfuse TTFT / tokens (Prometheus)",
-      "description": "Prometheus langfuse-exporter. Project + Execution ID filter (use .* for all). One row per Langfuse trace.",
       "datasource": {
         "type": "prometheus",
         "uid": "P7E2AE7DB8179C128"
       },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 21
-      },
-      "pluginVersion": "12.4.0-21342258703",
+      "description": "TTFT / tokens from langfuse-exporter. Filtered by Project, Workflow, Execution ID. Click Execution ID in the Trace table above to filter here. Use .* in Execution ID to list all AI runs.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -880,51 +869,43 @@
                 }
               },
               {
-                "id": "thresholds",
-                "value": {
-                  "mode": "absolute",
-                  "steps": [
-                    {
-                      "color": "green",
-                      "value": 0
-                    },
-                    {
-                      "color": "yellow",
-                      "value": 2000
-                    },
-                    {
-                      "color": "red",
-                      "value": 8000
-                    }
-                  ]
-                }
+                "id": "custom.width",
+                "value": 167
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "Langfuse trace"
+              "options": "__name__ 1"
             },
             "properties": [
               {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": true,
-                    "title": "Open Langfuse",
-                    "url": "${langfuseHost}/trace/${__value.raw}"
-                  }
-                ]
+                "id": "custom.width",
+                "value": 221
               }
             ]
           }
         ]
       },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 37
+      },
+      "id": 9001,
       "options": {
         "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
         "showHeader": true,
-        "frameIndex": 0,
         "sortBy": [
           {
             "desc": true,
@@ -932,6 +913,7 @@
           }
         ]
       },
+      "pluginVersion": "12.4.0-21342258703",
       "targets": [
         {
           "datasource": {
@@ -940,10 +922,10 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "langfuse_trace_ttft_ms{project=~\"$project\", execution_id=~\"$executionId\"}",
+          "expr": "last_over_time(langfuse_trace_ttft_ms{project=~\"$project\", workflow=~\"^$workflow$\", execution_id=~\"^$executionId$\"}[$__range])",
           "format": "table",
           "instant": true,
-          "legendFormat": "TTFT (ms)",
+          "legendFormat": "__auto",
           "range": false,
           "refId": "A"
         },
@@ -954,10 +936,10 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "langfuse_trace_input_tokens{project=~\"$project\", execution_id=~\"$executionId\"}",
+          "expr": "last_over_time(langfuse_trace_input_tokens{project=~\"$project\", workflow=~\"^$workflow$\", execution_id=~\"^$executionId$\"}[$__range])",
           "format": "table",
           "instant": true,
-          "legendFormat": "Input tokens",
+          "legendFormat": "__auto",
           "range": false,
           "refId": "B"
         },
@@ -968,10 +950,10 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "langfuse_trace_output_tokens{project=~\"$project\", execution_id=~\"$executionId\"}",
+          "expr": "last_over_time(langfuse_trace_output_tokens{project=~\"$project\", workflow=~\"^$workflow$\", execution_id=~\"^$executionId$\"}[$__range])",
           "format": "table",
           "instant": true,
-          "legendFormat": "Output tokens",
+          "legendFormat": "__auto",
           "range": false,
           "refId": "C"
         },
@@ -982,28 +964,21 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "langfuse_trace_total_tokens{project=~\"$project\", execution_id=~\"$executionId\"}",
+          "expr": "last_over_time(langfuse_trace_total_tokens{project=~\"$project\", workflow=~\"^$workflow$\", execution_id=~\"^$executionId$\"}[$__range])",
           "format": "table",
           "instant": true,
-          "legendFormat": "Total tokens",
+          "legendFormat": "__auto",
           "range": false,
           "refId": "D"
         }
       ],
+      "title": "Langfuse TTFT / tokens (Prometheus)",
       "transformations": [
         {
-          "id": "joinByLabels",
+          "id": "joinByField",
           "options": {
-            "join": [
-              "trace_id",
-              "execution_id",
-              "node_name",
-              "model",
-              "workflow",
-              "workflow_id",
-              "project"
-            ],
-            "value": "Value"
+            "byField": "execution_id",
+            "mode": "outer"
           }
         },
         {
@@ -1011,617 +986,88 @@
           "options": {
             "excludeByName": {
               "Time": true,
-              "__name__": true,
-              "job": true,
-              "instance": true
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "Value #B": false,
+              "__name__ 1": true,
+              "__name__ 2": true,
+              "__name__ 3": true,
+              "__name__ 4": true,
+              "instance 1": true,
+              "instance 2": true,
+              "instance 3": true,
+              "instance 4": true,
+              "job 1": true,
+              "job 2": true,
+              "job 3": true,
+              "job 4": true,
+              "model 2": true,
+              "model 3": true,
+              "model 4": true,
+              "node_name 2": true,
+              "node_name 3": true,
+              "node_name 4": true,
+              "project 1": true,
+              "project 2": true,
+              "project 3": true,
+              "project 4": true,
+              "trace_id 1": true,
+              "trace_id 2": true,
+              "trace_id 3": true,
+              "trace_id 4": true,
+              "workflow 1": false,
+              "workflow 2": true,
+              "workflow 3": true,
+              "workflow 4": true
             },
+            "includeByName": {},
             "indexByName": {
-              "execution_id": 0,
-              "node_name": 1,
-              "langfuse_trace_ttft_ms": 2,
-              "langfuse_trace_input_tokens": 3,
-              "langfuse_trace_output_tokens": 4,
-              "langfuse_trace_total_tokens": 5,
-              "TTFT (ms)": 2,
+              "Execution ID": 0,
               "Input tokens": 3,
+              "Langfuse trace": 10,
+              "Model": 6,
+              "Node": 1,
               "Output tokens": 4,
+              "Project": 9,
+              "TTFT (ms)": 2,
               "Total tokens": 5,
-              "model": 6,
-              "workflow": 7,
-              "workflow_id": 8,
-              "project": 9,
-              "trace_id": 10
+              "Workflow": 7,
+              "Workflow ID": 8,
+              "execution_id": 0,
+              "node_name": 1
             },
             "renameByName": {
-              "execution_id": "Execution ID",
-              "node_name": "Node",
-              "langfuse_trace_ttft_ms": "TTFT (ms)",
-              "langfuse_trace_input_tokens": "Input tokens",
-              "langfuse_trace_output_tokens": "Output tokens",
-              "langfuse_trace_total_tokens": "Total tokens",
+              "Time 2": "",
+              "Value": "TTFT (ms)",
               "Value #A": "TTFT (ms)",
               "Value #B": "Input tokens",
               "Value #C": "Output tokens",
               "Value #D": "Total tokens",
-              "A": "TTFT (ms)",
-              "B": "Input tokens",
-              "C": "Output tokens",
-              "D": "Total tokens",
+              "Value 1": "Input tokens",
+              "Value 2": "Output tokens",
+              "Value 3": "Total tokens",
+              "execution_id": "Execution ID",
               "model": "Model",
-              "workflow": "Workflow",
-              "workflow_id": "Workflow ID",
+              "node_name": "Node",
+              "node_name 1": "AI Node Name",
               "project": "Project",
-              "trace_id": "Langfuse trace"
+              "trace_id": "Langfuse trace",
+              "workflow": "Workflow",
+              "workflow 1": "Workflow",
+              "workflow_id": "Workflow ID"
             }
           }
         }
-      ]
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 68
-      },
-      "id": 9200,
-      "panels": [],
-      "title": "AI TTFT / tokens / rates (Prometheus · Langfuse exporter)",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P7E2AE7DB8179C128"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "-",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 8000
-              },
-              {
-                "color": "red",
-                "value": 16000
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 0,
-        "y": 69
-      },
-      "id": 9201,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.0-21342258703",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "max(langfuse_ttft_ms_last{project=~\"$project\"})",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
       ],
-      "title": "TTFT last",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P7E2AE7DB8179C128"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "-",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 8000
-              },
-              {
-                "color": "red",
-                "value": 16000
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 6,
-        "y": 69
-      },
-      "id": 9202,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.0-21342258703",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "avg(langfuse_ttft_ms_avg_window{project=~\"$project\"})",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "TTFT avg (window)",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P7E2AE7DB8179C128"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "-",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 8000
-              },
-              {
-                "color": "red",
-                "value": 16000
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 12,
-        "y": 69
-      },
-      "id": 9203,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.0-21342258703",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "max(langfuse_ttft_ms_p95_window{project=~\"$project\"})",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "TTFT p95 (window)",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P7E2AE7DB8179C128"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "noValue": "-",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "yellow",
-                "value": 8000
-              },
-              {
-                "color": "red",
-                "value": 16000
-              }
-            ]
-          },
-          "unit": "short"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 18,
-        "y": 69
-      },
-      "id": 9204,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.4.0-21342258703",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "sum(langfuse_window_traces{project=~\"$project\"})",
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "Traces in window",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P7E2AE7DB8179C128"
-      },
-      "description": "Last TTFT and histogram p95 from langfuse-exporter.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "ms",
-          "noValue": "-"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 73
-      },
-      "id": 9205,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "lastNotNull"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "12.4.0-21342258703",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "max by (model, node_name) (langfuse_ttft_ms_last{project=~\"$project\"})",
-          "legendFormat": "last {{model}}",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le, model) (rate(langfuse_ttft_ms_bucket{project=~\"$project\"}[$__rate_interval])))",
-          "legendFormat": "p95 {{model}}",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "TTFT over time",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "P7E2AE7DB8179C128"
-      },
-      "description": "Request and token rates from langfuse-exporter counters.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 15,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "showValues": false,
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "ops",
-          "noValue": "-"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 12,
-        "y": 73
-      },
-      "id": 9206,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "lastNotNull"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "12.4.0-21342258703",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "sum by (model) (rate(langfuse_traces_total{project=~\"$project\"}[$__rate_interval]))",
-          "legendFormat": "traces/s {{model}}",
-          "range": true,
-          "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "sum by (model) (rate(langfuse_trace_tokens_sum_total{project=~\"$project\"}[$__rate_interval]))",
-          "legendFormat": "tokens/s {{model}}",
-          "range": true,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "sum by (model) (rate(langfuse_trace_tokens_input_total{project=~\"$project\"}[$__rate_interval]))",
-          "legendFormat": "in tokens/s {{model}}",
-          "range": true,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "expr": "sum by (model) (rate(langfuse_trace_tokens_output_total{project=~\"$project\"}[$__rate_interval]))",
-          "legendFormat": "out tokens/s {{model}}",
-          "range": true,
-          "refId": "D"
-        }
-      ],
-      "title": "Request & token rates",
-      "type": "timeseries"
+      "type": "table"
     }
   ],
   "preload": false,
   "refresh": "30s",
   "schemaVersion": 42,
   "tags": [
-    "exporter",
     "infinity",
     "langfuse",
     "n8n",
@@ -1636,7 +1082,9 @@
       {
         "allValue": ".*",
         "current": {
-          "text": "TTFT-example",
+          "text": [
+            "TTFT-example"
+          ],
           "value": [
             "TTFT-example"
           ]
@@ -1646,7 +1094,6 @@
           "uid": "P7E2AE7DB8179C128"
         },
         "definition": "label_values(langfuse_exporter_last_scrape_success, project)",
-        "hide": 0,
         "includeAll": true,
         "label": "Project",
         "multi": true,
@@ -1668,7 +1115,6 @@
           "text": ".*",
           "value": ".*"
         },
-        "hide": 2,
         "label": "Workflow",
         "name": "workflow",
         "options": [
@@ -1683,47 +1129,44 @@
       },
       {
         "current": {
-          "text": "",
-          "value": ""
+          "text": "c56c13135aef497b4cd747a656d95881",
+          "value": "c56c13135aef497b4cd747a656d95881"
         },
-        "hide": 0,
         "label": "Trace ID",
         "name": "traceId",
         "options": [
           {
             "selected": true,
-            "text": "",
-            "value": ""
+            "text": "c56c13135aef497b4cd747a656d95881",
+            "value": "c56c13135aef497b4cd747a656d95881"
           }
         ],
-        "query": "",
+        "query": "c56c13135aef497b4cd747a656d95881",
         "type": "textbox"
       },
       {
         "current": {
-          "text": ".*",
-          "value": ".*"
+          "text": "670",
+          "value": "670"
         },
-        "hide": 0,
+        "description": "Filters Nodes (via parent workflow span) + Langfuse TTFT. Use .* for all; click Execution ID in the Trace table for one run.",
         "label": "Execution ID",
         "name": "executionId",
         "options": [
           {
             "selected": true,
-            "text": ".*",
-            "value": ".*"
+            "text": "670",
+            "value": "670"
           }
         ],
-        "query": ".*",
-        "type": "textbox",
-        "description": "Filters Nodes (via parent workflow span) + Langfuse TTFT. Use .* for all; click Execution ID in the Trace table for one run."
+        "query": "670",
+        "type": "textbox"
       },
       {
         "current": {
           "text": "http://100.119.124.68:23001",
           "value": "http://100.119.124.68:23001"
         },
-        "hide": 0,
         "label": "Langfuse Host",
         "name": "langfuseHost",
         "options": [
@@ -1739,12 +1182,10 @@
       {
         "current": {
           "text": "langfuse-datasource",
-          "value": "langfuse-datasource"
+          "value": "afuqecnvw5zpcc"
         },
-        "hide": 0,
         "includeAll": false,
         "label": "Langfuse DS",
-        "multi": false,
         "name": "langfuseDs",
         "options": [],
         "query": "yesoreyeram-infinity-datasource",
@@ -1755,13 +1196,13 @@
     ]
   },
   "time": {
-    "from": "now-24h",
-    "to": "now"
+    "from": "2026-08-09T09:43:36.962Z",
+    "to": "2026-08-10T09:43:36.962Z"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "n8n Traces",
   "uid": "n8n-traces",
-  "version": 63,
+  "version": 128,
   "weekStart": ""
 }
