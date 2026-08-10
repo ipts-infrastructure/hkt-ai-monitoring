@@ -114,6 +114,28 @@ WINDOW_TRACES = Gauge(
     ["project", "model", "node_name", "workflow"],
 )
 
+# Per-trace gauges (rebuilt each scrape) — for Grafana table + Execution ID filter
+TRACE_TTFT_MS = Gauge(
+    "langfuse_trace_ttft_ms",
+    "TTFT (ms) per Langfuse trace in the exporter lookback window",
+    ["project", "execution_id", "model", "node_name", "workflow", "trace_id"],
+)
+TRACE_INPUT_TOKENS = Gauge(
+    "langfuse_trace_input_tokens",
+    "Input tokens per Langfuse trace in the lookback window",
+    ["project", "execution_id", "model", "node_name", "workflow", "trace_id"],
+)
+TRACE_OUTPUT_TOKENS = Gauge(
+    "langfuse_trace_output_tokens",
+    "Output tokens per Langfuse trace in the lookback window",
+    ["project", "execution_id", "model", "node_name", "workflow", "trace_id"],
+)
+TRACE_TOTAL_TOKENS = Gauge(
+    "langfuse_trace_total_tokens",
+    "Total tokens per Langfuse trace in the lookback window",
+    ["project", "execution_id", "model", "node_name", "workflow", "trace_id"],
+)
+
 SCRAPE_SUCCESS = Gauge(
     "langfuse_exporter_last_scrape_success",
     "1 if the last Langfuse API scrape succeeded for this project, else 0",
@@ -143,6 +165,10 @@ _ALL_DAILY_GAUGES = (
     TTFT_MS_AVG_WINDOW,
     TTFT_MS_P95_WINDOW,
     WINDOW_TRACES,
+    TRACE_TTFT_MS,
+    TRACE_INPUT_TOKENS,
+    TRACE_OUTPUT_TOKENS,
+    TRACE_TOTAL_TOKENS,
 )
 
 # Per-project ring of seen trace IDs to avoid double-counting counters/histogram
@@ -272,6 +298,28 @@ def update_from_traces(project: str, trace_metrics: list[dict]) -> Tuple[int, in
         ttft_ms = item.get("ttft_ms")
         if ttft_ms is not None:
             ttft_by_label[key].append(float(ttft_ms))
+
+        # Per-trace gauges (all traces in window — for Prometheus table)
+        exec_id = item.get("execution_id") or "unknown"
+        trace_id = item.get("trace_id") or "unknown"
+        row_labels = {
+            "project": project,
+            "execution_id": exec_id,
+            "model": model,
+            "node_name": node_name,
+            "workflow": workflow,
+            "trace_id": trace_id,
+        }
+        if ttft_ms is not None:
+            TRACE_TTFT_MS.labels(**row_labels).set(float(ttft_ms))
+        if item.get("input_tokens") is not None:
+            TRACE_INPUT_TOKENS.labels(**row_labels).set(float(item["input_tokens"]))
+        if item.get("output_tokens") is not None:
+            TRACE_OUTPUT_TOKENS.labels(**row_labels).set(
+                float(item["output_tokens"])
+            )
+        if item.get("total_tokens") is not None:
+            TRACE_TOTAL_TOKENS.labels(**row_labels).set(float(item["total_tokens"]))
 
         if not _remember_trace(project, item.get("trace_id", "")):
             continue

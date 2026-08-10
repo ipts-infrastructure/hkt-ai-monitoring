@@ -207,6 +207,20 @@ class UpdateFromTracesTest(unittest.TestCase):
         self.assertEqual(
             REGISTRY.get_sample_value("langfuse_window_traces", labels), 1.0
         )
+        self.assertEqual(
+            REGISTRY.get_sample_value(
+                "langfuse_trace_ttft_ms",
+                {
+                    "project": "demo",
+                    "execution_id": "1",
+                    "model": "m1",
+                    "node_name": "AI Agent",
+                    "workflow": "Demo",
+                    "trace_id": "t1",
+                },
+            ),
+            1000.0,
+        )
 
 
 if __name__ == "__main__":

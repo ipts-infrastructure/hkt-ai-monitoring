@@ -180,6 +180,10 @@ Counters and the histogram are incremented **once per trace id** (deduped across
 | `langfuse_ttft_ms_avg_window` | Gauge | Avg over lookback window |
 | `langfuse_ttft_ms_p95_window` | Gauge | Approx p95 over lookback window |
 | `langfuse_window_traces` | Gauge | Traces with TTFT in lookback |
+| `langfuse_trace_ttft_ms` | Gauge | Per-trace TTFT (table; labels include `execution_id`) |
+| `langfuse_trace_input_tokens` | Gauge | Per-trace input tokens |
+| `langfuse_trace_output_tokens` | Gauge | Per-trace output tokens |
+| `langfuse_trace_total_tokens` | Gauge | Per-trace total tokens |
 
 ### Exporter health
 
