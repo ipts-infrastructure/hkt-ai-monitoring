@@ -54,29 +54,29 @@ MODEL_OBSERVATIONS = Gauge(
 TRACES_TOTAL = Counter(
     "langfuse_traces_total",
     "Langfuse traces processed by the exporter (use rate() for request rate)",
-    ["project", "model", "node_name", "workflow"],
+    ["project", "model", "node_name", "workflow", "workflow_id"],
 )
 # Named langfuse_trace_* so counters don't collide with daily gauges
 # (prometheus_client treats Counter "foo_total" as timeseries family "foo").
 TOKENS_INPUT_TOTAL = Counter(
     "langfuse_trace_tokens_input_total",
     "Cumulative input tokens from Langfuse traces (use rate())",
-    ["project", "model", "node_name", "workflow"],
+    ["project", "model", "node_name", "workflow", "workflow_id"],
 )
 TOKENS_OUTPUT_TOTAL = Counter(
     "langfuse_trace_tokens_output_total",
     "Cumulative output tokens from Langfuse traces (use rate())",
-    ["project", "model", "node_name", "workflow"],
+    ["project", "model", "node_name", "workflow", "workflow_id"],
 )
 TOKENS_SUM_TOTAL = Counter(
     "langfuse_trace_tokens_sum_total",
     "Cumulative total tokens from Langfuse traces (use rate())",
-    ["project", "model", "node_name", "workflow"],
+    ["project", "model", "node_name", "workflow", "workflow_id"],
 )
 TTFT_MS = Histogram(
     "langfuse_ttft_ms",
     "Time-to-first-token in milliseconds from Langfuse trace metadata",
-    ["project", "model", "node_name", "workflow"],
+    ["project", "model", "node_name", "workflow", "workflow_id"],
     buckets=(
         100,
         250,
@@ -96,44 +96,62 @@ TTFT_MS = Histogram(
 TTFT_MS_LAST = Gauge(
     "langfuse_ttft_ms_last",
     "Most recent TTFT in milliseconds observed by the exporter",
-    ["project", "model", "node_name", "workflow"],
+    ["project", "model", "node_name", "workflow", "workflow_id"],
 )
 TTFT_MS_AVG_WINDOW = Gauge(
     "langfuse_ttft_ms_avg_window",
     "Average TTFT (ms) over traces in the current lookback window",
-    ["project", "model", "node_name", "workflow"],
+    ["project", "model", "node_name", "workflow", "workflow_id"],
 )
 TTFT_MS_P95_WINDOW = Gauge(
     "langfuse_ttft_ms_p95_window",
     "Approx p95 TTFT (ms) over traces in the current lookback window",
-    ["project", "model", "node_name", "workflow"],
+    ["project", "model", "node_name", "workflow", "workflow_id"],
 )
 WINDOW_TRACES = Gauge(
     "langfuse_window_traces",
     "Number of traces with AI metrics in the lookback window",
-    ["project", "model", "node_name", "workflow"],
+    ["project", "model", "node_name", "workflow", "workflow_id"],
 )
 
 # Per-trace gauges (rebuilt each scrape) — for Grafana table + Execution ID filter
 TRACE_TTFT_MS = Gauge(
     "langfuse_trace_ttft_ms",
     "TTFT (ms) per Langfuse trace in the exporter lookback window",
-    ["project", "execution_id", "model", "node_name", "workflow", "trace_id"],
+    ["project", "execution_id", "model", "node_name", "workflow", "workflow_id", "trace_id"],
 )
 TRACE_INPUT_TOKENS = Gauge(
     "langfuse_trace_input_tokens",
     "Input tokens per Langfuse trace in the lookback window",
-    ["project", "execution_id", "model", "node_name", "workflow", "trace_id"],
+    ["project", "execution_id", "model", "node_name", "workflow", "workflow_id", "trace_id"],
 )
 TRACE_OUTPUT_TOKENS = Gauge(
     "langfuse_trace_output_tokens",
     "Output tokens per Langfuse trace in the lookback window",
-    ["project", "execution_id", "model", "node_name", "workflow", "trace_id"],
+    ["project", "execution_id", "model", "node_name", "workflow", "workflow_id", "trace_id"],
 )
 TRACE_TOTAL_TOKENS = Gauge(
     "langfuse_trace_total_tokens",
     "Total tokens per Langfuse trace in the lookback window",
-    ["project", "execution_id", "model", "node_name", "workflow", "trace_id"],
+    ["project", "execution_id", "model", "node_name", "workflow", "workflow_id", "trace_id"],
+)
+# Wide row for Grafana Table (one query; TTFT/tokens as labels — no joins)
+TRACE_ROW = Gauge(
+    "langfuse_trace_row",
+    "Langfuse AI trace row for Grafana tables (value always 1; numbers in labels)",
+    [
+        "project",
+        "execution_id",
+        "model",
+        "node_name",
+        "workflow",
+        "workflow_id",
+        "trace_id",
+        "ttft_ms",
+        "input_tokens",
+        "output_tokens",
+        "total_tokens",
+    ],
 )
 
 SCRAPE_SUCCESS = Gauge(
@@ -185,6 +203,7 @@ _ALL_DAILY_GAUGES = (
     TRACE_INPUT_TOKENS,
     TRACE_OUTPUT_TOKENS,
     TRACE_TOTAL_TOKENS,
+    TRACE_ROW,
 )
 
 # Per-project ring of seen trace IDs to avoid double-counting counters/histogram
@@ -295,20 +314,22 @@ def update_from_traces(project: str, trace_metrics: list[dict]) -> Tuple[int, in
 
     Returns (new_traces, window_traces_with_metrics).
     """
-    ttft_by_label: Dict[Tuple[str, str, str], list[float]] = defaultdict(list)
-    count_by_label: Dict[Tuple[str, str, str], int] = defaultdict(int)
+    ttft_by_label: Dict[Tuple[str, str, str, str], list[float]] = defaultdict(list)
+    count_by_label: Dict[Tuple[str, str, str, str], int] = defaultdict(int)
     new_count = 0
 
     for item in trace_metrics:
         model = item.get("model") or "unknown"
         node_name = item.get("node_name") or "unknown"
         workflow = item.get("workflow") or "unknown"
-        key = (model, node_name, workflow)
+        workflow_id = item.get("workflow_id") or "unknown"
+        key = (model, node_name, workflow, workflow_id)
         labels = {
             "project": project,
             "model": model,
             "node_name": node_name,
             "workflow": workflow,
+            "workflow_id": workflow_id,
         }
         count_by_label[key] += 1
         ttft_ms = item.get("ttft_ms")
@@ -324,6 +345,7 @@ def update_from_traces(project: str, trace_metrics: list[dict]) -> Tuple[int, in
             "model": model,
             "node_name": node_name,
             "workflow": workflow,
+            "workflow_id": workflow_id,
             "trace_id": trace_id,
         }
         if ttft_ms is not None:
@@ -336,6 +358,31 @@ def update_from_traces(project: str, trace_metrics: list[dict]) -> Tuple[int, in
             )
         if item.get("total_tokens") is not None:
             TRACE_TOTAL_TOKENS.labels(**row_labels).set(float(item["total_tokens"]))
+
+        def _label_num(value: object) -> str:
+            if value is None:
+                return ""
+            try:
+                number = float(value)
+            except (TypeError, ValueError):
+                return str(value)
+            if number == int(number):
+                return str(int(number))
+            return str(number)
+
+        TRACE_ROW.labels(
+            project=project,
+            execution_id=exec_id,
+            model=model,
+            node_name=node_name,
+            workflow=workflow,
+            workflow_id=workflow_id,
+            trace_id=trace_id,
+            ttft_ms=_label_num(ttft_ms),
+            input_tokens=_label_num(item.get("input_tokens")),
+            output_tokens=_label_num(item.get("output_tokens")),
+            total_tokens=_label_num(item.get("total_tokens")),
+        ).set(1)
 
         if not _remember_trace(project, item.get("trace_id", "")):
             continue
@@ -354,12 +401,13 @@ def update_from_traces(project: str, trace_metrics: list[dict]) -> Tuple[int, in
 
     # Rebuild window aggregates each scrape
     for key, window_count in count_by_label.items():
-        model, node_name, workflow = key
+        model, node_name, workflow, workflow_id = key
         labels = {
             "project": project,
             "model": model,
             "node_name": node_name,
             "workflow": workflow,
+            "workflow_id": workflow_id,
         }
         WINDOW_TRACES.labels(**labels).set(window_count)
         values_sorted = sorted(ttft_by_label.get(key, []))

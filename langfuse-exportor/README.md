@@ -95,6 +95,7 @@ The exporter reads numeric fields from each Langfuse trace `metadata` (as writte
 | `model` | label |
 | `n8n_node_name` or `n8n.node.name` | `node_name` label |
 | `n8n_workflow_name` or `n8n.workflow.name` | `workflow` label |
+| `n8n_workflow_id` or `n8n.workflow.id` | `workflow_id` label |
 
 Prompt/output text is **not** exported to Prometheus (cardinality / privacy).
 
@@ -165,7 +166,7 @@ When Langfuse returns no daily rows, or a day has no model usage, the exporter s
 
 ### Trace-based TTFT / tokens / rates
 
-Labels: `project`, `model`, `node_name`, `workflow`.
+Labels: `project`, `model`, `node_name`, `workflow`, `workflow_id`.
 
 Counters and the histogram are incremented **once per trace id** (deduped across scrapes) so you can use `rate()` / `increase()`.
 

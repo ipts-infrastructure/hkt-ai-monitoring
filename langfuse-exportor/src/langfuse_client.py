@@ -198,6 +198,16 @@ def extract_trace_metrics(trace: dict) -> Optional[dict]:
     if isinstance(workflow, dict):
         workflow = workflow.get("name") or "unknown"
 
+    workflow_id = (
+        metadata.get("n8n_workflow_id")
+        or metadata.get("n8n.workflow.id")
+        or metadata.get("workflowId")
+        or metadata.get("workflow_id")
+        or ""
+    )
+    if isinstance(workflow_id, dict):
+        workflow_id = workflow_id.get("id") or ""
+
     execution_id = metadata.get("executionId")
     if execution_id is None:
         execution_id = metadata.get("n8n_execution_id") or metadata.get(
@@ -213,5 +223,6 @@ def extract_trace_metrics(trace: dict) -> Optional[dict]:
         "model": str(model),
         "node_name": str(node_name),
         "workflow": str(workflow),
+        "workflow_id": str(workflow_id) if workflow_id not in (None, "") else "unknown",
         "execution_id": str(execution_id) if execution_id is not None else "",
     }

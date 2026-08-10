@@ -1380,7 +1380,7 @@
           },
           "limit": 100,
           "metricsQueryType": "range",
-          "query": "{ status = error } << { name = \"workflow.execute\" } | select(span.n8n.workflow.id, span.n8n.workflow.name)",
+          "query": "{ name = \"workflow.execute\" && status = error } | select(span.n8n.workflow.id, span.n8n.workflow.name)",
           "queryType": "traceql",
           "refId": "A",
           "serviceMapUseNativeHistograms": false,

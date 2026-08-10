@@ -1,0 +1,1483 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "n8n evaluations \u2014 token usage / TTFT rates (Langfuse exporter via Prometheus) and workflow latency (Tempo). Select project TTFT-example for AI metrics.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 0,
+  "links": [],
+  "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 9000,
+      "links": [
+        {
+          "includeVars": true,
+          "keepTime": true,
+          "targetBlank": false,
+          "title": "Open Overview",
+          "url": "/d/n8n-overview/n8n-overview?${__url_time_range}"
+        },
+        {
+          "includeVars": true,
+          "keepTime": true,
+          "targetBlank": false,
+          "title": "Open Traces",
+          "url": "/d/n8n-traces/n8n-traces?${__url_time_range}"
+        }
+      ],
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"display:flex;align-items:stretch;width:100%;height:100%;min-height:24px;border:none;border-radius:0;overflow:hidden;background:#191B1F;\"><a href=\"/d/n8n-overview/n8n-overview?orgId=1&${__url_time_range}\" style=\"flex:1;display:flex;text-decoration:none;color:inherit;min-width:0;background:#191B1F;\"><div style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border-radius:0;border:none;background:#191B1F;\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Overview</div></div></a><a href=\"/d/n8n-traces/n8n-traces?orgId=1&${__url_time_range}\" style=\"flex:1;display:flex;text-decoration:none;color:inherit;min-width:0;background:#191B1F;\"><div style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border-radius:0;border:none;background:#191B1F;\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Traces</div></div></a><div style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border-radius:0;border:none;border-bottom:2px solid #8ec8ff;background:#1a3a6b;\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Evaluations</div></div></div>",
+        "mode": "html"
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "Total Tokens",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 0,
+        "y": 2
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "sum by (date) (max by (project, date, model) (langfuse_tokens_total{project=~\"$project\"})) or label_replace(vector(0), \"date\", \"${__from:date:YYYY-MM-DD}\", \"\", \"\")",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Tokens",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "dateFormat": "YYYY-MM-DD",
+                "destinationType": "time",
+                "targetField": "date"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "p95 workflow.execute duration from Tempo.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "-",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 5000000000
+              },
+              {
+                "color": "red",
+                "value": 30000000000
+              }
+            ]
+          },
+          "unit": "ns"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 9,
+        "x": 5,
+        "y": 2
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 20,
+          "metricsQueryType": "range",
+          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"${workflow}\" } | quantile_over_time(duration, 0.95)",
+          "queryType": "traceql",
+          "refId": "A",
+          "tableType": "spans"
+        }
+      ],
+      "title": "p95 Latency",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "ns"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Workflow"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Open Traces",
+                    "url": "/d/n8n-traces/n8n-traces?orgId=1&${__url_time_range}&var-workflow=${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 10,
+        "x": 14,
+        "y": 2
+      },
+      "id": 7,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Duration (mean)"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 500,
+          "metricsQueryType": "range",
+          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"${workflow}\" } | select(span.n8n.workflow.name)",
+          "queryType": "traceql",
+          "refId": "A",
+          "tableType": "spans"
+        }
+      ],
+      "title": "Latency by Workflow",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Duration": {
+                "aggregations": [
+                  "mean",
+                  "min",
+                  "max"
+                ],
+                "operation": "aggregate"
+              },
+              "n8n.workflow.name": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "Duration (max)": "Max",
+              "Duration (mean)": "Avg",
+              "Duration (min)": "Min",
+              "n8n.workflow.name": "Workflow"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "Average and p95 workflow.execute latency over time.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "ns"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 14,
+        "x": 0,
+        "y": 6
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": false
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 20,
+          "metricsQueryType": "range",
+          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"${workflow}\" } | avg_over_time(duration) by (span.n8n.workflow.name)",
+          "queryType": "traceql",
+          "refId": "A",
+          "serviceMapUseNativeHistograms": false,
+          "tableType": "spans"
+        },
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 20,
+          "metricsQueryType": "range",
+          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"${workflow}\" } | quantile_over_time(duration, 0.95) by (span.n8n.workflow.name)",
+          "queryType": "traceql",
+          "refId": "B",
+          "serviceMapUseNativeHistograms": false,
+          "tableType": "spans"
+        }
+      ],
+      "title": "Latency over time (avg / p95) by Workflow",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "Daily combined token total.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 40,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "sum by (date) (max by (project, date, model) (langfuse_tokens_total{project=~\"$project\"})) or label_replace(vector(0), \"date\", \"${__from:date:YYYY-MM-DD}\", \"\", \"\")",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "tokens",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "title": "Tokens per Day",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "dateFormat": "YYYY-MM-DD",
+                "destinationType": "time",
+                "targetField": "date"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "prepareTimeSeries",
+          "options": {
+            "format": "wide"
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 20,
+      "panels": [],
+      "title": "AI TTFT / tokens / rates (Langfuse exporter)",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "Most recent AI_TTFT_Ms from Langfuse traces (exporter).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "-",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 8000
+              },
+              {
+                "color": "red",
+                "value": 16000
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 23
+      },
+      "id": 21,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "max(langfuse_ttft_ms_last{project=~\"$project\"})",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "TTFT last",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "Average TTFT over exporter lookback window.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "-",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 8000
+              },
+              {
+                "color": "red",
+                "value": 16000
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 23
+      },
+      "id": 22,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "avg(langfuse_ttft_ms_avg_window{project=~\"$project\"})",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "TTFT avg (window)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "Approx p95 TTFT over exporter lookback window.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "-",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 8000
+              },
+              {
+                "color": "red",
+                "value": 16000
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 23
+      },
+      "id": 23,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "max(langfuse_ttft_ms_p95_window{project=~\"$project\"})",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "TTFT p95 (window)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "Traces with AI metrics in the exporter lookback window.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "noValue": "-",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 8000
+              },
+              {
+                "color": "red",
+                "value": 16000
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 23
+      },
+      "id": 24,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "sum(langfuse_window_traces{project=~\"$project\"})",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Traces in window",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "Last TTFT gauge and histogram p95 from exporter.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "ms",
+          "noValue": "-"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 37
+      },
+      "id": 25,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "max by (model, node_name, workflow) (langfuse_ttft_ms_last{project=~\"$project\"})",
+          "legendFormat": "last {{model}} / {{node_name}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "histogram_quantile(0.95, sum by (le, model) (rate(langfuse_ttft_ms_bucket{project=~\"$project\"}[$__rate_interval])))",
+          "legendFormat": "p95 {{model}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "TTFT over time (last / p95 histogram)",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "Rates from exporter counters (deduped per Langfuse trace id).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "ops",
+          "noValue": "-"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 37
+      },
+      "id": 26,
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "max",
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "sum by (model) (rate(langfuse_traces_total{project=~\"$project\"}[$__rate_interval]))",
+          "legendFormat": "traces/s {{model}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "sum by (model) (rate(langfuse_trace_tokens_sum_total{project=~\"$project\"}[$__rate_interval]))",
+          "legendFormat": "tokens/s {{model}}",
+          "range": true,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "sum by (model) (rate(langfuse_trace_tokens_input_total{project=~\"$project\"}[$__rate_interval]))",
+          "legendFormat": "input tokens/s {{model}}",
+          "range": true,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "expr": "sum by (model) (rate(langfuse_trace_tokens_output_total{project=~\"$project\"}[$__rate_interval]))",
+          "legendFormat": "output tokens/s {{model}}",
+          "range": true,
+          "refId": "D"
+        }
+      ],
+      "title": "Request & token rates",
+      "type": "timeseries"
+    },
+    {
+      "type": "table",
+      "id": 27,
+      "title": "Langfuse TTFT / tokens (Prometheus)",
+      "description": "Prometheus langfuse-exporter. Project + Execution ID filter (use .* for all). One row per Langfuse trace.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 27
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TTFT (ms)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 2000
+                    },
+                    {
+                      "color": "red",
+                      "value": 8000
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Langfuse trace"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": true,
+                    "title": "Open Langfuse",
+                    "url": "${langfuseHost}/trace/${__value.raw}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "frameIndex": 0,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "TTFT (ms)"
+          }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "langfuse_trace_ttft_ms{project=~\"$project\", execution_id=~\"$executionId\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "TTFT (ms)",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "langfuse_trace_input_tokens{project=~\"$project\", execution_id=~\"$executionId\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "Input tokens",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "langfuse_trace_output_tokens{project=~\"$project\", execution_id=~\"$executionId\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "Output tokens",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "langfuse_trace_total_tokens{project=~\"$project\", execution_id=~\"$executionId\"}",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "Total tokens",
+          "range": false,
+          "refId": "D"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "joinByLabels",
+          "options": {
+            "join": [
+              "trace_id",
+              "execution_id",
+              "node_name",
+              "model",
+              "workflow",
+              "workflow_id",
+              "project"
+            ],
+            "value": "Value"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "job": true,
+              "instance": true
+            },
+            "indexByName": {
+              "execution_id": 0,
+              "node_name": 1,
+              "langfuse_trace_ttft_ms": 2,
+              "langfuse_trace_input_tokens": 3,
+              "langfuse_trace_output_tokens": 4,
+              "langfuse_trace_total_tokens": 5,
+              "TTFT (ms)": 2,
+              "Input tokens": 3,
+              "Output tokens": 4,
+              "Total tokens": 5,
+              "model": 6,
+              "workflow": 7,
+              "workflow_id": 8,
+              "project": 9,
+              "trace_id": 10
+            },
+            "renameByName": {
+              "execution_id": "Execution ID",
+              "node_name": "Node",
+              "langfuse_trace_ttft_ms": "TTFT (ms)",
+              "langfuse_trace_input_tokens": "Input tokens",
+              "langfuse_trace_output_tokens": "Output tokens",
+              "langfuse_trace_total_tokens": "Total tokens",
+              "Value #A": "TTFT (ms)",
+              "Value #B": "Input tokens",
+              "Value #C": "Output tokens",
+              "Value #D": "Total tokens",
+              "A": "TTFT (ms)",
+              "B": "Input tokens",
+              "C": "Output tokens",
+              "D": "Total tokens",
+              "model": "Model",
+              "workflow": "Workflow",
+              "workflow_id": "Workflow ID",
+              "project": "Project",
+              "trace_id": "Langfuse trace"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": [
+    "evaluations",
+    "langfuse",
+    "n8n",
+    "n8n-observability",
+    "prometheus",
+    "tempo",
+    "ttft"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": ".*",
+        "current": {
+          "text": "TTFT-example",
+          "value": [
+            "TTFT-example"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P7E2AE7DB8179C128"
+        },
+        "definition": "label_values(langfuse_exporter_last_scrape_success, project)",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Project",
+        "multi": true,
+        "name": "project",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(langfuse_exporter_last_scrape_success, project)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "regexApplyTo": "value",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": ".*",
+          "value": ".*"
+        },
+        "hide": 2,
+        "label": "Workflow",
+        "name": "workflow",
+        "options": [
+          {
+            "selected": true,
+            "text": ".*",
+            "value": ".*"
+          }
+        ],
+        "query": ".*",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": ".*",
+          "value": ".*"
+        },
+        "hide": 0,
+        "label": "Execution ID",
+        "name": "executionId",
+        "query": ".*",
+        "type": "textbox",
+        "options": [
+          {
+            "selected": true,
+            "text": ".*",
+            "value": ".*"
+          }
+        ]
+      },
+      {
+        "current": {
+          "text": "http://100.119.124.68:23001",
+          "value": "http://100.119.124.68:23001"
+        },
+        "hide": 2,
+        "label": "Langfuse Host",
+        "name": "langfuseHost",
+        "query": "http://100.119.124.68:23001",
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "n8n Evaluations",
+  "uid": "n8n-evaluations",
+  "version": 28,
+  "weekStart": ""
+}

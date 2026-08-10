@@ -45,6 +45,8 @@ cp langfuse-exportor/projects.json.example langfuse-exportor/projects.json
 
 Edit `langfuse-exportor/projects.json` with keys from Langfuse UI → **Project → Settings → API Keys**.
 
+The Prometheus `project` label is the JSON `name` field (e.g. `"TTFT-example"`). Grafana **n8n Evaluations** / **n8n Traces** filter AI TTFT & token-rate panels with the **Project** variable — select `TTFT-example` after the exporter has scraped once.
+
 The exporter is included in the main stack and scrapes Langfuse over the internal Docker network (`http://langfuse-web:3000`). Prometheus is preconfigured to scrape `langfuse-exporter:29100`.
 
 ### 4. Download & install HKT exporter binary

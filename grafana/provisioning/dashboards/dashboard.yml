@@ -11,5 +11,15 @@ providers:
     updateIntervalSeconds: 10
     allowUiUpdates: true
     options:
-      path: /var/lib/grafana/dashboards
+      path: /var/lib/grafana/dashboards/MacOS
+      foldersFromFilesStructure: false
+  - name: 'n8n'
+    orgId: 1
+    folder: 'n8n'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    allowUiUpdates: true
+    options:
+      path: /var/lib/grafana/dashboards/n8n
       foldersFromFilesStructure: false

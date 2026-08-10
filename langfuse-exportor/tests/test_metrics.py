@@ -116,6 +116,7 @@ class ExtractTraceMetricsTest(unittest.TestCase):
                     "model": "qwen/qwen3.6-27b",
                     "n8n_node_name": "AI Agent",
                     "n8n_workflow_name": "Demo Agent TTFT Langfuse",
+                    "n8n_workflow_id": "wf-123",
                     "executionId": 660,
                 },
             }
@@ -126,6 +127,8 @@ class ExtractTraceMetricsTest(unittest.TestCase):
         self.assertEqual(extracted["input_tokens"], 33.0)
         self.assertEqual(extracted["node_name"], "AI Agent")
         self.assertEqual(extracted["execution_id"], "660")
+        self.assertEqual(extracted["workflow_id"], "wf-123")
+        self.assertEqual(extracted["workflow"], "Demo Agent TTFT Langfuse")
 
     def test_reads_ttft_from_output_and_string_metadata(self) -> None:
         extracted = extract_trace_metrics(
@@ -152,11 +155,13 @@ class ExtractTraceMetricsTest(unittest.TestCase):
                     "AI_TTFT_Ms": 500,
                     "n8n.node.name": "AI Agent",
                     "n8n.workflow.name": "Demo",
+                    "n8n.workflow.id": "wf-dotted",
                 },
             }
         )
         self.assertEqual(extracted["node_name"], "AI Agent")
         self.assertEqual(extracted["workflow"], "Demo")
+        self.assertEqual(extracted["workflow_id"], "wf-dotted")
 
     def test_skips_traces_without_ai_metrics(self) -> None:
         self.assertIsNone(
@@ -184,6 +189,7 @@ class UpdateFromTracesTest(unittest.TestCase):
                 "model": "m1",
                 "node_name": "AI Agent",
                 "workflow": "Demo",
+                "workflow_id": "wf-1",
                 "execution_id": "1",
             }
         ]
@@ -192,6 +198,7 @@ class UpdateFromTracesTest(unittest.TestCase):
             "model": "m1",
             "node_name": "AI Agent",
             "workflow": "Demo",
+            "workflow_id": "wf-1",
         }
 
         new1, window1 = update_from_traces("demo", rows)
@@ -233,6 +240,7 @@ class UpdateFromTracesTest(unittest.TestCase):
                     "model": "m1",
                     "node_name": "AI Agent",
                     "workflow": "Demo",
+                    "workflow_id": "wf-1",
                     "trace_id": "t1",
                 },
             ),
