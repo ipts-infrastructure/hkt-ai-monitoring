@@ -1,6 +1,9 @@
 # Langfuse Prometheus Exporter
 
-Polls the Langfuse [Daily Metrics API](https://langfuse.com/docs/metrics/features/metrics-api#daily-metrics) for **multiple projects** and exposes Prometheus metrics with a `project` label.
+Polls Langfuse for **multiple projects** and exposes Prometheus metrics with a `project` label:
+
+1. **Daily Metrics API** — traces, observations, cost, tokens by model/day
+2. **Traces API** — per-trace **TTFT**, **tokens**, and **rates** (from n8n post-run metadata)
 
 Works with **Prometheus and Grafana already running on your Mac** — this repo only runs the exporter.
 
@@ -65,10 +68,35 @@ Reload Prometheus and confirm the target is **UP** (e.g. http://localhost:29090/
 6. Grafana PromQL examples:
 
 ```promql
+# Daily (calendar day label)
 sum by (project, model) (langfuse_tokens_total)
 sum by (project) (langfuse_daily_cost_usd)
+
+# TTFT / tokens / rates from traces (n8n post-run metadata)
+langfuse_ttft_ms_last
+langfuse_ttft_ms_avg_window
+histogram_quantile(0.95, sum by (le, project, model) (rate(langfuse_ttft_ms_bucket[15m])))
+rate(langfuse_traces_total[5m])
+rate(langfuse_trace_tokens_sum_total[5m])
+rate(langfuse_trace_tokens_input_total[5m])
+rate(langfuse_trace_tokens_output_total[5m])
+
 langfuse_exporter_last_scrape_success
 ```
+
+## Trace metadata expected (TTFT / tokens)
+
+The exporter reads numeric fields from each Langfuse trace `metadata` (as written by the n8n Langfuse post-run child):
+
+| Metadata key | Metric use |
+|--------------|------------|
+| `AI_TTFT_Ms` (or `AI_TTFT_Sec`) | TTFT histogram + last/avg/p95 |
+| `inputTokens` / `outputTokens` / `totalTokens` | Token counters |
+| `model` | label |
+| `n8n_node_name` or `n8n.node.name` | `node_name` label |
+| `n8n_workflow_name` or `n8n.workflow.name` | `workflow` label |
+
+Prompt/output text is **not** exported to Prometheus (cardinality / privacy).
 
 ## Logs
 
@@ -79,8 +107,7 @@ docker compose logs -f langfuse-exporter
 Expected output per scrape cycle:
 
 ```text
-INFO Scraped 7 daily metric rows for project dify-prod
-INFO Scraped 7 daily metric rows for project dify-dev
+INFO Scraped project dify-prod: daily_rows=7 traces=42 ai_metrics=12 new=3
 ```
 
 ## Scrape target by setup
@@ -111,11 +138,16 @@ cd src && python exporter.py
 | `LANGFUSE_PROJECTS_FILE` | yes | — | Path to projects JSON (use `/app/projects.json` in Docker) |
 | `SCRAPE_INTERVAL_SECONDS` | no | `60` | Poll interval |
 | `LOOKBACK_DAYS` | no | `7` | Days of daily metrics to fetch |
+| `TRACE_LOOKBACK_HOURS` | no | `24` | Hours of traces to fetch for TTFT/tokens |
+| `TRACE_PAGE_LIMIT` | no | `100` | Traces per API page |
+| `TRACE_MAX_PAGES` | no | `10` | Max pages per scrape |
 | `METRICS_PORT` | no | `29100` | Exporter listen port |
 
 ## Exported metrics
 
-All metrics include a `project` label.
+### Daily metrics API
+
+All include a `project` label. Day series also have a `date` label (`YYYY-MM-DD`).
 
 | Metric | Labels |
 |--------|--------|
@@ -128,11 +160,33 @@ All metrics include a `project` label.
 | `langfuse_model_cost_usd` | `project`, `date`, `model` |
 | `langfuse_model_traces` | `project`, `date`, `model` |
 | `langfuse_model_observations` | `project`, `date`, `model` |
+
+When Langfuse returns no daily rows, or a day has no model usage, the exporter still emits zero-valued metrics (`model="none"` for token series).
+
+### Trace-based TTFT / tokens / rates
+
+Labels: `project`, `model`, `node_name`, `workflow`.
+
+Counters and the histogram are incremented **once per trace id** (deduped across scrapes) so you can use `rate()` / `increase()`.
+
+| Metric | Type | Notes |
+|--------|------|-------|
+| `langfuse_traces_total` | Counter | Use `rate(...[5m])` for request rate |
+| `langfuse_trace_tokens_input_total` | Counter | Use `rate()` for tokens/sec |
+| `langfuse_trace_tokens_output_total` | Counter | Use `rate()` for tokens/sec |
+| `langfuse_trace_tokens_sum_total` | Counter | Use `rate()` for tokens/sec |
+| `langfuse_ttft_ms` | Histogram | Quantiles via `histogram_quantile` |
+| `langfuse_ttft_ms_last` | Gauge | Most recent TTFT |
+| `langfuse_ttft_ms_avg_window` | Gauge | Avg over lookback window |
+| `langfuse_ttft_ms_p95_window` | Gauge | Approx p95 over lookback window |
+| `langfuse_window_traces` | Gauge | Traces with TTFT in lookback |
+
+### Exporter health
+
+| Metric | Labels |
+|--------|--------|
 | `langfuse_exporter_last_scrape_success` | `project` |
+| `langfuse_exporter_last_scrape_timestamp_seconds` | `project` |
 | `langfuse_exporter_scrape_errors_total` | `project` |
-
-Each metric carries a `date` label (`YYYY-MM-DD`). Grafana filters by calendar day using that label and the dashboard time picker (Prometheus scrape timestamps are not used for day boundaries).
-
-When Langfuse returns no daily rows, or a day has no model usage, the exporter still emits zero-valued metrics (`model="none"` for token series) so Grafana/Prometheus always have a series to query.
 
 `projects.json` is gitignored — do not commit API keys.

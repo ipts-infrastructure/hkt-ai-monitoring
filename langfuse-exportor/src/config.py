@@ -46,5 +46,8 @@ def load_config() -> dict:
         "projects": load_projects(),
         "scrape_interval": int(os.environ.get("SCRAPE_INTERVAL_SECONDS", "60")),
         "lookback_days": int(os.environ.get("LOOKBACK_DAYS", "7")),
+        "trace_lookback_hours": int(os.environ.get("TRACE_LOOKBACK_HOURS", "24")),
+        "trace_page_limit": int(os.environ.get("TRACE_PAGE_LIMIT", "100")),
+        "trace_max_pages": int(os.environ.get("TRACE_MAX_PAGES", "10")),
         "metrics_port": int(os.environ.get("METRICS_PORT", "29100")),
     }
