@@ -3,11 +3,12 @@ from unittest.mock import patch
 
 from prometheus_client import REGISTRY
 
+from langfuse_client import extract_trace_metrics
 from metrics import (
-    DAILY_TRACES,
-    TOKENS_TOTAL,
+    clear_daily_gauges,
     clear_gauges,
     update_from_daily_rows,
+    update_from_traces,
 )
 
 
@@ -99,6 +100,112 @@ class UpdateFromDailyRowsTest(unittest.TestCase):
                 "langfuse_tokens_total",
                 {"project": "demo", "date": "2025-06-15", "model": "none"},
             ),
+        )
+
+
+class ExtractTraceMetricsTest(unittest.TestCase):
+    def test_extracts_ttft_tokens_and_underscore_labels(self) -> None:
+        extracted = extract_trace_metrics(
+            {
+                "id": "66000000000000000000000000000000",
+                "metadata": {
+                    "AI_TTFT_Ms": 11026,
+                    "inputTokens": 33,
+                    "outputTokens": 156,
+                    "totalTokens": 189,
+                    "model": "qwen/qwen3.6-27b",
+                    "n8n_node_name": "AI Agent",
+                    "n8n_workflow_name": "Demo Agent TTFT Langfuse",
+                    "executionId": 660,
+                },
+            }
+        )
+        self.assertIsNotNone(extracted)
+        assert extracted is not None
+        self.assertEqual(extracted["ttft_ms"], 11026.0)
+        self.assertEqual(extracted["input_tokens"], 33.0)
+        self.assertEqual(extracted["node_name"], "AI Agent")
+        self.assertEqual(extracted["execution_id"], "660")
+
+    def test_falls_back_to_dotted_metadata_keys(self) -> None:
+        extracted = extract_trace_metrics(
+            {
+                "id": "abc",
+                "metadata": {
+                    "AI_TTFT_Ms": 500,
+                    "n8n.node.name": "AI Agent",
+                    "n8n.workflow.name": "Demo",
+                },
+            }
+        )
+        self.assertEqual(extracted["node_name"], "AI Agent")
+        self.assertEqual(extracted["workflow"], "Demo")
+
+    def test_skips_traces_without_ai_metrics(self) -> None:
+        self.assertIsNone(
+            extract_trace_metrics({"id": "x", "metadata": {"foo": "bar"}})
+        )
+
+
+class UpdateFromTracesTest(unittest.TestCase):
+    def setUp(self) -> None:
+        clear_daily_gauges()
+        # Isolate seen-trace state per test project name
+        from metrics import _SEEN, _SEEN_SET
+
+        _SEEN.clear()
+        _SEEN_SET.clear()
+
+    def test_increments_counters_and_ttft_once_per_trace(self) -> None:
+        rows = [
+            {
+                "trace_id": "t1",
+                "ttft_ms": 1000.0,
+                "input_tokens": 10.0,
+                "output_tokens": 20.0,
+                "total_tokens": 30.0,
+                "model": "m1",
+                "node_name": "AI Agent",
+                "workflow": "Demo",
+                "execution_id": "1",
+            }
+        ]
+        labels = {
+            "project": "demo",
+            "model": "m1",
+            "node_name": "AI Agent",
+            "workflow": "Demo",
+        }
+
+        new1, window1 = update_from_traces("demo", rows)
+        self.assertEqual(new1, 1)
+        self.assertEqual(window1, 1)
+        self.assertEqual(
+            REGISTRY.get_sample_value("langfuse_traces_total", labels), 1.0
+        )
+        self.assertEqual(
+            REGISTRY.get_sample_value("langfuse_ttft_ms_last", labels), 1000.0
+        )
+        self.assertEqual(
+            REGISTRY.get_sample_value(
+                "langfuse_trace_tokens_input_total", labels
+            ),
+            10.0,
+        )
+
+        # Second scrape with same trace id must not double-count counters
+        new2, window2 = update_from_traces("demo", rows)
+        self.assertEqual(new2, 0)
+        self.assertEqual(window2, 1)
+        self.assertEqual(
+            REGISTRY.get_sample_value("langfuse_traces_total", labels), 1.0
+        )
+        self.assertEqual(
+            REGISTRY.get_sample_value("langfuse_ttft_ms_avg_window", labels),
+            1000.0,
+        )
+        self.assertEqual(
+            REGISTRY.get_sample_value("langfuse_window_traces", labels), 1.0
         )
 
 
