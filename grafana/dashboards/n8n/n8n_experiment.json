@@ -1,0 +1,1905 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Compare two n8n executions (possibly from different workflows): pick workflow → execution on each side, then compare node durations and Langfuse TTFT/tokens. Part of Overview / Traces / Evaluations / Experiment tabs.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 0,
+  "links": [],
+  "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 9000,
+      "links": [
+        {
+          "includeVars": true,
+          "keepTime": true,
+          "targetBlank": false,
+          "title": "Open Overview",
+          "url": "/d/n8n-overview/n8n-overview?${__url_time_range}"
+        },
+        {
+          "includeVars": true,
+          "keepTime": true,
+          "targetBlank": false,
+          "title": "Open Traces",
+          "url": "/d/n8n-traces/n8n-traces?${__url_time_range}"
+        },
+        {
+          "includeVars": true,
+          "keepTime": true,
+          "targetBlank": false,
+          "title": "Open Evaluations",
+          "url": "/d/n8n-evaluations/n8n-evaluations?${__url_time_range}"
+        }
+      ],
+      "options": {
+        "code": {
+          "language": "html",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<div style=\"display:flex;align-items:stretch;width:100%;height:100%;min-height:24px;border:none;border-radius:0;overflow:hidden;background:#191B1F;\"><a href=\"/d/n8n-overview/n8n-overview?orgId=1&${__url_time_range}\" style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border:none;text-decoration:none;color:inherit;background:#191B1F;cursor:pointer;\" onmouseover=\"this.style.background='#2a3140';var l=this.querySelector('div');if(l)l.style.color='#8ec8ff';\" onmouseout=\"this.style.background='#191B1F';var l=this.querySelector('div');if(l)l.style.color='#ffffff';\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Overview</div></a><a href=\"/d/n8n-traces/n8n-traces?orgId=1&${__url_time_range}\" style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border:none;text-decoration:none;color:inherit;background:#191B1F;cursor:pointer;\" onmouseover=\"this.style.background='#2a3140';var l=this.querySelector('div');if(l)l.style.color='#8ec8ff';\" onmouseout=\"this.style.background='#191B1F';var l=this.querySelector('div');if(l)l.style.color='#ffffff';\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Traces</div></a><a href=\"/d/n8n-evaluations/n8n-evaluations?orgId=1&${__url_time_range}\" style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border:none;text-decoration:none;color:inherit;background:#191B1F;cursor:pointer;\" onmouseover=\"this.style.background='#2a3140';var l=this.querySelector('div');if(l)l.style.color='#8ec8ff';\" onmouseout=\"this.style.background='#191B1F';var l=this.querySelector('div');if(l)l.style.color='#ffffff';\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Evaluations</div></a><div style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border:none;border-bottom:2px solid #8ec8ff;background:#1a3a6b;\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Experiment</div></div></div>",
+        "mode": "html"
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "Click a workflow to set Workflow A. Then pick an execution on the right.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Workflow"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Select workflow A",
+                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowA=${__value.raw}&var-executionIdA=&var-workflowB=${workflowB}&var-executionIdB=${executionIdB}&var-project=${project}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Traces Count"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "red",
+                      "value": 200
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Error Count"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "noValue",
+                "value": "0"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 0,
+        "y": 2
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": true,
+          "fields": "",
+          "reducer": [
+            "count"
+          ],
+          "show": true
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Workflow"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 500,
+          "metricsQueryType": "range",
+          "query": "{ name = \"workflow.execute\" } | select(span.n8n.workflow.name, status)",
+          "queryType": "traceql",
+          "refId": "A",
+          "serviceMapUseNativeHistograms": false,
+          "tableType": "spans"
+        }
+      ],
+      "title": "A · Workflows",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "n8n.workflow.name": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "status": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "groupingToMatrix",
+          "options": {
+            "columnField": "status",
+            "emptyValue": "zero",
+            "rowField": "n8n.workflow.name",
+            "valueField": "status (count)"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Traces Count",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "error",
+                "ok",
+                "unset"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "ok": true,
+              "unset": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Traces Count": 1,
+              "error": 3,
+              "n8n.workflow.name": 0,
+              "ok": 2
+            },
+            "renameByName": {
+              "error": "Error Count",
+              "n8n.workflow.name": "Workflow"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "Executions for Workflow A. Click Execution ID to select it for comparison. A and B can be from different workflows.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "#EAB839",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Trace ID"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Select execution A",
+                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowA=${workflowA}&var-executionIdA=${__data.fields[\"Execution ID\"]}&var-workflowB=${workflowB}&var-executionIdB=${executionIdB}&var-project=${project}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Execution ID"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Select as Execution A",
+                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowA=${workflowA}&var-executionIdA=${__value.raw}&var-workflowB=${workflowB}&var-executionIdB=${executionIdB}&var-project=${project}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "error": {
+                        "color": "red",
+                        "index": 1,
+                        "text": "Error"
+                      },
+                      "ok": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "OK"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ns"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 6,
+        "y": 2
+      },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Start time"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 50,
+          "metricsQueryType": "range",
+          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"^${workflowA}$\" } | select(span.n8n.workflow.id, span.n8n.workflow.name, span.n8n.execution.id, status)",
+          "queryType": "traceql",
+          "refId": "A",
+          "tableType": "spans"
+        }
+      ],
+      "title": "A · Executions: ${workflowA}",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Trace ID",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "traceIdHidden"
+              ],
+              "reducer": "first"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Name": true,
+              "Service": true,
+              "Span ID": true,
+              "Trace Name": true,
+              "Trace Service": true,
+              "n8n.workflow.id": true,
+              "name": true,
+              "nested": true,
+              "service.name": true,
+              "spanID": true,
+              "traceIdHidden": true,
+              "traceName": true,
+              "traceService": true
+            },
+            "indexByName": {
+              "Duration": 4,
+              "Start time": 5,
+              "Trace ID": 0,
+              "n8n.execution.id": 2,
+              "n8n.workflow.name": 1,
+              "status": 3
+            },
+            "renameByName": {
+              "n8n.execution.id": "Execution ID",
+              "n8n.workflow.name": "Workflow",
+              "status": "Status"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "Click a workflow to set Workflow B. Then pick an execution on the right.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "noValue": "0",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Workflow"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Select workflow B",
+                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowB=${__value.raw}&var-executionIdB=&var-workflowA=${workflowA}&var-executionIdA=${executionIdA}&var-project=${project}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Traces Count"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "red",
+                      "value": 200
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Error Count"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "red",
+                      "value": 1
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "noValue",
+                "value": "0"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 12,
+        "y": 2
+      },
+      "id": 12,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": true,
+          "fields": "",
+          "reducer": [
+            "count"
+          ],
+          "show": true
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Workflow"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 500,
+          "metricsQueryType": "range",
+          "query": "{ name = \"workflow.execute\" } | select(span.n8n.workflow.name, status)",
+          "queryType": "traceql",
+          "refId": "A",
+          "serviceMapUseNativeHistograms": false,
+          "tableType": "spans"
+        }
+      ],
+      "title": "B · Workflows",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "n8n.workflow.name": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "status": {
+                "aggregations": [
+                  "count"
+                ],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "groupingToMatrix",
+          "options": {
+            "columnField": "status",
+            "emptyValue": "zero",
+            "rowField": "n8n.workflow.name",
+            "valueField": "status (count)"
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Traces Count",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "error",
+                "ok",
+                "unset"
+              ],
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "ok": true,
+              "unset": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Traces Count": 1,
+              "error": 3,
+              "n8n.workflow.name": 0,
+              "ok": 2
+            },
+            "renameByName": {
+              "error": "Error Count",
+              "n8n.workflow.name": "Workflow"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "Executions for Workflow B. Click Execution ID to select it for comparison. A and B can be from different workflows.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "#EAB839",
+                "value": 50
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Trace ID"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Select execution B",
+                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowB=${workflowB}&var-executionIdB=${__data.fields[\"Execution ID\"]}&var-workflowA=${workflowA}&var-executionIdA=${executionIdA}&var-project=${project}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Execution ID"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "targetBlank": false,
+                    "title": "Select as Execution B",
+                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowB=${workflowB}&var-executionIdB=${__value.raw}&var-workflowA=${workflowA}&var-executionIdA=${executionIdA}&var-project=${project}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "error": {
+                        "color": "red",
+                        "index": 1,
+                        "text": "Error"
+                      },
+                      "ok": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "OK"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ns"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 6,
+        "x": 18,
+        "y": 2
+      },
+      "id": 13,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Start time"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 50,
+          "metricsQueryType": "range",
+          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"^${workflowB}$\" } | select(span.n8n.workflow.id, span.n8n.workflow.name, span.n8n.execution.id, status)",
+          "queryType": "traceql",
+          "refId": "A",
+          "tableType": "spans"
+        }
+      ],
+      "title": "B · Executions: ${workflowB}",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "Trace ID",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "traceIdHidden"
+              ],
+              "reducer": "first"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Name": true,
+              "Service": true,
+              "Span ID": true,
+              "Trace Name": true,
+              "Trace Service": true,
+              "n8n.workflow.id": true,
+              "name": true,
+              "nested": true,
+              "service.name": true,
+              "spanID": true,
+              "traceIdHidden": true,
+              "traceName": true,
+              "traceService": true
+            },
+            "indexByName": {
+              "Duration": 4,
+              "Start time": 5,
+              "Trace ID": 0,
+              "n8n.execution.id": 2,
+              "n8n.workflow.name": 1,
+              "status": 3
+            },
+            "renameByName": {
+              "n8n.execution.id": "Execution ID",
+              "n8n.workflow.name": "Workflow",
+              "status": "Status"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "node.execute children of the workflow.execute span for this Execution ID. (Node spans do not carry n8n.execution.id — filter via parent >> child.) If empty, check Trace detail for node spans, and that N8N_OTEL_TRACES_INCLUDE_NODE_SPANS is not false. Span limit (spss) is raised so early nodes (e.g. Chat Trigger) are included; table pagination is client-side.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "error": {
+                        "color": "red",
+                        "index": 1,
+                        "text": "Error"
+                      },
+                      "ok": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "OK"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ns"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 12
+      },
+      "id": 20,
+      "options": {
+        "cellHeight": "sm",
+        "enablePagination": true,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Start time"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 200,
+          "metricsQueryType": "range",
+          "query": "{ name = \"workflow.execute\" && span.n8n.execution.id =~ \"^${executionIdA}$\" } >> { name = \"node.execute\" } | select(span.n8n.node.name, span.n8n.node.type, status, statusMessage)",
+          "queryType": "traceql",
+          "refId": "A",
+          "spss": 500,
+          "tableType": "spans"
+        }
+      ],
+      "title": "A · Nodes: ${executionIdA} (${workflowA})",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Name": true,
+              "Service": true,
+              "Span ID": true,
+              "Trace ID": true,
+              "Trace Name": true,
+              "Trace Service": true,
+              "n8n.execution.id": true,
+              "name": true,
+              "nested": true,
+              "service.name": true,
+              "spanID": true,
+              "traceIdHidden": true,
+              "traceName": true,
+              "traceService": true
+            },
+            "indexByName": {
+              "Duration": 4,
+              "Start time": 0,
+              "n8n.node.name": 1,
+              "n8n.node.type": 2,
+              "status": 3,
+              "statusMessage": 5
+            },
+            "renameByName": {
+              "n8n.node.name": "Node",
+              "n8n.node.type": "Node type",
+              "status": "Status",
+              "statusMessage": "Error message"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "description": "node.execute children of the workflow.execute span for this Execution ID. (Node spans do not carry n8n.execution.id — filter via parent >> child.) If empty, check Trace detail for node spans, and that N8N_OTEL_TRACES_INCLUDE_NODE_SPANS is not false. Span limit (spss) is raised so early nodes (e.g. Chat Trigger) are included; table pagination is client-side.",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Status"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "error": {
+                        "color": "red",
+                        "index": 1,
+                        "text": "Error"
+                      },
+                      "ok": {
+                        "color": "green",
+                        "index": 0,
+                        "text": "OK"
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ns"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 12
+      },
+      "id": 21,
+      "options": {
+        "cellHeight": "sm",
+        "enablePagination": true,
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Start time"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "limit": 200,
+          "metricsQueryType": "range",
+          "query": "{ name = \"workflow.execute\" && span.n8n.execution.id =~ \"^${executionIdB}$\" } >> { name = \"node.execute\" } | select(span.n8n.node.name, span.n8n.node.type, status, statusMessage)",
+          "queryType": "traceql",
+          "refId": "A",
+          "spss": 500,
+          "tableType": "spans"
+        }
+      ],
+      "title": "B · Nodes: ${executionIdB} (${workflowB})",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Name": true,
+              "Service": true,
+              "Span ID": true,
+              "Trace ID": true,
+              "Trace Name": true,
+              "Trace Service": true,
+              "n8n.execution.id": true,
+              "name": true,
+              "nested": true,
+              "service.name": true,
+              "spanID": true,
+              "traceIdHidden": true,
+              "traceName": true,
+              "traceService": true
+            },
+            "indexByName": {
+              "Duration": 4,
+              "Start time": 0,
+              "n8n.node.name": 1,
+              "n8n.node.type": 2,
+              "status": 3,
+              "statusMessage": 5
+            },
+            "renameByName": {
+              "n8n.node.name": "Node",
+              "n8n.node.type": "Node type",
+              "status": "Status",
+              "statusMessage": "Error message"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "TTFT / tokens from langfuse-exporter for Execution A. Filtered by Project + Execution ID (workflow filter optional per side).",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TTFT (ms)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 167
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "__name__ 1"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 221
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 30,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "TTFT (ms)"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "last_over_time(langfuse_trace_ttft_ms{project=~\"$project\", workflow=~\"^$workflowA$\", execution_id=~\"^$executionIdA$\"}[$__range])",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "last_over_time(langfuse_trace_input_tokens{project=~\"$project\", workflow=~\"^$workflowA$\", execution_id=~\"^$executionIdA$\"}[$__range])",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "last_over_time(langfuse_trace_output_tokens{project=~\"$project\", workflow=~\"^$workflowA$\", execution_id=~\"^$executionIdA$\"}[$__range])",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "last_over_time(langfuse_trace_total_tokens{project=~\"$project\", workflow=~\"^$workflowA$\", execution_id=~\"^$executionIdA$\"}[$__range])",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "D"
+        }
+      ],
+      "title": "A · Langfuse TTFT / tokens (${executionIdA})",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "execution_id",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "Value #B": false,
+              "__name__ 1": true,
+              "__name__ 2": true,
+              "__name__ 3": true,
+              "__name__ 4": true,
+              "instance 1": true,
+              "instance 2": true,
+              "instance 3": true,
+              "instance 4": true,
+              "job 1": true,
+              "job 2": true,
+              "job 3": true,
+              "job 4": true,
+              "model 2": true,
+              "model 3": true,
+              "model 4": true,
+              "node_name 2": true,
+              "node_name 3": true,
+              "node_name 4": true,
+              "project 1": true,
+              "project 2": true,
+              "project 3": true,
+              "project 4": true,
+              "trace_id 1": true,
+              "trace_id 2": true,
+              "trace_id 3": true,
+              "trace_id 4": true,
+              "workflow 1": false,
+              "workflow 2": true,
+              "workflow 3": true,
+              "workflow 4": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Execution ID": 0,
+              "Input tokens": 3,
+              "Langfuse trace": 10,
+              "Model": 6,
+              "Node": 1,
+              "Output tokens": 4,
+              "Project": 9,
+              "TTFT (ms)": 2,
+              "Total tokens": 5,
+              "Workflow": 7,
+              "Workflow ID": 8,
+              "execution_id": 0,
+              "node_name": 1
+            },
+            "renameByName": {
+              "Time 2": "",
+              "Value": "TTFT (ms)",
+              "Value #A": "TTFT (ms)",
+              "Value #B": "Input tokens",
+              "Value #C": "Output tokens",
+              "Value #D": "Total tokens",
+              "Value 1": "Input tokens",
+              "Value 2": "Output tokens",
+              "Value 3": "Total tokens",
+              "execution_id": "Execution ID",
+              "model": "Model",
+              "node_name": "Node",
+              "node_name 1": "AI Node Name",
+              "project": "Project",
+              "trace_id": "Langfuse trace",
+              "workflow": "Workflow",
+              "workflow 1": "Workflow",
+              "workflow_id": "Workflow ID"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "P7E2AE7DB8179C128"
+      },
+      "description": "TTFT / tokens from langfuse-exporter for Execution B. Filtered by Project + Execution ID (workflow filter optional per side).",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TTFT (ms)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 167
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "__name__ 1"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 221
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "id": 31,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "TTFT (ms)"
+          }
+        ]
+      },
+      "pluginVersion": "12.4.0-21342258703",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "last_over_time(langfuse_trace_ttft_ms{project=~\"$project\", workflow=~\"^$workflowB$\", execution_id=~\"^$executionIdB$\"}[$__range])",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "last_over_time(langfuse_trace_input_tokens{project=~\"$project\", workflow=~\"^$workflowB$\", execution_id=~\"^$executionIdB$\"}[$__range])",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "B"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "last_over_time(langfuse_trace_output_tokens{project=~\"$project\", workflow=~\"^$workflowB$\", execution_id=~\"^$executionIdB$\"}[$__range])",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "C"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "P7E2AE7DB8179C128"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "last_over_time(langfuse_trace_total_tokens{project=~\"$project\", workflow=~\"^$workflowB$\", execution_id=~\"^$executionIdB$\"}[$__range])",
+          "format": "table",
+          "instant": true,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "D"
+        }
+      ],
+      "title": "B · Langfuse TTFT / tokens (${executionIdB})",
+      "transformations": [
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "execution_id",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "Time 1": true,
+              "Time 2": true,
+              "Time 3": true,
+              "Time 4": true,
+              "Value #B": false,
+              "__name__ 1": true,
+              "__name__ 2": true,
+              "__name__ 3": true,
+              "__name__ 4": true,
+              "instance 1": true,
+              "instance 2": true,
+              "instance 3": true,
+              "instance 4": true,
+              "job 1": true,
+              "job 2": true,
+              "job 3": true,
+              "job 4": true,
+              "model 2": true,
+              "model 3": true,
+              "model 4": true,
+              "node_name 2": true,
+              "node_name 3": true,
+              "node_name 4": true,
+              "project 1": true,
+              "project 2": true,
+              "project 3": true,
+              "project 4": true,
+              "trace_id 1": true,
+              "trace_id 2": true,
+              "trace_id 3": true,
+              "trace_id 4": true,
+              "workflow 1": false,
+              "workflow 2": true,
+              "workflow 3": true,
+              "workflow 4": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "Execution ID": 0,
+              "Input tokens": 3,
+              "Langfuse trace": 10,
+              "Model": 6,
+              "Node": 1,
+              "Output tokens": 4,
+              "Project": 9,
+              "TTFT (ms)": 2,
+              "Total tokens": 5,
+              "Workflow": 7,
+              "Workflow ID": 8,
+              "execution_id": 0,
+              "node_name": 1
+            },
+            "renameByName": {
+              "Time 2": "",
+              "Value": "TTFT (ms)",
+              "Value #A": "TTFT (ms)",
+              "Value #B": "Input tokens",
+              "Value #C": "Output tokens",
+              "Value #D": "Total tokens",
+              "Value 1": "Input tokens",
+              "Value 2": "Output tokens",
+              "Value 3": "Total tokens",
+              "execution_id": "Execution ID",
+              "model": "Model",
+              "node_name": "Node",
+              "node_name 1": "AI Node Name",
+              "project": "Project",
+              "trace_id": "Langfuse trace",
+              "workflow": "Workflow",
+              "workflow 1": "Workflow",
+              "workflow_id": "Workflow ID"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "30s",
+  "schemaVersion": 42,
+  "tags": [
+    "n8n"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": ".*",
+        "current": {
+          "text": [
+            "TTFT-example"
+          ],
+          "value": [
+            "TTFT-example"
+          ]
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "P7E2AE7DB8179C128"
+        },
+        "definition": "label_values(langfuse_exporter_last_scrape_success, project)",
+        "hide": 2,
+        "includeAll": true,
+        "label": "Project",
+        "multi": true,
+        "name": "project",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(langfuse_exporter_last_scrape_success, project)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "regexApplyTo": "value",
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": ".*",
+          "value": ".*"
+        },
+        "description": "Workflow for side A. Click a row in A · Workflows.",
+        "hide": 2,
+        "label": "Workflow A",
+        "name": "workflowA",
+        "options": [
+          {
+            "selected": true,
+            "text": ".*",
+            "value": ".*"
+          }
+        ],
+        "query": ".*",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "Execution for side A. Click Execution ID in A · Executions.",
+        "hide": 2,
+        "label": "Execution A",
+        "name": "executionIdA",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": ".*",
+          "value": ".*"
+        },
+        "description": "Workflow for side B (can differ from A). Click a row in B · Workflows.",
+        "hide": 2,
+        "label": "Workflow B",
+        "name": "workflowB",
+        "options": [
+          {
+            "selected": true,
+            "text": ".*",
+            "value": ".*"
+          }
+        ],
+        "query": ".*",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "Execution for side B. Click Execution ID in B · Executions.",
+        "hide": 2,
+        "label": "Execution B",
+        "name": "executionIdB",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "2026-08-09T07:24:08.789Z",
+    "to": "2026-08-11T07:24:08.789Z"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "n8n Experiment",
+  "uid": "n8n-experiment",
+  "version": 8,
+  "weekStart": ""
+}

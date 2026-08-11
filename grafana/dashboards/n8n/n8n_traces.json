@@ -19,6 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
+  "id": 0,
   "links": [],
   "panels": [
     {
@@ -47,6 +48,13 @@
           "targetBlank": false,
           "title": "Open Evaluations",
           "url": "/d/n8n-evaluations/n8n-evaluations?from=${__from}&to=${__to}"
+        },
+        {
+          "includeVars": true,
+          "keepTime": true,
+          "targetBlank": false,
+          "title": "Open Experiment",
+          "url": "/d/n8n-experiment/n8n-experiment?from=${__from}&to=${__to}"
         }
       ],
       "options": {
@@ -55,7 +63,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<div style=\"display:flex;align-items:stretch;width:100%;height:100%;min-height:24px;border:none;border-radius:0;overflow:hidden;background:#191B1F;\"><a href=\"/d/n8n-overview/n8n-overview?orgId=1&from=${__from}&to=${__to}\" style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border:none;text-decoration:none;color:inherit;background:#191B1F;cursor:pointer;\" onmouseover=\"this.style.background='#2a3140';var l=this.querySelector('div');if(l)l.style.color='#8ec8ff';\" onmouseout=\"this.style.background='#191B1F';var l=this.querySelector('div');if(l)l.style.color='#ffffff';\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Overview</div></a><div style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border:none;border-bottom:2px solid #8ec8ff;background:#1a3a6b;\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Traces</div></div><a href=\"/d/n8n-evaluations/n8n-evaluations?orgId=1&from=${__from}&to=${__to}\" style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border:none;text-decoration:none;color:inherit;background:#191B1F;cursor:pointer;\" onmouseover=\"this.style.background='#2a3140';var l=this.querySelector('div');if(l)l.style.color='#8ec8ff';\" onmouseout=\"this.style.background='#191B1F';var l=this.querySelector('div');if(l)l.style.color='#ffffff';\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Evaluations</div></a></div>",
+        "content": "<div style=\"display:flex;align-items:stretch;width:100%;height:100%;min-height:24px;border:none;border-radius:0;overflow:hidden;background:#191B1F;\"><a href=\"/d/n8n-overview/n8n-overview?orgId=1&from=${__from}&to=${__to}\" style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border:none;text-decoration:none;color:inherit;background:#191B1F;cursor:pointer;\" onmouseover=\"this.style.background='#2a3140';var l=this.querySelector('div');if(l)l.style.color='#8ec8ff';\" onmouseout=\"this.style.background='#191B1F';var l=this.querySelector('div');if(l)l.style.color='#ffffff';\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Overview</div></a><div style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border:none;border-bottom:2px solid #8ec8ff;background:#1a3a6b;\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Traces</div></div><a href=\"/d/n8n-evaluations/n8n-evaluations?orgId=1&from=${__from}&to=${__to}\" style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border:none;text-decoration:none;color:inherit;background:#191B1F;cursor:pointer;\" onmouseover=\"this.style.background='#2a3140';var l=this.querySelector('div');if(l)l.style.color='#8ec8ff';\" onmouseout=\"this.style.background='#191B1F';var l=this.querySelector('div');if(l)l.style.color='#ffffff';\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Evaluations</div></a><a href=\"/d/n8n-experiment/n8n-experiment?orgId=1&from=${__from}&to=${__to}\" style=\"flex:1;display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-height:24px;padding:4px 28px;border:none;text-decoration:none;color:inherit;background:#191B1F;cursor:pointer;\" onmouseover=\"this.style.background='#2a3140';var l=this.querySelector('div');if(l)l.style.color='#8ec8ff';\" onmouseout=\"this.style.background='#191B1F';var l=this.querySelector('div');if(l)l.style.color='#ffffff';\"><div style=\"font-size:12px;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;\">Experiment</div></a></div>",
         "mode": "html"
       },
       "pluginVersion": "12.4.0-21342258703",
@@ -621,7 +629,7 @@
         "type": "tempo",
         "uid": "tempo"
       },
-      "description": "node.execute children of the workflow.execute span for this Execution ID. (Node spans do not carry n8n.execution.id — filter via parent >> child.) If empty, check Trace detail for node spans, and that N8N_OTEL_TRACES_INCLUDE_NODE_SPANS is not false.",
+      "description": "node.execute children of the workflow.execute span for this Execution ID. (Node spans do not carry n8n.execution.id — filter via parent >> child.) If empty, check Trace detail for node spans, and that N8N_OTEL_TRACES_INCLUDE_NODE_SPANS is not false. Span limit (spss) is raised so early nodes (e.g. Chat Trigger) are included; table pagination is client-side.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -700,18 +708,31 @@
                 }
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Node"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 274
+              }
+            ]
           }
         ]
       },
       "gridPos": {
         "h": 16,
-        "w": 8,
+        "w": 11,
         "x": 0,
         "y": 21
       },
       "id": 4,
       "options": {
         "cellHeight": "sm",
+        "enablePagination": true,
         "showHeader": true,
         "sortBy": [
           {
@@ -732,6 +753,8 @@
           "query": "{ name = \"workflow.execute\" && span.n8n.execution.id =~ \"^${executionId}$\" } >> { name = \"node.execute\" } | select(span.n8n.node.name, span.n8n.node.type, status, statusMessage)",
           "queryType": "traceql",
           "refId": "A",
+          "serviceMapUseNativeHistograms": false,
+          "spss": 500,
           "tableType": "spans"
         }
       ],
@@ -752,10 +775,12 @@
               "nested": true,
               "service.name": true,
               "spanID": true,
+              "statusMessage": true,
               "traceIdHidden": true,
               "traceName": true,
               "traceService": true
             },
+            "includeByName": {},
             "indexByName": {
               "Duration": 4,
               "Start time": 0,
@@ -787,8 +812,8 @@
       },
       "gridPos": {
         "h": 16,
-        "w": 16,
-        "x": 8,
+        "w": 13,
+        "x": 11,
         "y": 21
       },
       "id": 5,
@@ -832,7 +857,7 @@
             "cellOptions": {
               "type": "auto"
             },
-            "filterable": true,
+            "filterable": false,
             "footer": {
               "reducers": []
             },
@@ -1068,14 +1093,7 @@
   "refresh": "30s",
   "schemaVersion": 42,
   "tags": [
-    "infinity",
-    "langfuse",
-    "n8n",
-    "n8n-observability",
-    "prometheus",
-    "tempo",
-    "traces",
-    "ttft"
+    "n8n"
   ],
   "templating": {
     "list": [
@@ -1094,6 +1112,7 @@
           "uid": "P7E2AE7DB8179C128"
         },
         "definition": "label_values(langfuse_exporter_last_scrape_success, project)",
+        "hide": 2,
         "includeAll": true,
         "label": "Project",
         "multi": true,
@@ -1115,6 +1134,7 @@
           "text": ".*",
           "value": ".*"
         },
+        "hide": 2,
         "label": "Workflow",
         "name": "workflow",
         "options": [
@@ -1132,6 +1152,7 @@
           "text": "c56c13135aef497b4cd747a656d95881",
           "value": "c56c13135aef497b4cd747a656d95881"
         },
+        "hide": 2,
         "label": "Trace ID",
         "name": "traceId",
         "options": [
@@ -1150,6 +1171,7 @@
           "value": "670"
         },
         "description": "Filters Nodes (via parent workflow span) + Langfuse TTFT. Use .* for all; click Execution ID in the Trace table for one run.",
+        "hide": 2,
         "label": "Execution ID",
         "name": "executionId",
         "options": [
@@ -1167,6 +1189,7 @@
           "text": "http://100.119.124.68:23001",
           "value": "http://100.119.124.68:23001"
         },
+        "hide": 2,
         "label": "Langfuse Host",
         "name": "langfuseHost",
         "options": [
@@ -1184,6 +1207,7 @@
           "text": "langfuse-datasource",
           "value": "afuqecnvw5zpcc"
         },
+        "hide": 2,
         "includeAll": false,
         "label": "Langfuse DS",
         "name": "langfuseDs",
@@ -1196,13 +1220,13 @@
     ]
   },
   "time": {
-    "from": "2026-08-09T09:43:36.962Z",
-    "to": "2026-08-10T09:43:36.962Z"
+    "from": "2026-08-09T07:24:08.789Z",
+    "to": "2026-08-11T07:24:08.789Z"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "n8n Traces",
   "uid": "n8n-traces",
-  "version": 128,
+  "version": 145,
   "weekStart": ""
 }
