@@ -114,7 +114,7 @@
                   {
                     "targetBlank": false,
                     "title": "Select workflow A",
-                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowA=${__value.raw}&var-executionIdA=&var-workflowB=${workflowB}&var-executionIdB=${executionIdB}&var-project=${project}"
+                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&from=${__from}&to=${__to}&var-workflowA=${__value.raw:percentencode}&var-executionIdA=&var-workflowB=${workflowB:percentencode}&var-executionIdB=${executionIdB}&${project:queryparam}"
                   }
                 ]
               }
@@ -307,7 +307,7 @@
         "type": "tempo",
         "uid": "tempo"
       },
-      "description": "Executions for Workflow A. Click Execution ID to select it for comparison. A and B can be from different workflows.",
+      "description": "Distinct executions for Workflow A. One row per Execution ID (parallel Tempo traces collapsed). Click Execution ID to select.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -322,42 +322,16 @@
           },
           "mappings": [],
           "thresholds": {
-            "mode": "percentage",
+            "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": 0
-              },
-              {
-                "color": "#EAB839",
-                "value": 50
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Trace ID"
-            },
-            "properties": [
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": false,
-                    "title": "Select execution A",
-                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowA=${workflowA}&var-executionIdA=${__data.fields[\"Execution ID\"]}&var-workflowB=${workflowB}&var-executionIdB=${executionIdB}&var-project=${project}"
-                  }
-                ]
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -370,7 +344,7 @@
                   {
                     "targetBlank": false,
                     "title": "Select as Execution A",
-                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowA=${workflowA}&var-executionIdA=${__value.raw}&var-workflowB=${workflowB}&var-executionIdB=${executionIdB}&var-project=${project}"
+                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&from=${__from}&to=${__to}&var-workflowA=${workflowA:percentencode}&var-executionIdA=${__value.raw}&var-workflowB=${workflowB:percentencode}&var-executionIdB=${executionIdB}&${project:queryparam}"
                   }
                 ]
               }
@@ -414,7 +388,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Duration"
+              "options": "Execution Duration"
             },
             "properties": [
               {
@@ -422,11 +396,45 @@
                 "value": "ns"
               },
               {
+                "id": "min",
+                "value": 0
+              },
+              {
                 "id": "custom.cellOptions",
                 "value": {
                   "mode": "gradient",
                   "type": "gauge",
                   "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "percentage",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "orange",
+                      "value": 75
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
                 }
               }
             ]
@@ -442,6 +450,7 @@
       "id": 11,
       "options": {
         "cellHeight": "sm",
+        "enablePagination": true,
         "showHeader": true,
         "sortBy": [
           {
@@ -457,61 +466,80 @@
             "type": "tempo",
             "uid": "tempo"
           },
-          "limit": 50,
+          "limit": 200,
           "metricsQueryType": "range",
-          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"^${workflowA}$\" } | select(span.n8n.workflow.id, span.n8n.workflow.name, span.n8n.execution.id, status)",
+          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"^${workflowA}$\" } | select(span.n8n.workflow.name, span.n8n.execution.id, status)",
           "queryType": "traceql",
           "refId": "A",
+          "spss": 20,
           "tableType": "spans"
         }
       ],
       "title": "A · Executions: ${workflowA}",
       "transformations": [
         {
-          "id": "calculateField",
+          "id": "groupBy",
           "options": {
-            "alias": "Trace ID",
-            "mode": "reduceRow",
-            "reduce": {
-              "include": [
-                "traceIdHidden"
-              ],
-              "reducer": "first"
-            },
-            "replaceFields": false
+            "fields": {
+              "Duration": {
+                "aggregations": [
+                  "max"
+                ],
+                "operation": "aggregate"
+              },
+              "Start time": {
+                "aggregations": [
+                  "min"
+                ],
+                "operation": "aggregate"
+              },
+              "n8n.execution.id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "status": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "aggregate"
+              }
+            }
           }
         },
         {
           "id": "organize",
           "options": {
-            "excludeByName": {
-              "Name": true,
-              "Service": true,
-              "Span ID": true,
-              "Trace Name": true,
-              "Trace Service": true,
-              "n8n.workflow.id": true,
-              "name": true,
-              "nested": true,
-              "service.name": true,
-              "spanID": true,
-              "traceIdHidden": true,
-              "traceName": true,
-              "traceService": true
-            },
+            "excludeByName": {},
             "indexByName": {
-              "Duration": 4,
-              "Start time": 5,
-              "Trace ID": 0,
-              "n8n.execution.id": 2,
-              "n8n.workflow.name": 1,
-              "status": 3
+              "Duration (max)": 3,
+              "Start time (min)": 2,
+              "n8n.execution.id": 0,
+              "status (last)": 1
             },
             "renameByName": {
+              "Duration (max)": "Execution Duration",
+              "Last status": "Status",
+              "Start time (min)": "Start time",
               "n8n.execution.id": "Execution ID",
-              "n8n.workflow.name": "Workflow",
-              "status": "Status"
+              "status": "Status",
+              "status (last)": "Status"
             }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "Execution Duration"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "Duration (max)"
+              }
+            ],
+            "fields": {}
           }
         }
       ],
@@ -560,7 +588,7 @@
                   {
                     "targetBlank": false,
                     "title": "Select workflow B",
-                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowB=${__value.raw}&var-executionIdB=&var-workflowA=${workflowA}&var-executionIdA=${executionIdA}&var-project=${project}"
+                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&from=${__from}&to=${__to}&var-workflowB=${__value.raw:percentencode}&var-executionIdB=&var-workflowA=${workflowA:percentencode}&var-executionIdA=${executionIdA}&${project:queryparam}"
                   }
                 ]
               }
@@ -753,7 +781,7 @@
         "type": "tempo",
         "uid": "tempo"
       },
-      "description": "Executions for Workflow B. Click Execution ID to select it for comparison. A and B can be from different workflows.",
+      "description": "Distinct executions for Workflow B. One row per Execution ID (parallel Tempo traces collapsed). Click Execution ID to select.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -768,42 +796,16 @@
           },
           "mappings": [],
           "thresholds": {
-            "mode": "percentage",
+            "mode": "absolute",
             "steps": [
               {
                 "color": "green",
                 "value": 0
-              },
-              {
-                "color": "#EAB839",
-                "value": 50
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
         },
         "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Trace ID"
-            },
-            "properties": [
-              {
-                "id": "links",
-                "value": [
-                  {
-                    "targetBlank": false,
-                    "title": "Select execution B",
-                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowB=${workflowB}&var-executionIdB=${__data.fields[\"Execution ID\"]}&var-workflowA=${workflowA}&var-executionIdA=${executionIdA}&var-project=${project}"
-                  }
-                ]
-              }
-            ]
-          },
           {
             "matcher": {
               "id": "byName",
@@ -816,7 +818,7 @@
                   {
                     "targetBlank": false,
                     "title": "Select as Execution B",
-                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&${__url_time_range}&var-workflowB=${workflowB}&var-executionIdB=${__value.raw}&var-workflowA=${workflowA}&var-executionIdA=${executionIdA}&var-project=${project}"
+                    "url": "/d/n8n-experiment/n8n-experiment?orgId=1&from=${__from}&to=${__to}&var-workflowB=${workflowB:percentencode}&var-executionIdB=${__value.raw}&var-workflowA=${workflowA:percentencode}&var-executionIdA=${executionIdA}&${project:queryparam}"
                   }
                 ]
               }
@@ -860,7 +862,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Duration"
+              "options": "Execution Duration"
             },
             "properties": [
               {
@@ -868,11 +870,45 @@
                 "value": "ns"
               },
               {
+                "id": "min",
+                "value": 0
+              },
+              {
                 "id": "custom.cellOptions",
                 "value": {
                   "mode": "gradient",
                   "type": "gauge",
                   "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "percentage",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "orange",
+                      "value": 75
+                    },
+                    {
+                      "color": "red",
+                      "value": 90
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "color",
+                "value": {
+                  "mode": "thresholds"
                 }
               }
             ]
@@ -888,6 +924,7 @@
       "id": 13,
       "options": {
         "cellHeight": "sm",
+        "enablePagination": true,
         "showHeader": true,
         "sortBy": [
           {
@@ -903,61 +940,80 @@
             "type": "tempo",
             "uid": "tempo"
           },
-          "limit": 50,
+          "limit": 200,
           "metricsQueryType": "range",
-          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"^${workflowB}$\" } | select(span.n8n.workflow.id, span.n8n.workflow.name, span.n8n.execution.id, status)",
+          "query": "{ name = \"workflow.execute\" && span.n8n.workflow.name =~ \"^${workflowB}$\" } | select(span.n8n.workflow.name, span.n8n.execution.id, status)",
           "queryType": "traceql",
           "refId": "A",
+          "spss": 20,
           "tableType": "spans"
         }
       ],
       "title": "B · Executions: ${workflowB}",
       "transformations": [
         {
-          "id": "calculateField",
+          "id": "groupBy",
           "options": {
-            "alias": "Trace ID",
-            "mode": "reduceRow",
-            "reduce": {
-              "include": [
-                "traceIdHidden"
-              ],
-              "reducer": "first"
-            },
-            "replaceFields": false
+            "fields": {
+              "Duration": {
+                "aggregations": [
+                  "max"
+                ],
+                "operation": "aggregate"
+              },
+              "Start time": {
+                "aggregations": [
+                  "min"
+                ],
+                "operation": "aggregate"
+              },
+              "n8n.execution.id": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "status": {
+                "aggregations": [
+                  "last"
+                ],
+                "operation": "aggregate"
+              }
+            }
           }
         },
         {
           "id": "organize",
           "options": {
-            "excludeByName": {
-              "Name": true,
-              "Service": true,
-              "Span ID": true,
-              "Trace Name": true,
-              "Trace Service": true,
-              "n8n.workflow.id": true,
-              "name": true,
-              "nested": true,
-              "service.name": true,
-              "spanID": true,
-              "traceIdHidden": true,
-              "traceName": true,
-              "traceService": true
-            },
+            "excludeByName": {},
             "indexByName": {
-              "Duration": 4,
-              "Start time": 5,
-              "Trace ID": 0,
-              "n8n.execution.id": 2,
-              "n8n.workflow.name": 1,
-              "status": 3
+              "Duration (max)": 3,
+              "Start time (min)": 2,
+              "n8n.execution.id": 0,
+              "status (last)": 1
             },
             "renameByName": {
+              "Duration (max)": "Execution Duration",
+              "Last status": "Status",
+              "Start time (min)": "Start time",
               "n8n.execution.id": "Execution ID",
-              "n8n.workflow.name": "Workflow",
-              "status": "Status"
+              "status": "Status",
+              "status (last)": "Status"
             }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "Execution Duration"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "Duration (max)"
+              }
+            ],
+            "fields": {}
           }
         }
       ],
@@ -1075,11 +1131,12 @@
             "type": "tempo",
             "uid": "tempo"
           },
-          "limit": 200,
+          "limit": 50,
           "metricsQueryType": "range",
-          "query": "{ name = \"workflow.execute\" && span.n8n.execution.id =~ \"^${executionIdA}$\" } >> { name = \"node.execute\" } | select(span.n8n.node.name, span.n8n.node.type, status, statusMessage)",
+          "query": "{ name = \"workflow.execute\" && span.n8n.execution.id = \"${executionIdA}\" } >> { name = \"node.execute\" } | select(span.n8n.node.name, span.n8n.node.type, status, statusMessage)",
           "queryType": "traceql",
           "refId": "A",
+          "serviceMapUseNativeHistograms": false,
           "spss": 500,
           "tableType": "spans"
         }
@@ -1093,6 +1150,7 @@
               "Name": true,
               "Service": true,
               "Span ID": true,
+              "Start time": true,
               "Trace ID": true,
               "Trace Name": true,
               "Trace Service": true,
@@ -1105,13 +1163,19 @@
               "traceName": true,
               "traceService": true
             },
+            "includeByName": {},
             "indexByName": {
-              "Duration": 4,
+              "Duration": 3,
+              "Name": 10,
+              "Span ID": 9,
               "Start time": 0,
+              "Trace Name": 8,
+              "Trace Service": 7,
               "n8n.node.name": 1,
               "n8n.node.type": 2,
-              "status": 3,
-              "statusMessage": 5
+              "status": 4,
+              "statusMessage": 5,
+              "traceIdHidden": 6
             },
             "renameByName": {
               "n8n.node.name": "Node",
@@ -1236,9 +1300,9 @@
             "type": "tempo",
             "uid": "tempo"
           },
-          "limit": 200,
+          "limit": 50,
           "metricsQueryType": "range",
-          "query": "{ name = \"workflow.execute\" && span.n8n.execution.id =~ \"^${executionIdB}$\" } >> { name = \"node.execute\" } | select(span.n8n.node.name, span.n8n.node.type, status, statusMessage)",
+          "query": "{ name = \"workflow.execute\" && span.n8n.execution.id = \"${executionIdB}\" } >> { name = \"node.execute\" } | select(span.n8n.node.name, span.n8n.node.type, status, statusMessage)",
           "queryType": "traceql",
           "refId": "A",
           "spss": 500,
@@ -1254,6 +1318,7 @@
               "Name": true,
               "Service": true,
               "Span ID": true,
+              "Start time": true,
               "Trace ID": true,
               "Trace Name": true,
               "Trace Service": true,
@@ -1266,13 +1331,19 @@
               "traceName": true,
               "traceService": true
             },
+            "includeByName": {},
             "indexByName": {
-              "Duration": 4,
+              "Duration": 3,
+              "Name": 10,
+              "Span ID": 9,
               "Start time": 0,
+              "Trace Name": 8,
+              "Trace Service": 7,
               "n8n.node.name": 1,
               "n8n.node.type": 2,
-              "status": 3,
-              "statusMessage": 5
+              "status": 4,
+              "statusMessage": 5,
+              "traceIdHidden": 6
             },
             "renameByName": {
               "n8n.node.name": "Node",
@@ -1438,7 +1509,7 @@
           "refId": "D"
         }
       ],
-      "title": "A · Langfuse TTFT / tokens (${executionIdA})",
+      "title": "A · Execution Statistic (${executionIdA})",
       "transformations": [
         {
           "id": "joinByField",
@@ -1682,7 +1753,7 @@
           "refId": "D"
         }
       ],
-      "title": "B · Langfuse TTFT / tokens (${executionIdB})",
+      "title": "B · Execution Statistic (${executionIdB})",
       "transformations": [
         {
           "id": "joinByField",
@@ -1816,8 +1887,8 @@
       },
       {
         "current": {
-          "text": ".*",
-          "value": ".*"
+          "text": "Experiment A Workflow",
+          "value": "Experiment A Workflow"
         },
         "description": "Workflow for side A. Click a row in A · Workflows.",
         "hide": 2,
@@ -1826,17 +1897,17 @@
         "options": [
           {
             "selected": true,
-            "text": ".*",
-            "value": ".*"
+            "text": "Experiment A Workflow",
+            "value": "Experiment A Workflow"
           }
         ],
-        "query": ".*",
+        "query": "Experiment A Workflow",
         "type": "textbox"
       },
       {
         "current": {
-          "text": "",
-          "value": ""
+          "text": "676",
+          "value": "676"
         },
         "description": "Execution for side A. Click Execution ID in A · Executions.",
         "hide": 2,
@@ -1845,17 +1916,17 @@
         "options": [
           {
             "selected": true,
-            "text": "",
-            "value": ""
+            "text": "676",
+            "value": "676"
           }
         ],
-        "query": "",
+        "query": "676",
         "type": "textbox"
       },
       {
         "current": {
-          "text": ".*",
-          "value": ".*"
+          "text": "Experiment B Workflow",
+          "value": "Experiment B Workflow"
         },
         "description": "Workflow for side B (can differ from A). Click a row in B · Workflows.",
         "hide": 2,
@@ -1864,17 +1935,17 @@
         "options": [
           {
             "selected": true,
-            "text": ".*",
-            "value": ".*"
+            "text": "Experiment B Workflow",
+            "value": "Experiment B Workflow"
           }
         ],
-        "query": ".*",
+        "query": "Experiment B Workflow",
         "type": "textbox"
       },
       {
         "current": {
-          "text": "",
-          "value": ""
+          "text": "678",
+          "value": "678"
         },
         "description": "Execution for side B. Click Execution ID in B · Executions.",
         "hide": 2,
@@ -1883,23 +1954,23 @@
         "options": [
           {
             "selected": true,
-            "text": "",
-            "value": ""
+            "text": "678",
+            "value": "678"
           }
         ],
-        "query": "",
+        "query": "678",
         "type": "textbox"
       }
     ]
   },
   "time": {
-    "from": "2026-08-09T07:24:08.789Z",
-    "to": "2026-08-11T07:24:08.789Z"
+    "from": "2026-08-11T04:21:43.489Z",
+    "to": "2026-08-12T04:21:43.489Z"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "n8n Experiment",
   "uid": "n8n-experiment",
-  "version": 8,
+  "version": 27,
   "weekStart": ""
 }
