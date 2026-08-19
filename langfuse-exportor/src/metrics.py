@@ -431,18 +431,29 @@ def update_from_observations(
             "trace_id": trace_id,
             "observation_id": observation_id,
         }
-        if ttft_ms is not None:
-            TRACE_TTFT_MS.labels(**row_labels).set(float(ttft_ms))
-        if tps is not None:
-            TRACE_TPS.labels(**row_labels).set(float(tps))
-        if item.get("input_tokens") is not None:
-            TRACE_INPUT_TOKENS.labels(**row_labels).set(float(item["input_tokens"]))
-        if item.get("output_tokens") is not None:
-            TRACE_OUTPUT_TOKENS.labels(**row_labels).set(
-                float(item["output_tokens"])
-            )
-        if item.get("total_tokens") is not None:
-            TRACE_TOTAL_TOKENS.labels(**row_labels).set(float(item["total_tokens"]))
+        # Always emit gauges so Grafana table joins don't collapse when
+        # Langfuse omits TTFT (non-streaming) or TPS.
+        TRACE_TTFT_MS.labels(**row_labels).set(
+            float(ttft_ms) if ttft_ms is not None else 0.0
+        )
+        TRACE_TPS.labels(**row_labels).set(
+            float(tps) if tps is not None else 0.0
+        )
+        TRACE_INPUT_TOKENS.labels(**row_labels).set(
+            float(item["input_tokens"])
+            if item.get("input_tokens") is not None
+            else 0.0
+        )
+        TRACE_OUTPUT_TOKENS.labels(**row_labels).set(
+            float(item["output_tokens"])
+            if item.get("output_tokens") is not None
+            else 0.0
+        )
+        TRACE_TOTAL_TOKENS.labels(**row_labels).set(
+            float(item["total_tokens"])
+            if item.get("total_tokens") is not None
+            else 0.0
+        )
 
         TRACE_ROW.labels(
             project=project,
