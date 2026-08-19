@@ -203,6 +203,21 @@ def _ttft_ms_from_observation(observation: dict) -> Optional[float]:
     return ttft_sec * 1000.0
 
 
+def _latency_ms_from_observation(observation: dict) -> Optional[float]:
+    """
+    Langfuse generation latency in milliseconds.
+
+    Observations API returns `latency` in seconds (v2); some builds use ms.
+    """
+    latency = _to_float(observation.get("latency"))
+    if latency is None or latency < 0:
+        return None
+    # Same heuristic as TPS: values > 600 are treated as already-ms
+    if latency > 600:
+        return latency
+    return latency * 1000.0
+
+
 def _tps_from_observation(
     observation: dict,
     *,
@@ -254,11 +269,18 @@ def extract_observation_metrics(observation: dict) -> Optional[dict]:
             return None
 
     ttft_ms = _ttft_ms_from_observation(observation)
+    latency_ms = _latency_ms_from_observation(observation)
     input_tokens, output_tokens, total_tokens = _usage_tokens(observation)
     tps = _tps_from_observation(observation, output_tokens=output_tokens)
 
-    # Require Langfuse TTFT or TPS (or usage) so empty generations are skipped
-    if ttft_ms is None and tps is None and input_tokens is None and output_tokens is None:
+    # Require Langfuse TTFT, latency, TPS, or usage so empty generations are skipped
+    if (
+        ttft_ms is None
+        and latency_ms is None
+        and tps is None
+        and input_tokens is None
+        and output_tokens is None
+    ):
         return None
 
     metadata = _as_dict(observation.get("metadata"))
@@ -305,6 +327,7 @@ def extract_observation_metrics(observation: dict) -> Optional[dict]:
         "observation_id": str(observation.get("id") or ""),
         "trace_id": str(observation.get("traceId") or observation.get("trace_id") or ""),
         "ttft_ms": ttft_ms,
+        "latency_ms": latency_ms,
         "tps": tps,
         "input_tokens": input_tokens,
         "output_tokens": output_tokens,

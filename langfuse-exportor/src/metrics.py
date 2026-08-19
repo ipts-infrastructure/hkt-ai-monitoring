@@ -153,6 +153,20 @@ TRACE_TPS = Gauge(
         "observation_id",
     ],
 )
+TRACE_LATENCY_MS = Gauge(
+    "langfuse_trace_latency_ms",
+    "Langfuse generation latency (ms) per generation in the lookback window",
+    [
+        "project",
+        "execution_id",
+        "model",
+        "node_name",
+        "workflow",
+        "workflow_id",
+        "trace_id",
+        "observation_id",
+    ],
+)
 TRACE_INPUT_TOKENS = Gauge(
     "langfuse_trace_input_tokens",
     "Langfuse input tokens per generation in the lookback window",
@@ -209,6 +223,7 @@ TRACE_ROW = Gauge(
         "trace_id",
         "observation_id",
         "ttft_ms",
+        "latency_ms",
         "tps",
         "input_tokens",
         "output_tokens",
@@ -264,6 +279,7 @@ _ALL_DAILY_GAUGES = (
     WINDOW_TRACES,
     TRACE_TTFT_MS,
     TRACE_TPS,
+    TRACE_LATENCY_MS,
     TRACE_INPUT_TOKENS,
     TRACE_OUTPUT_TOKENS,
     TRACE_TOTAL_TOKENS,
@@ -412,6 +428,7 @@ def update_from_observations(
         }
         count_by_label[key] += 1
         ttft_ms = item.get("ttft_ms")
+        latency_ms = item.get("latency_ms")
         tps = item.get("tps")
         if ttft_ms is not None:
             ttft_by_label[key].append(float(ttft_ms))
@@ -435,6 +452,9 @@ def update_from_observations(
         # Langfuse omits TTFT (non-streaming) or TPS.
         TRACE_TTFT_MS.labels(**row_labels).set(
             float(ttft_ms) if ttft_ms is not None else 0.0
+        )
+        TRACE_LATENCY_MS.labels(**row_labels).set(
+            float(latency_ms) if latency_ms is not None else 0.0
         )
         TRACE_TPS.labels(**row_labels).set(
             float(tps) if tps is not None else 0.0
@@ -465,6 +485,7 @@ def update_from_observations(
             trace_id=trace_id,
             observation_id=observation_id,
             ttft_ms=_label_num(ttft_ms),
+            latency_ms=_label_num(latency_ms),
             tps=_label_num(tps),
             input_tokens=_label_num(item.get("input_tokens")),
             output_tokens=_label_num(item.get("output_tokens")),

@@ -127,6 +127,7 @@ class ExtractObservationMetricsTest(unittest.TestCase):
         self.assertIsNotNone(extracted)
         assert extracted is not None
         self.assertAlmostEqual(extracted["ttft_ms"], 1102.6)
+        self.assertEqual(extracted["latency_ms"], 3500.0)
         self.assertEqual(extracted["tps"], 42.5)
         self.assertEqual(extracted["input_tokens"], 33.0)
         self.assertEqual(extracted["output_tokens"], 156.0)
@@ -172,6 +173,7 @@ class ExtractObservationMetricsTest(unittest.TestCase):
         )
         assert extracted is not None
         self.assertEqual(extracted["ttft_ms"], 200.0)
+        self.assertEqual(extracted["latency_ms"], 2000.0)
         self.assertEqual(extracted["tps"], 50.0)
 
     def test_skips_without_langfuse_metrics(self) -> None:
@@ -210,6 +212,7 @@ class UpdateFromObservationsTest(unittest.TestCase):
                 "observation_id": "o1",
                 "trace_id": "t1",
                 "ttft_ms": 1000.0,
+                "latency_ms": 2500.0,
                 "tps": 25.0,
                 "input_tokens": 10.0,
                 "output_tokens": 20.0,
@@ -288,6 +291,22 @@ class UpdateFromObservationsTest(unittest.TestCase):
                 },
             ),
             25.0,
+        )
+        self.assertEqual(
+            REGISTRY.get_sample_value(
+                "langfuse_trace_latency_ms",
+                {
+                    "project": "demo",
+                    "execution_id": "1",
+                    "model": "m1",
+                    "node_name": "AI Agent",
+                    "workflow": "Demo",
+                    "workflow_id": "wf-1",
+                    "trace_id": "t1",
+                    "observation_id": "o1",
+                },
+            ),
+            2500.0,
         )
 
 
