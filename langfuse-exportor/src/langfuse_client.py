@@ -32,75 +32,104 @@ class LangfuseClient:
         payload = response.json()
         return payload.get("data", [])
 
-    def fetch_trace(self, trace_id: str) -> dict:
-        response = self._session.get(
-            f"{self._base}/api/public/traces/{trace_id}",
-            timeout=60,
-        )
-        response.raise_for_status()
-        return response.json()
-
-    def fetch_traces(
+    def fetch_observations(
         self,
         lookback_hours: int,
         *,
         page_limit: int = 100,
         max_pages: int = 10,
-        hydrate_missing_ai: bool = True,
     ) -> list[dict]:
         """
-        Fetch recent traces within the lookback window.
+        Fetch GENERATION observations with Langfuse-calculated metrics.
 
-        Langfuse list responses sometimes omit custom metadata; when AI fields
-        are missing we optionally GET each trace by id.
+        Tries Observations API v2 first (`fields` includes metrics/usage), then
+        falls back to v1 page-based `/api/public/observations`.
         """
         end = datetime.now(timezone.utc)
         start = end - timedelta(hours=lookback_hours)
-        traces: list[dict] = []
-        page = 1
-        while page <= max_pages:
-            params = {
-                "fromTimestamp": start.isoformat().replace("+00:00", "Z"),
-                "toTimestamp": end.isoformat().replace("+00:00", "Z"),
+        from_ts = start.isoformat().replace("+00:00", "Z")
+        to_ts = end.isoformat().replace("+00:00", "Z")
+
+        try:
+            return self._fetch_observations_v2(
+                from_ts, to_ts, page_limit=page_limit, max_pages=max_pages
+            )
+        except Exception as exc:
+            logger.info(
+                "Observations v2 unavailable (%s); falling back to v1", exc
+            )
+            return self._fetch_observations_v1(
+                from_ts, to_ts, page_limit=page_limit, max_pages=max_pages
+            )
+
+    def _fetch_observations_v2(
+        self,
+        from_ts: str,
+        to_ts: str,
+        *,
+        page_limit: int,
+        max_pages: int,
+    ) -> list[dict]:
+        observations: list[dict] = []
+        cursor: Optional[str] = None
+        for _ in range(max_pages):
+            params: dict[str, Any] = {
+                "fromStartTime": from_ts,
+                "toStartTime": to_ts,
+                "type": "GENERATION",
                 "limit": page_limit,
-                "page": page,
+                "fields": "core,basic,metrics,usage,model,time,metadata",
             }
+            if cursor:
+                params["cursor"] = cursor
             response = self._session.get(
-                f"{self._base}/api/public/traces",
+                f"{self._base}/api/public/v2/observations",
                 params=params,
                 timeout=60,
             )
             response.raise_for_status()
             payload = response.json()
             batch = payload.get("data") or []
-            traces.extend(batch)
+            observations.extend(batch)
+            meta = payload.get("meta") or {}
+            cursor = meta.get("cursor")
+            if not batch or not cursor:
+                break
+        return observations
+
+    def _fetch_observations_v1(
+        self,
+        from_ts: str,
+        to_ts: str,
+        *,
+        page_limit: int,
+        max_pages: int,
+    ) -> list[dict]:
+        observations: list[dict] = []
+        page = 1
+        while page <= max_pages:
+            params = {
+                "fromStartTime": from_ts,
+                "toStartTime": to_ts,
+                "type": "GENERATION",
+                "limit": page_limit,
+                "page": page,
+            }
+            response = self._session.get(
+                f"{self._base}/api/public/observations",
+                params=params,
+                timeout=60,
+            )
+            response.raise_for_status()
+            payload = response.json()
+            batch = payload.get("data") or []
+            observations.extend(batch)
             meta = payload.get("meta") or {}
             total_pages = int(meta.get("totalPages") or 1)
             if page >= total_pages or not batch:
                 break
             page += 1
-
-        if not hydrate_missing_ai:
-            return traces
-
-        hydrated: list[dict] = []
-        for trace in traces:
-            if _has_ai_fields(trace):
-                hydrated.append(trace)
-                continue
-            trace_id = trace.get("id")
-            if not trace_id:
-                hydrated.append(trace)
-                continue
-            try:
-                detail = self.fetch_trace(str(trace_id))
-                hydrated.append(detail if isinstance(detail, dict) else trace)
-            except Exception:
-                logger.warning(
-                    "Failed to hydrate Langfuse trace %s", trace_id, exc_info=True
-                )
-                hydrated.append(trace)
-        return hydrated
+        return observations
 
 
 def _as_dict(value: Any) -> dict:
@@ -116,15 +145,6 @@ def _as_dict(value: Any) -> dict:
     return {}
 
 
-def _has_ai_fields(trace: dict) -> bool:
-    metadata = _as_dict(trace.get("metadata"))
-    output = _as_dict(trace.get("output"))
-    for key in ("AI_TTFT_Ms", "AI_TTFT_Sec", "inputTokens", "outputTokens", "totalTokens"):
-        if metadata.get(key) is not None or output.get(key) is not None:
-            return True
-    return False
-
-
 def _to_float(value: Any) -> Optional[float]:
     if value is None or value == "":
         return None
@@ -137,86 +157,155 @@ def _to_float(value: Any) -> Optional[float]:
     return number
 
 
-def extract_trace_metrics(trace: dict) -> Optional[dict]:
-    """
-    Pull TTFT / tokens / labels from a Langfuse trace.
+def _usage_tokens(observation: dict) -> tuple[Optional[float], Optional[float], Optional[float]]:
+    """Read Langfuse usage fields (not n8n metadata)."""
+    usage = _as_dict(observation.get("usage"))
+    details = _as_dict(observation.get("usageDetails"))
 
-    Supports post-run metadata from n8n demos:
-      AI_TTFT_Ms, inputTokens, outputTokens, totalTokens,
-      model, n8n_node_name / n8n.node.name, n8n_workflow_name, executionId
-    Also checks trace.output (n8n sometimes stores TTFT there).
-    """
-    metadata = _as_dict(trace.get("metadata"))
-    output = _as_dict(trace.get("output"))
-
-    ttft_ms = _to_float(metadata.get("AI_TTFT_Ms"))
-    if ttft_ms is None:
-        ttft_ms = _to_float(output.get("AI_TTFT_Ms"))
-    if ttft_ms is None:
-        ttft_sec = _to_float(metadata.get("AI_TTFT_Sec"))
-        if ttft_sec is None:
-            ttft_sec = _to_float(output.get("AI_TTFT_Sec"))
-        if ttft_sec is not None:
-            ttft_ms = ttft_sec * 1000.0
-
-    input_tokens = _to_float(metadata.get("inputTokens"))
-    if input_tokens is None:
-        input_tokens = _to_float(output.get("inputTokens"))
-    output_tokens = _to_float(metadata.get("outputTokens"))
-    if output_tokens is None:
-        output_tokens = _to_float(output.get("outputTokens"))
-    total_tokens = _to_float(metadata.get("totalTokens"))
-    if total_tokens is None:
-        total_tokens = _to_float(output.get("totalTokens"))
+    input_tokens = _to_float(
+        observation.get("inputUsage")
+        or usage.get("input")
+        or usage.get("promptTokens")
+        or details.get("input")
+        or details.get("promptTokens")
+    )
+    output_tokens = _to_float(
+        observation.get("outputUsage")
+        or usage.get("output")
+        or usage.get("completionTokens")
+        or details.get("output")
+        or details.get("completionTokens")
+    )
+    total_tokens = _to_float(
+        observation.get("totalUsage")
+        or usage.get("total")
+        or usage.get("totalTokens")
+        or details.get("total")
+        or details.get("totalTokens")
+    )
     if total_tokens is None and input_tokens is not None and output_tokens is not None:
         total_tokens = input_tokens + output_tokens
+    return input_tokens, output_tokens, total_tokens
 
-    # Skip traces with nothing useful for Prometheus numeric export
-    if ttft_ms is None and input_tokens is None and output_tokens is None:
+
+def _ttft_ms_from_observation(observation: dict) -> Optional[float]:
+    """
+    Langfuse-calculated TTFT only.
+
+    Observations API returns timeToFirstToken in seconds (v1/v2 metrics group).
+    """
+    ttft_sec = _to_float(observation.get("timeToFirstToken"))
+    if ttft_sec is None:
+        return None
+    # Guard: some builds may already return milliseconds (> few minutes unlikely as seconds)
+    if ttft_sec > 600:
+        return ttft_sec
+    return ttft_sec * 1000.0
+
+
+def _tps_from_observation(
+    observation: dict,
+    *,
+    output_tokens: Optional[float],
+) -> Optional[float]:
+    """Langfuse tokensPerSecond, or derive from Langfuse latency + output tokens."""
+    tps = _to_float(observation.get("tokensPerSecond"))
+    if tps is not None:
+        return tps
+    # outputTokensPerSecond alias if present
+    tps = _to_float(observation.get("outputTokensPerSecond"))
+    if tps is not None:
+        return tps
+
+    latency_sec = _to_float(observation.get("latency"))
+    if latency_sec is None or latency_sec <= 0 or output_tokens is None:
+        return None
+    # latency is seconds on v2 metrics; some v1 builds use ms
+    if latency_sec > 600:
+        latency_sec = latency_sec / 1000.0
+    if latency_sec <= 0:
+        return None
+    return float(output_tokens) / latency_sec
+
+
+def _label_from_metadata(metadata: dict, *keys: str, default: str = "unknown") -> str:
+    for key in keys:
+        value = metadata.get(key)
+        if value is None or value == "":
+            continue
+        if isinstance(value, dict):
+            value = value.get("name") or value.get("id")
+        if value is not None and value != "":
+            return str(value)
+    return default
+
+
+def extract_observation_metrics(observation: dict) -> Optional[dict]:
+    """
+    Pull TTFT / TPS / tokens from Langfuse observation fields only.
+
+    TTFT and TPS come from Langfuse-calculated observation metrics
+    (`timeToFirstToken`, `tokensPerSecond` / latency+tokens). Token counts come
+    from Langfuse usage on the generation — not from n8n AI_* metadata.
+    """
+    if str(observation.get("type") or "").upper() not in ("", "GENERATION"):
+        # Allow missing type (some payloads); reject explicit non-generations
+        if observation.get("type") is not None:
+            return None
+
+    ttft_ms = _ttft_ms_from_observation(observation)
+    input_tokens, output_tokens, total_tokens = _usage_tokens(observation)
+    tps = _tps_from_observation(observation, output_tokens=output_tokens)
+
+    # Require Langfuse TTFT or TPS (or usage) so empty generations are skipped
+    if ttft_ms is None and tps is None and input_tokens is None and output_tokens is None:
         return None
 
-    trace_input = _as_dict(trace.get("input"))
+    metadata = _as_dict(observation.get("metadata"))
     model = (
-        metadata.get("model")
-        or output.get("model")
-        or trace_input.get("model")
+        observation.get("providedModelName")
+        or observation.get("model")
+        or metadata.get("model")
         or "unknown"
     )
-    node_name = (
-        metadata.get("n8n_node_name")
-        or metadata.get("n8n.node.name")
-        or metadata.get("node")
-        or "unknown"
+    node_name = _label_from_metadata(
+        metadata,
+        "n8n_node_name",
+        "n8n.node.name",
+        "node",
+        default=str(observation.get("name") or "unknown"),
     )
-    workflow = (
-        metadata.get("n8n_workflow_name")
-        or metadata.get("n8n.workflow.name")
-        or metadata.get("parentWorkflow")
-        or metadata.get("workflow")
-        or "unknown"
+    workflow = _label_from_metadata(
+        metadata,
+        "n8n_workflow_name",
+        "n8n.workflow.name",
+        "parentWorkflow",
+        "workflow",
+        default=str(observation.get("traceName") or "unknown"),
     )
-    if isinstance(workflow, dict):
-        workflow = workflow.get("name") or "unknown"
-
-    workflow_id = (
-        metadata.get("n8n_workflow_id")
-        or metadata.get("n8n.workflow.id")
-        or metadata.get("workflowId")
-        or metadata.get("workflow_id")
-        or ""
+    workflow_id = _label_from_metadata(
+        metadata,
+        "n8n_workflow_id",
+        "n8n.workflow.id",
+        "workflowId",
+        "workflow_id",
+        default="unknown",
     )
-    if isinstance(workflow_id, dict):
-        workflow_id = workflow_id.get("id") or ""
-
-    execution_id = metadata.get("executionId")
-    if execution_id is None:
-        execution_id = metadata.get("n8n_execution_id") or metadata.get(
-            "n8n.execution.id"
-        )
+    execution_id = _label_from_metadata(
+        metadata,
+        "executionId",
+        "n8n_execution_id",
+        "n8n.execution.id",
+        default="",
+    )
+    if execution_id == "unknown":
+        execution_id = ""
 
     return {
-        "trace_id": str(trace.get("id") or ""),
+        "observation_id": str(observation.get("id") or ""),
+        "trace_id": str(observation.get("traceId") or observation.get("trace_id") or ""),
         "ttft_ms": ttft_ms,
+        "tps": tps,
         "input_tokens": input_tokens,
         "output_tokens": output_tokens,
         "total_tokens": total_tokens,
@@ -226,3 +315,11 @@ def extract_trace_metrics(trace: dict) -> Optional[dict]:
         "workflow_id": str(workflow_id) if workflow_id not in (None, "") else "unknown",
         "execution_id": str(execution_id) if execution_id is not None else "",
     }
+
+
+# Back-compat for older imports/tests — metadata path removed.
+def extract_trace_metrics(trace: dict) -> Optional[dict]:
+    logger.warning(
+        "extract_trace_metrics is deprecated; use extract_observation_metrics"
+    )
+    return None

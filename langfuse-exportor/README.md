@@ -3,7 +3,7 @@
 Polls Langfuse for **multiple projects** and exposes Prometheus metrics with a `project` label:
 
 1. **Daily Metrics API** — traces, observations, cost, tokens by model/day
-2. **Traces API** — per-trace **TTFT**, **tokens**, and **rates** (from n8n post-run metadata)
+2. **Observations API** — per-generation **TTFT**, **TPS**, and **tokens** from Langfuse-calculated fields (`timeToFirstToken`, `tokensPerSecond`, usage) — **not** from n8n `AI_*` metadata
 
 Works with **Prometheus and Grafana already running on your Mac** — this repo only runs the exporter.
 
@@ -72,32 +72,40 @@ Reload Prometheus and confirm the target is **UP** (e.g. http://localhost:29090/
 sum by (project, model) (langfuse_tokens_total)
 sum by (project) (langfuse_daily_cost_usd)
 
-# TTFT / tokens / rates from traces (n8n post-run metadata)
+# TTFT / TPS from Langfuse observations
 langfuse_ttft_ms_last
+langfuse_tps_last
 langfuse_ttft_ms_avg_window
+langfuse_tps_avg_window
 histogram_quantile(0.95, sum by (le, project, model) (rate(langfuse_ttft_ms_bucket[15m])))
 rate(langfuse_traces_total[5m])
 rate(langfuse_trace_tokens_sum_total[5m])
-rate(langfuse_trace_tokens_input_total[5m])
-rate(langfuse_trace_tokens_output_total[5m])
+
+# Per-generation table series
+langfuse_trace_ttft_ms
+langfuse_trace_tps
+langfuse_trace_input_tokens
+langfuse_trace_output_tokens
+langfuse_trace_total_tokens
 
 langfuse_exporter_last_scrape_success
 ```
 
-## Trace metadata expected (TTFT / tokens)
+## Langfuse observation fields used
 
-The exporter reads numeric fields from each Langfuse trace `metadata` (as written by the n8n Langfuse post-run child):
+The exporter scrapes **GENERATION** observations (`/api/public/v2/observations`, falls back to v1) and reads:
 
-| Metadata key | Metric use |
-|--------------|------------|
-| `AI_TTFT_Ms` (or `AI_TTFT_Sec`) | TTFT histogram + last/avg/p95 |
-| `inputTokens` / `outputTokens` / `totalTokens` | Token counters |
-| `model` | label |
-| `n8n_node_name` or `n8n.node.name` | `node_name` label |
-| `n8n_workflow_name` or `n8n.workflow.name` | `workflow` label |
-| `n8n_workflow_id` or `n8n.workflow.id` | `workflow_id` label |
+| Langfuse field | Metric use |
+|----------------|------------|
+| `timeToFirstToken` (seconds) | TTFT histogram + gauges (exported as ms) |
+| `tokensPerSecond` / `outputTokensPerSecond` | TPS gauges (else derived from `latency` + output tokens) |
+| `usage` / `usageDetails` / `inputUsage` / `outputUsage` / `totalUsage` | Token counters + per-generation gauges |
+| `providedModelName` / `model` | `model` label |
+| observation `metadata` (n8n keys only for labels) | `execution_id`, `workflow`, `node_name` for Grafana joins |
 
-Prompt/output text is **not** exported to Prometheus (cardinality / privacy).
+**Not used:** n8n post-run metadata `AI_TTFT_Ms`, `AI_TTFT_Sec`, or metadata token fields.
+
+TTFT is only present when the Langfuse SDK/integration recorded streaming `completionStartTime`. Without that, TTFT series stay empty even if generations have token usage.
 
 ## Logs
 
@@ -108,7 +116,8 @@ docker compose logs -f langfuse-exporter
 Expected output per scrape cycle:
 
 ```text
-INFO Scraped project dify-prod: daily_rows=7 traces=42 ai_metrics=12 new=3
+INFO Scraped project dify-prod: daily_rows=7 observations=42 ai_metrics=12 new=3
+INFO Project dify-prod: Langfuse metrics coverage ttft=10/12 tps=12/12
 ```
 
 ## Scrape target by setup
@@ -139,8 +148,8 @@ cd src && python exporter.py
 | `LANGFUSE_PROJECTS_FILE` | yes | — | Path to projects JSON (use `/app/projects.json` in Docker) |
 | `SCRAPE_INTERVAL_SECONDS` | no | `60` | Poll interval |
 | `LOOKBACK_DAYS` | no | `7` | Days of daily metrics to fetch |
-| `TRACE_LOOKBACK_HOURS` | no | `24` | Hours of traces to fetch for TTFT/tokens |
-| `TRACE_PAGE_LIMIT` | no | `100` | Traces per API page |
+| `TRACE_LOOKBACK_HOURS` | no | `24` | Hours of observations to fetch for TTFT/TPS |
+| `TRACE_PAGE_LIMIT` | no | `100` | Observations per API page |
 | `TRACE_MAX_PAGES` | no | `10` | Max pages per scrape |
 | `METRICS_PORT` | no | `29100` | Exporter listen port |
 
@@ -164,27 +173,31 @@ All include a `project` label. Day series also have a `date` label (`YYYY-MM-DD`
 
 When Langfuse returns no daily rows, or a day has no model usage, the exporter still emits zero-valued metrics (`model="none"` for token series).
 
-### Trace-based TTFT / tokens / rates
+### Observation-based TTFT / TPS / tokens
 
-Labels: `project`, `model`, `node_name`, `workflow`, `workflow_id`.
+Labels (aggregates): `project`, `model`, `node_name`, `workflow`, `workflow_id`.  
+Per-generation gauges also include `execution_id`, `trace_id`, `observation_id`.
 
-Counters and the histogram are incremented **once per trace id** (deduped across scrapes) so you can use `rate()` / `increase()`.
+Counters and the histogram are incremented **once per observation id** (deduped across scrapes) so you can use `rate()` / `increase()`.
 
 | Metric | Type | Notes |
 |--------|------|-------|
-| `langfuse_traces_total` | Counter | Use `rate(...[5m])` for request rate |
-| `langfuse_trace_tokens_input_total` | Counter | Use `rate()` for tokens/sec |
-| `langfuse_trace_tokens_output_total` | Counter | Use `rate()` for tokens/sec |
-| `langfuse_trace_tokens_sum_total` | Counter | Use `rate()` for tokens/sec |
+| `langfuse_traces_total` | Counter | Generations processed; use `rate(...[5m])` |
+| `langfuse_trace_tokens_input_total` | Counter | Use `rate()` for tokens/sec inflow |
+| `langfuse_trace_tokens_output_total` | Counter | Use `rate()` for tokens/sec inflow |
+| `langfuse_trace_tokens_sum_total` | Counter | Use `rate()` for tokens/sec inflow |
 | `langfuse_ttft_ms` | Histogram | Quantiles via `histogram_quantile` |
 | `langfuse_ttft_ms_last` | Gauge | Most recent TTFT |
 | `langfuse_ttft_ms_avg_window` | Gauge | Avg over lookback window |
 | `langfuse_ttft_ms_p95_window` | Gauge | Approx p95 over lookback window |
-| `langfuse_window_traces` | Gauge | Traces with TTFT in lookback |
-| `langfuse_trace_ttft_ms` | Gauge | Per-trace TTFT (table; labels include `execution_id`) |
-| `langfuse_trace_input_tokens` | Gauge | Per-trace input tokens |
-| `langfuse_trace_output_tokens` | Gauge | Per-trace output tokens |
-| `langfuse_trace_total_tokens` | Gauge | Per-trace total tokens |
+| `langfuse_tps_last` | Gauge | Most recent tokens/sec |
+| `langfuse_tps_avg_window` | Gauge | Avg tokens/sec over lookback |
+| `langfuse_window_traces` | Gauge | Generations with metrics in lookback |
+| `langfuse_trace_ttft_ms` | Gauge | Per-generation TTFT |
+| `langfuse_trace_tps` | Gauge | Per-generation TPS |
+| `langfuse_trace_input_tokens` | Gauge | Per-generation input tokens |
+| `langfuse_trace_output_tokens` | Gauge | Per-generation output tokens |
+| `langfuse_trace_total_tokens` | Gauge | Per-generation total tokens |
 
 ### Exporter health
 

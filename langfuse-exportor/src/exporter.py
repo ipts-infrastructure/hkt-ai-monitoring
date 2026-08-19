@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from prometheus_client import start_http_server
 
 from config import load_config
-from langfuse_client import LangfuseClient, extract_trace_metrics
+from langfuse_client import LangfuseClient, extract_observation_metrics
 from metrics import (
     AI_METRICS_EXTRACTED,
     SCRAPE_ERRORS,
@@ -14,7 +14,7 @@ from metrics import (
     TRACES_FETCHED,
     clear_daily_gauges,
     update_from_daily_rows,
-    update_from_traces,
+    update_from_observations,
 )
 
 logging.basicConfig(
@@ -31,39 +31,51 @@ def scrape_project(host: str, project: dict, cfg: dict) -> None:
     rows = client.fetch_daily_metrics(cfg["lookback_days"])
     update_from_daily_rows(name, rows)
 
-    traces = client.fetch_traces(
+    observations = client.fetch_observations(
         cfg["trace_lookback_hours"],
         page_limit=cfg["trace_page_limit"],
         max_pages=cfg["trace_max_pages"],
     )
-    trace_metrics = []
-    for trace in traces:
-        extracted = extract_trace_metrics(trace)
+    observation_metrics = []
+    for observation in observations:
+        extracted = extract_observation_metrics(observation)
         if extracted:
-            trace_metrics.append(extracted)
+            observation_metrics.append(extracted)
 
-    new_traces, window_traces = update_from_traces(name, trace_metrics)
+    new_obs, window_obs = update_from_observations(name, observation_metrics)
 
-    TRACES_FETCHED.labels(project=name).set(len(traces))
-    AI_METRICS_EXTRACTED.labels(project=name).set(len(trace_metrics))
+    TRACES_FETCHED.labels(project=name).set(len(observations))
+    AI_METRICS_EXTRACTED.labels(project=name).set(len(observation_metrics))
     SCRAPE_SUCCESS.labels(project=name).set(1)
     SCRAPE_TIMESTAMP.labels(project=name).set(
         datetime.now(timezone.utc).timestamp()
     )
     logger.info(
-        "Scraped project %s: daily_rows=%d traces=%d ai_metrics=%d new=%d",
+        "Scraped project %s: daily_rows=%d observations=%d ai_metrics=%d new=%d",
         name,
         len(rows),
-        len(traces),
-        len(trace_metrics),
-        new_traces,
+        len(observations),
+        len(observation_metrics),
+        new_obs,
     )
-    if traces and not trace_metrics:
+    if observations and not observation_metrics:
         logger.warning(
-            "Project %s: fetched %d traces but none had AI_TTFT_Ms/tokens "
-            "(check Langfuse metadata on those traces)",
+            "Project %s: fetched %d GENERATION observations but none had "
+            "Langfuse timeToFirstToken / tokensPerSecond / usage "
+            "(needs streaming completionStartTime for TTFT)",
             name,
-            len(traces),
+            len(observations),
+        )
+    elif observation_metrics:
+        with_ttft = sum(1 for m in observation_metrics if m.get("ttft_ms") is not None)
+        with_tps = sum(1 for m in observation_metrics if m.get("tps") is not None)
+        logger.info(
+            "Project %s: Langfuse metrics coverage ttft=%d/%d tps=%d/%d",
+            name,
+            with_ttft,
+            len(observation_metrics),
+            with_tps,
+            len(observation_metrics),
         )
 
 
@@ -74,7 +86,7 @@ def run() -> None:
     start_http_server(cfg["metrics_port"])
     logger.info(
         "Langfuse exporter listening on :%d/metrics "
-        "(interval=%ds, lookback=%dd, trace_lookback=%dh, projects=%s)",
+        "(interval=%ds, lookback=%dd, observation_lookback=%dh, projects=%s)",
         cfg["metrics_port"],
         cfg["scrape_interval"],
         cfg["lookback_days"],
