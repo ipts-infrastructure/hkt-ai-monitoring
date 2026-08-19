@@ -187,6 +187,7 @@ Counters and the histogram are incremented **once per observation id** (deduped 
 | `langfuse_trace_tokens_output_total` | Counter | Use `rate()` for tokens/sec inflow |
 | `langfuse_trace_tokens_sum_total` | Counter | Use `rate()` for tokens/sec inflow |
 | `langfuse_ttft_ms` | Histogram | Quantiles via `histogram_quantile` |
+| `langfuse_latency_ms` | Histogram | Generation latency quantiles via `histogram_quantile` |
 | `langfuse_ttft_ms_last` | Gauge | Most recent TTFT |
 | `langfuse_ttft_ms_avg_window` | Gauge | Avg over lookback window |
 | `langfuse_ttft_ms_p95_window` | Gauge | Approx p95 over lookback window |

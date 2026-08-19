@@ -308,6 +308,19 @@ class UpdateFromObservationsTest(unittest.TestCase):
             ),
             2500.0,
         )
+        self.assertEqual(
+            REGISTRY.get_sample_value(
+                "langfuse_latency_ms_sum",
+                {
+                    "project": "demo",
+                    "model": "m1",
+                    "node_name": "AI Agent",
+                    "workflow": "Demo",
+                    "workflow_id": "wf-1",
+                },
+            ),
+            2500.0,
+        )
 
 
 if __name__ == "__main__":

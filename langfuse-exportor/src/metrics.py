@@ -93,6 +93,27 @@ TTFT_MS = Histogram(
         float("inf"),
     ),
 )
+LATENCY_MS = Histogram(
+    "langfuse_latency_ms",
+    "Langfuse generation latency in milliseconds (endTime - startTime)",
+    ["project", "model", "node_name", "workflow", "workflow_id"],
+    buckets=(
+        100,
+        250,
+        500,
+        1000,
+        2000,
+        4000,
+        8000,
+        12000,
+        16000,
+        24000,
+        32000,
+        60000,
+        120000,
+        float("inf"),
+    ),
+)
 TTFT_MS_LAST = Gauge(
     "langfuse_ttft_ms_last",
     "Most recent Langfuse-calculated TTFT in milliseconds",
@@ -501,6 +522,8 @@ def update_from_observations(
         if ttft_ms is not None:
             TTFT_MS.labels(**labels).observe(float(ttft_ms))
             TTFT_MS_LAST.labels(**labels).set(float(ttft_ms))
+        if latency_ms is not None:
+            LATENCY_MS.labels(**labels).observe(float(latency_ms))
         if tps is not None:
             TPS_LAST.labels(**labels).set(float(tps))
         if item.get("input_tokens") is not None:
