@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 0,
+  "id": 1687722972508160,
   "links": [],
   "panels": [
     {
@@ -1159,6 +1159,7 @@
               "nested": true,
               "service.name": true,
               "spanID": true,
+              "statusMessage": true,
               "traceIdHidden": true,
               "traceName": true,
               "traceService": true
@@ -1327,6 +1328,7 @@
               "nested": true,
               "service.name": true,
               "spanID": true,
+              "statusMessage": true,
               "traceIdHidden": true,
               "traceName": true,
               "traceService": true
@@ -1554,7 +1556,7 @@
               "trace_id 2": true,
               "trace_id 3": true,
               "trace_id 4": true,
-              "workflow 1": false,
+              "workflow 1": true,
               "workflow 2": true,
               "workflow 3": true,
               "workflow 4": true
@@ -1798,7 +1800,7 @@
               "trace_id 2": true,
               "trace_id 3": true,
               "trace_id 4": true,
-              "workflow 1": false,
+              "workflow 1": true,
               "workflow 2": true,
               "workflow 3": true,
               "workflow 4": true
@@ -1887,8 +1889,8 @@
       },
       {
         "current": {
-          "text": "Experiment A Workflow",
-          "value": "Experiment A Workflow"
+          "text": ".*",
+          "value": ".*"
         },
         "description": "Workflow for side A. Click a row in A · Workflows.",
         "hide": 2,
@@ -1897,17 +1899,17 @@
         "options": [
           {
             "selected": true,
-            "text": "Experiment A Workflow",
-            "value": "Experiment A Workflow"
+            "text": ".*",
+            "value": ".*"
           }
         ],
-        "query": "Experiment A Workflow",
+        "query": ".*",
         "type": "textbox"
       },
       {
         "current": {
-          "text": "676",
-          "value": "676"
+          "text": "",
+          "value": ""
         },
         "description": "Execution for side A. Click Execution ID in A · Executions.",
         "hide": 2,
@@ -1916,17 +1918,17 @@
         "options": [
           {
             "selected": true,
-            "text": "676",
-            "value": "676"
+            "text": "",
+            "value": ""
           }
         ],
-        "query": "676",
+        "query": "",
         "type": "textbox"
       },
       {
         "current": {
-          "text": "Experiment B Workflow",
-          "value": "Experiment B Workflow"
+          "text": ".*",
+          "value": ".*"
         },
         "description": "Workflow for side B (can differ from A). Click a row in B · Workflows.",
         "hide": 2,
@@ -1935,17 +1937,17 @@
         "options": [
           {
             "selected": true,
-            "text": "Experiment B Workflow",
-            "value": "Experiment B Workflow"
+            "text": ".*",
+            "value": ".*"
           }
         ],
-        "query": "Experiment B Workflow",
+        "query": ".*",
         "type": "textbox"
       },
       {
         "current": {
-          "text": "678",
-          "value": "678"
+          "text": "",
+          "value": ""
         },
         "description": "Execution for side B. Click Execution ID in B · Executions.",
         "hide": 2,
@@ -1954,23 +1956,23 @@
         "options": [
           {
             "selected": true,
-            "text": "678",
-            "value": "678"
+            "text": "",
+            "value": ""
           }
         ],
-        "query": "678",
+        "query": "",
         "type": "textbox"
       }
     ]
   },
   "time": {
-    "from": "2026-08-11T04:21:43.489Z",
-    "to": "2026-08-12T04:21:43.489Z"
+    "from": "2026-08-09T07:24:08.789Z",
+    "to": "2026-08-11T07:24:08.789Z"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "n8n Experiment",
   "uid": "n8n-experiment",
-  "version": 27,
+  "version": 29,
   "weekStart": ""
 }

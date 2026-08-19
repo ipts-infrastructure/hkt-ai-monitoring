@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 3878087452745728,
+  "id": 0,
   "links": [],
   "panels": [
     {
@@ -1082,13 +1082,13 @@
     ]
   },
   "time": {
-    "from": "2026-08-11T04:21:43.489Z",
-    "to": "2026-08-12T04:21:43.489Z"
+    "from": "now-24h",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "n8n Evaluations",
   "uid": "n8n-evaluations",
-  "version": 37,
+  "version": 39,
   "weekStart": ""
 }
