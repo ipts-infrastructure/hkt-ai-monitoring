@@ -19,7 +19,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 0,
+  "id": 3878127395102720,
   "links": [],
   "panels": [
     {
@@ -1207,6 +1207,6 @@
   "timezone": "browser",
   "title": "n8n Traces",
   "uid": "n8n-traces",
-  "version": 160,
+  "version": 161,
   "weekStart": ""
 }

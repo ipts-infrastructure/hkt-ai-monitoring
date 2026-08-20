@@ -1363,7 +1363,7 @@
         "type": "prometheus",
         "uid": "P7E2AE7DB8179C128"
       },
-      "description": "TTFT / tokens from langfuse-exporter for Execution A. Filtered by Project + Execution ID (workflow filter optional per side).",
+      "description": "TTFT / Latency / TPS / tokens from langfuse-exporter (one row per Langfuse generation). Filtered by Project + Execution ID. Latency is Langfuse generation duration (ms).",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -1392,7 +1392,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "TTFT (ms)"
+              "options": "TTFT"
             },
             "properties": [
               {
@@ -1409,19 +1409,59 @@
               },
               {
                 "id": "custom.width",
-                "value": 167
+                "value": 140
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "__name__ 1"
+              "options": "Latency"
             },
             "properties": [
               {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
                 "id": "custom.width",
-                "value": 221
+                "value": 140
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TPS (token/s)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 120
               }
             ]
           }
@@ -1448,7 +1488,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "TTFT (ms)"
+            "displayName": "Latency"
           }
         ]
       },
@@ -1461,142 +1501,91 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "last_over_time(langfuse_trace_ttft_ms{project=~\"$project\", workflow=~\"^$workflowA$\", execution_id=~\"^$executionIdA$\"}[$__range])",
+          "expr": "langfuse_trace_row{project=~\"$project\", execution_id=~\"^$executionIdA$\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "last_over_time(langfuse_trace_input_tokens{project=~\"$project\", workflow=~\"^$workflowA$\", execution_id=~\"^$executionIdA$\"}[$__range])",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "last_over_time(langfuse_trace_output_tokens{project=~\"$project\", workflow=~\"^$workflowA$\", execution_id=~\"^$executionIdA$\"}[$__range])",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "last_over_time(langfuse_trace_total_tokens{project=~\"$project\", workflow=~\"^$workflowA$\", execution_id=~\"^$executionIdA$\"}[$__range])",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "D"
         }
       ],
       "title": "A · Execution Statistic (${executionIdA})",
       "transformations": [
         {
-          "id": "joinByField",
-          "options": {
-            "byField": "execution_id",
-            "mode": "outer"
-          }
-        },
-        {
           "id": "organize",
           "options": {
             "excludeByName": {
               "Time": true,
-              "Time 1": true,
-              "Time 2": true,
-              "Time 3": true,
-              "Time 4": true,
-              "Value #B": false,
-              "__name__ 1": true,
-              "__name__ 2": true,
-              "__name__ 3": true,
-              "__name__ 4": true,
-              "instance 1": true,
-              "instance 2": true,
-              "instance 3": true,
-              "instance 4": true,
-              "job 1": true,
-              "job 2": true,
-              "job 3": true,
-              "job 4": true,
-              "model 2": true,
-              "model 3": true,
-              "model 4": true,
-              "node_name 2": true,
-              "node_name 3": true,
-              "node_name 4": true,
-              "project 1": true,
-              "project 2": true,
-              "project 3": true,
-              "project 4": true,
-              "trace_id 1": true,
-              "trace_id 2": true,
-              "trace_id 3": true,
-              "trace_id 4": true,
-              "workflow 1": true,
-              "workflow 2": true,
-              "workflow 3": true,
-              "workflow 4": true
+              "Value": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "observation_id": true,
+              "project": true,
+              "trace_id": true,
+              "workflow_id": true
             },
             "includeByName": {},
             "indexByName": {
-              "Execution ID": 0,
-              "Input tokens": 3,
-              "Langfuse trace": 10,
-              "Model": 6,
-              "Node": 1,
-              "Output tokens": 4,
-              "Project": 9,
-              "TTFT (ms)": 2,
-              "Total tokens": 5,
-              "Workflow": 7,
-              "Workflow ID": 8,
               "execution_id": 0,
-              "node_name": 1
+              "input_tokens": 5,
+              "latency_ms": 3,
+              "model": 8,
+              "node_name": 1,
+              "observation_id": 10,
+              "output_tokens": 6,
+              "total_tokens": 7,
+              "tps": 4,
+              "trace_id": 11,
+              "ttft_ms": 2,
+              "workflow": 9
             },
             "renameByName": {
-              "Time 2": "",
-              "Value": "TTFT (ms)",
-              "Value #A": "TTFT (ms)",
-              "Value #B": "Input tokens",
-              "Value #C": "Output tokens",
-              "Value #D": "Total tokens",
-              "Value 1": "Input tokens",
-              "Value 2": "Output tokens",
-              "Value 3": "Total tokens",
               "execution_id": "Execution ID",
+              "input_tokens": "Input tokens",
+              "latency_ms": "Latency",
               "model": "Model",
               "node_name": "Node",
-              "node_name 1": "AI Node Name",
-              "project": "Project",
+              "observation_id": "Observation ID",
+              "output_tokens": "Output tokens",
+              "total_tokens": "Total tokens",
+              "tps": "TPS (token/s)",
               "trace_id": "Langfuse trace",
-              "workflow": "Workflow",
-              "workflow 1": "Workflow",
-              "workflow_id": "Workflow ID"
+              "ttft_ms": "TTFT",
+              "workflow": "Workflow"
             }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "TTFT"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "Latency"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "TPS (token/s)"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "Input tokens"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "Output tokens"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "Total tokens"
+              }
+            ],
+            "fields": {}
           }
         }
       ],
@@ -1607,7 +1596,7 @@
         "type": "prometheus",
         "uid": "P7E2AE7DB8179C128"
       },
-      "description": "TTFT / tokens from langfuse-exporter for Execution B. Filtered by Project + Execution ID (workflow filter optional per side).",
+      "description": "TTFT / Latency / TPS / tokens from langfuse-exporter (one row per Langfuse generation). Filtered by Project + Execution ID. Latency is Langfuse generation duration (ms).",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -1636,7 +1625,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "TTFT (ms)"
+              "options": "TTFT"
             },
             "properties": [
               {
@@ -1653,19 +1642,59 @@
               },
               {
                 "id": "custom.width",
-                "value": 167
+                "value": 140
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "__name__ 1"
+              "options": "Latency"
             },
             "properties": [
               {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
                 "id": "custom.width",
-                "value": 221
+                "value": 140
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "TPS (token/s)"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge",
+                  "valueDisplayMode": "text"
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 120
               }
             ]
           }
@@ -1692,7 +1721,7 @@
         "sortBy": [
           {
             "desc": true,
-            "displayName": "TTFT (ms)"
+            "displayName": "Latency"
           }
         ]
       },
@@ -1705,142 +1734,91 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "last_over_time(langfuse_trace_ttft_ms{project=~\"$project\", workflow=~\"^$workflowB$\", execution_id=~\"^$executionIdB$\"}[$__range])",
+          "expr": "langfuse_trace_row{project=~\"$project\", execution_id=~\"^$executionIdB$\"}",
           "format": "table",
           "instant": true,
           "legendFormat": "__auto",
           "range": false,
           "refId": "A"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "last_over_time(langfuse_trace_input_tokens{project=~\"$project\", workflow=~\"^$workflowB$\", execution_id=~\"^$executionIdB$\"}[$__range])",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "B"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "last_over_time(langfuse_trace_output_tokens{project=~\"$project\", workflow=~\"^$workflowB$\", execution_id=~\"^$executionIdB$\"}[$__range])",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "C"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "P7E2AE7DB8179C128"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "last_over_time(langfuse_trace_total_tokens{project=~\"$project\", workflow=~\"^$workflowB$\", execution_id=~\"^$executionIdB$\"}[$__range])",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "D"
         }
       ],
       "title": "B · Execution Statistic (${executionIdB})",
       "transformations": [
         {
-          "id": "joinByField",
-          "options": {
-            "byField": "execution_id",
-            "mode": "outer"
-          }
-        },
-        {
           "id": "organize",
           "options": {
             "excludeByName": {
               "Time": true,
-              "Time 1": true,
-              "Time 2": true,
-              "Time 3": true,
-              "Time 4": true,
-              "Value #B": false,
-              "__name__ 1": true,
-              "__name__ 2": true,
-              "__name__ 3": true,
-              "__name__ 4": true,
-              "instance 1": true,
-              "instance 2": true,
-              "instance 3": true,
-              "instance 4": true,
-              "job 1": true,
-              "job 2": true,
-              "job 3": true,
-              "job 4": true,
-              "model 2": true,
-              "model 3": true,
-              "model 4": true,
-              "node_name 2": true,
-              "node_name 3": true,
-              "node_name 4": true,
-              "project 1": true,
-              "project 2": true,
-              "project 3": true,
-              "project 4": true,
-              "trace_id 1": true,
-              "trace_id 2": true,
-              "trace_id 3": true,
-              "trace_id 4": true,
-              "workflow 1": true,
-              "workflow 2": true,
-              "workflow 3": true,
-              "workflow 4": true
+              "Value": true,
+              "__name__": true,
+              "instance": true,
+              "job": true,
+              "observation_id": true,
+              "project": true,
+              "trace_id": true,
+              "workflow_id": true
             },
             "includeByName": {},
             "indexByName": {
-              "Execution ID": 0,
-              "Input tokens": 3,
-              "Langfuse trace": 10,
-              "Model": 6,
-              "Node": 1,
-              "Output tokens": 4,
-              "Project": 9,
-              "TTFT (ms)": 2,
-              "Total tokens": 5,
-              "Workflow": 7,
-              "Workflow ID": 8,
               "execution_id": 0,
-              "node_name": 1
+              "input_tokens": 5,
+              "latency_ms": 3,
+              "model": 8,
+              "node_name": 1,
+              "observation_id": 10,
+              "output_tokens": 6,
+              "total_tokens": 7,
+              "tps": 4,
+              "trace_id": 11,
+              "ttft_ms": 2,
+              "workflow": 9
             },
             "renameByName": {
-              "Time 2": "",
-              "Value": "TTFT (ms)",
-              "Value #A": "TTFT (ms)",
-              "Value #B": "Input tokens",
-              "Value #C": "Output tokens",
-              "Value #D": "Total tokens",
-              "Value 1": "Input tokens",
-              "Value 2": "Output tokens",
-              "Value 3": "Total tokens",
               "execution_id": "Execution ID",
+              "input_tokens": "Input tokens",
+              "latency_ms": "Latency",
               "model": "Model",
               "node_name": "Node",
-              "node_name 1": "AI Node Name",
-              "project": "Project",
+              "observation_id": "Observation ID",
+              "output_tokens": "Output tokens",
+              "total_tokens": "Total tokens",
+              "tps": "TPS (token/s)",
               "trace_id": "Langfuse trace",
-              "workflow": "Workflow",
-              "workflow 1": "Workflow",
-              "workflow_id": "Workflow ID"
+              "ttft_ms": "TTFT",
+              "workflow": "Workflow"
             }
+          }
+        },
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "TTFT"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "Latency"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "TPS (token/s)"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "Input tokens"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "Output tokens"
+              },
+              {
+                "destinationType": "number",
+                "targetField": "Total tokens"
+              }
+            ],
+            "fields": {}
           }
         }
       ],
@@ -1889,8 +1867,8 @@
       },
       {
         "current": {
-          "text": ".*",
-          "value": ".*"
+          "text": "Demo Agent TTFT Langfuse",
+          "value": "Demo Agent TTFT Langfuse"
         },
         "description": "Workflow for side A. Click a row in A · Workflows.",
         "hide": 2,
@@ -1899,17 +1877,17 @@
         "options": [
           {
             "selected": true,
-            "text": ".*",
-            "value": ".*"
+            "text": "Demo Agent TTFT Langfuse",
+            "value": "Demo Agent TTFT Langfuse"
           }
         ],
-        "query": ".*",
+        "query": "Demo Agent TTFT Langfuse",
         "type": "textbox"
       },
       {
         "current": {
-          "text": "",
-          "value": ""
+          "text": "722",
+          "value": "722"
         },
         "description": "Execution for side A. Click Execution ID in A · Executions.",
         "hide": 2,
@@ -1918,17 +1896,17 @@
         "options": [
           {
             "selected": true,
-            "text": "",
-            "value": ""
+            "text": "722",
+            "value": "722"
           }
         ],
-        "query": "",
+        "query": "722",
         "type": "textbox"
       },
       {
         "current": {
-          "text": ".*",
-          "value": ".*"
+          "text": "Demo Agent TTFT Langfuse",
+          "value": "Demo Agent TTFT Langfuse"
         },
         "description": "Workflow for side B (can differ from A). Click a row in B · Workflows.",
         "hide": 2,
@@ -1937,17 +1915,17 @@
         "options": [
           {
             "selected": true,
-            "text": ".*",
-            "value": ".*"
+            "text": "Demo Agent TTFT Langfuse",
+            "value": "Demo Agent TTFT Langfuse"
           }
         ],
-        "query": ".*",
+        "query": "Demo Agent TTFT Langfuse",
         "type": "textbox"
       },
       {
         "current": {
-          "text": "",
-          "value": ""
+          "text": "724",
+          "value": "724"
         },
         "description": "Execution for side B. Click Execution ID in B · Executions.",
         "hide": 2,
@@ -1956,23 +1934,23 @@
         "options": [
           {
             "selected": true,
-            "text": "",
-            "value": ""
+            "text": "724",
+            "value": "724"
           }
         ],
-        "query": "",
+        "query": "724",
         "type": "textbox"
       }
     ]
   },
   "time": {
-    "from": "2026-08-09T07:24:08.789Z",
-    "to": "2026-08-11T07:24:08.789Z"
+    "from": "now-24h",
+    "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "n8n Experiment",
   "uid": "n8n-experiment",
-  "version": 29,
+  "version": 31,
   "weekStart": ""
 }
