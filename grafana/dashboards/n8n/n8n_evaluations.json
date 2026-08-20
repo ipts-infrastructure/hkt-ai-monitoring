@@ -15,7 +15,7 @@
       }
     ]
   },
-  "description": "n8n evaluations — token usage / TTFT rates (Langfuse exporter via Prometheus) and workflow latency (Tempo). Select project TTFT-example for AI metrics.",
+  "description": "n8n evaluations \u2014 token usage / TTFT rates (Langfuse exporter via Prometheus) and workflow latency (Tempo). Select project TTFT-example for AI metrics.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -313,7 +313,7 @@
           "tableType": "spans"
         }
       ],
-      "title": "Workflow latency (95% ≤ this)",
+      "title": "Workflow latency (95% \u2264 this)",
       "type": "stat"
     },
     {
@@ -633,7 +633,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "ms (95% ≤ this)",
+            "axisLabel": "ms (95% \u2264 this)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -710,7 +710,7 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le, model) (rate(langfuse_ttft_ms_bucket{project=~\"$project\"}[$p95Window])))",
+          "expr": "histogram_quantile(0.95, sum by (le, model) (rate(langfuse_ttft_ms_bucket{project=~\"$project\"}[1h])))",
           "legendFormat": "{{model}}",
           "range": true,
           "refId": "A"
@@ -724,7 +724,7 @@
         "type": "prometheus",
         "uid": "P7E2AE7DB8179C128"
       },
-      "description": "95% of Langfuse generation durations (end − start) were within this many ms. Lower is better. Uses langfuse_latency_ms histogram from the exporter.",
+      "description": "95% of Langfuse generation durations (end \u2212 start) were within this many ms. Lower is better. Uses langfuse_latency_ms histogram from the exporter.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -734,7 +734,7 @@
             "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "ms (95% ≤ this)",
+            "axisLabel": "ms (95% \u2264 this)",
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
@@ -811,7 +811,7 @@
             "uid": "P7E2AE7DB8179C128"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(0.95, sum by (le, model) (rate(langfuse_latency_ms_bucket{project=~\"$project\"}[$p95Window])))",
+          "expr": "histogram_quantile(0.95, sum by (le, model) (rate(langfuse_latency_ms_bucket{project=~\"$project\"}[1h])))",
           "legendFormat": "{{model}}",
           "range": true,
           "refId": "A"
@@ -962,20 +962,6 @@
         "regexApplyTo": "value",
         "sort": 1,
         "type": "query"
-      },
-      {
-        "current": {
-          "text": "1h",
-          "value": "1h"
-        },
-        "description": "Sliding window for P95 TTFT and P95 Latency charts. Each point = 95% of samples in this lookback.",
-        "includeAll": false,
-        "label": "P95 window",
-        "name": "p95Window",
-        "options": [],
-        "query": "5m,15m,1h,6h,24h",
-        "type": "custom",
-        "valuesFormat": "csv"
       },
       {
         "current": {
